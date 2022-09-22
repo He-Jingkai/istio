@@ -17,8 +17,11 @@
 package plugin
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"net"
 	"runtime/debug"
 	"strconv"
@@ -31,6 +34,8 @@ import (
 
 	"istio.io/api/annotation"
 	"istio.io/istio/cni/pkg/constants"
+	ipt "istio.io/istio/offmesh-tools/iptables"
+	offMesh "istio.io/istio/offmesh-tools/utils"
 	"istio.io/pkg/log"
 )
 
@@ -89,6 +94,9 @@ type K8sArgs struct {
 	K8S_POD_NAME               types.UnmarshallableString // nolint: revive, stylecheck
 	K8S_POD_NAMESPACE          types.UnmarshallableString // nolint: revive, stylecheck
 	K8S_POD_INFRA_CONTAINER_ID types.UnmarshallableString // nolint: revive, stylecheck
+
+	// For offMesh, by hjk
+	PROXY offMesh.ProxyArgs
 }
 
 // parseConfig parses the supplied configuration (and prevResult) from stdin.
@@ -194,17 +202,15 @@ func CmdAdd(args *skel.CmdArgs) (err error) {
 	}
 
 	log.Infof("istio-cni cmdAdd with k8s args: %+v", k8sArgs)
-	if conf.Kubernetes.CNIBinDir != "" {
-		nsSetupBinDir = conf.Kubernetes.CNIBinDir
-	}
-	if conf.Kubernetes.InterceptRuleMgrType != "" {
-		interceptRuleMgrType = conf.Kubernetes.InterceptRuleMgrType
-	}
 
 	// Check if the workload is running under Kubernetes.
 	// TODO(bianpengyuan): refactor the following code to make it less nested.
 	podNamespace := string(k8sArgs.K8S_POD_NAMESPACE)
 	podName := string(k8sArgs.K8S_POD_NAME)
+
+	proxyNamespace := string(k8sArgs.PROXY.PROXY_POD_NAMESPACE)
+	proxyName := string(k8sArgs.PROXY.PROXY_POD_NAME)
+
 	if podNamespace != "" && podName != "" {
 		excludePod := false
 		for _, excludeNs := range conf.Kubernetes.ExcludeNamespaces {
@@ -263,20 +269,45 @@ func CmdAdd(args *skel.CmdArgs) (err error) {
 				}
 				if !excludePod {
 					log.Debugf("Setting up redirect for pod %v/%v", podNamespace, podName)
+					pod := &v1.Pod{}
+					proxy := &v1.Pod{}
+					var podErr error
+					var proxyErr error
+					var iptableErr error
+					for attempt := 1; attempt <= podRetrievalMaxRetries; attempt++ {
+						pod, podErr = client.CoreV1().Pods(podNamespace).Get(context.TODO(), podName, metav1.GetOptions{})
+						if podErr == nil {
+							break
+						}
+						log.Debugf("Failed to get %s/%s pod info: %v", podNamespace, podName, podErr)
+						time.Sleep(podRetrievalInterval)
+					}
+					if podErr != nil {
+						log.Errorf("Failed to get %s/%s pod info: %v", podNamespace, podName, k8sErr)
+						return podErr
+					}
+					for attempt := 1; attempt <= podRetrievalMaxRetries; attempt++ {
+						proxy, proxyErr = client.CoreV1().Pods(proxyNamespace).Get(context.TODO(), proxyName, metav1.GetOptions{})
+						if proxyErr == nil {
+							break
+						}
+						log.Debugf("Failed to get %s/%s pod info: %v", proxyNamespace, proxyName, proxyErr)
+						time.Sleep(podRetrievalInterval)
+					}
+					if proxyErr != nil {
+						log.Errorf("Failed to get %s/%s pod info: %v", proxyNamespace, proxyName, proxyErr)
+						return proxyErr
+					}
 					if redirect, redirErr := NewRedirect(pi); redirErr != nil {
 						log.Errorf("Pod %s/%s redirect failed due to bad params: %v", podNamespace, podName, redirErr)
+						return redirErr
 					} else {
-						// Get the constructor for the configured type of InterceptRuleMgr
-						interceptMgrCtor := GetInterceptRuleMgrCtor(interceptRuleMgrType)
-						if interceptMgrCtor == nil {
-							log.Errorf("Pod redirect failed due to unavailable InterceptRuleMgr of type %s",
-								interceptRuleMgrType)
-						} else {
-							redirect.hostNSEnterExec = conf.HostNSEnterExec
-							rulesMgr := interceptMgrCtor()
-							if err := rulesMgr.Program(podName, args.Netns, redirect); err != nil {
-								return err
-							}
+						// TODO: support more options, such as noRedirectUID
+						log.Debugf("pod info:%+v， proxy info:%+v, redirect config:%+v", pod, proxy, redirect)
+						iptableErr = ipt.DeleteIPTableRedirect(pod.Status.PodIP, proxy.Status.PodIP, redirect.targetPort)
+						if iptableErr != nil {
+							log.Errorf("Failed to delete iptable rule: %v", iptableErr)
+							return iptableErr
 						}
 					}
 				}
@@ -307,5 +338,197 @@ func CmdCheck(args *skel.CmdArgs) (err error) {
 }
 
 func CmdDelete(args *skel.CmdArgs) (err error) {
-	return nil
+	// Defer a panic recover, so that in case if panic we can still return
+	// a proper error to the runtime.
+	defer func() {
+		if e := recover(); e != nil {
+			msg := fmt.Sprintf("istio-cni panicked during CmdDelete: %v\n%v", e, string(debug.Stack()))
+			if err != nil {
+				// If we're recovering and there was also an error, then we need to
+				// present both.
+				msg = fmt.Sprintf("%s: %v", msg, err)
+			}
+			err = fmt.Errorf(msg)
+		}
+		if err != nil {
+			log.Errorf("istio-cni CmdDelete error: %v", err)
+		}
+	}()
+
+	conf, err := parseConfig(args.StdinData)
+	if err != nil {
+		log.Errorf("istio-cni CmdDelete failed to parse config %v %v", string(args.StdinData), err)
+		return err
+	}
+
+	if conf.LogUDSAddress != "" {
+		// reconfigure log output with tee to UDS if UDS log is enabled.
+		if err := log.Configure(GetLoggingOptions(conf.LogUDSAddress)); err != nil {
+			log.Error("Failed to configure istio-cni with UDS log")
+		}
+	}
+	log.FindScope("default").SetOutputLevel(getLogLevel(conf.LogLevel))
+
+	// Determine if running under k8s by checking the CNI args
+	log.Debugf("istio-cni CmdDelete args: %s", args.Args)
+	k8sArgs := K8sArgs{}
+	if err := types.LoadArgs(args.Args, &k8sArgs); err != nil {
+		return err
+	}
+
+	log.Infof("istio-cni CmdDelete with k8s args: %+v", k8sArgs)
+	if conf.Kubernetes.CNIBinDir != "" {
+		nsSetupBinDir = conf.Kubernetes.CNIBinDir
+	}
+	if conf.Kubernetes.InterceptRuleMgrType != "" {
+		interceptRuleMgrType = conf.Kubernetes.InterceptRuleMgrType
+	}
+
+	// Check if the workload is running under Kubernetes.
+	// TODO(bianpengyuan): refactor the following code to make it less nested.
+	podNamespace := string(k8sArgs.K8S_POD_NAMESPACE)
+	podName := string(k8sArgs.K8S_POD_NAME)
+
+	proxyNamespace := string(k8sArgs.PROXY.PROXY_POD_NAMESPACE)
+	proxyName := string(k8sArgs.PROXY.PROXY_POD_NAME)
+
+	if podNamespace != "" && podName != "" {
+		excludePod := false
+		for _, excludeNs := range conf.Kubernetes.ExcludeNamespaces {
+			if podNamespace == excludeNs {
+				excludePod = true
+				break
+			}
+		}
+		if !excludePod {
+			client, err := newKubeClient(*conf)
+			if err != nil {
+				return err
+			}
+			pi := &PodInfo{}
+			var k8sErr error
+			for attempt := 1; attempt <= podRetrievalMaxRetries; attempt++ {
+				pi, k8sErr = getKubePodInfo(client, podName, podNamespace)
+				if k8sErr == nil {
+					break
+				}
+				log.Debugf("Failed to get %s/%s pod info: %v", podNamespace, podName, k8sErr)
+				time.Sleep(podRetrievalInterval)
+			}
+			if k8sErr != nil {
+				log.Errorf("Failed to get %s/%s pod info: %v", podNamespace, podName, k8sErr)
+				return k8sErr
+			}
+
+			// Check if istio-init container is present; in that case exclude pod
+			if _, present := pi.InitContainers[ISTIOINIT]; present {
+				log.Infof("Pod %s/%s excluded due to being already injected with istio-init container", podNamespace, podName)
+				excludePod = true
+			}
+
+			if val, ok := pi.ProxyEnvironments["DISABLE_ENVOY"]; ok {
+				if val, err := strconv.ParseBool(val); err == nil && val {
+					log.Infof("Pod %s/%s excluded due to DISABLE_ENVOY on istio-proxy", podNamespace, podName)
+					excludePod = true
+				}
+			}
+
+			if len(pi.Containers) > 1 {
+				log.Debugf("Checking pod %s/%s annotations prior to redirect for Istio proxy", podNamespace, podName)
+				if val, ok := pi.Annotations[injectAnnotationKey]; ok {
+					log.Debugf("Pod %s/%s contains inject annotation: %s", podNamespace, podName, val)
+					if injectEnabled, err := strconv.ParseBool(val); err == nil {
+						if !injectEnabled {
+							log.Infof("Pod %s/%s excluded due to inject-disabled annotation", podNamespace, podName)
+							excludePod = true
+						}
+					}
+				}
+				if _, ok := pi.Annotations[sidecarStatusKey]; !ok {
+					log.Infof("Pod %s/%s excluded due to not containing sidecar annotation", podNamespace, podName)
+					excludePod = true
+				}
+				if !excludePod {
+					log.Debugf("Setting up redirect for pod %v/%v", podNamespace, podName)
+					// offMesh
+					pod := &v1.Pod{}
+					proxy := &v1.Pod{}
+					var podErr error
+					var proxyErr error
+					var iptableErr error
+					for attempt := 1; attempt <= podRetrievalMaxRetries; attempt++ {
+						pod, podErr = client.CoreV1().Pods(podNamespace).Get(context.TODO(), podName, metav1.GetOptions{})
+						if podErr == nil {
+							break
+						}
+						log.Debugf("Failed to get %s/%s pod info: %v", podNamespace, podName, podErr)
+						time.Sleep(podRetrievalInterval)
+					}
+					if podErr != nil {
+						log.Errorf("Failed to get %s/%s pod info: %v", podNamespace, podName, k8sErr)
+						return podErr
+					}
+					for attempt := 1; attempt <= podRetrievalMaxRetries; attempt++ {
+						proxy, proxyErr = client.CoreV1().Pods(proxyNamespace).Get(context.TODO(), proxyName, metav1.GetOptions{})
+						if proxyErr == nil {
+							break
+						}
+						log.Debugf("Failed to get %s/%s pod info: %v", proxyNamespace, proxyName, proxyErr)
+						time.Sleep(podRetrievalInterval)
+					}
+					if proxyErr != nil {
+						log.Errorf("Failed to get %s/%s pod info: %v", proxyNamespace, proxyName, proxyErr)
+						return proxyErr
+					}
+					if redirect, redirErr := NewRedirect(pi); redirErr != nil {
+						log.Errorf("Pod %s/%s redirect failed due to bad params: %v", podNamespace, podName, redirErr)
+						return redirErr
+					} else {
+						// TODO: support more options, such as noRedirectUID
+						log.Debugf("pod info:%+v， proxy info:%+v, redirect config:%+v", pod, proxy, redirect)
+						iptableErr = ipt.AddIPTableRedirect(pod.Status.PodIP, proxy.Status.PodIP, redirect.targetPort)
+						if iptableErr != nil {
+							log.Errorf("Failed to add iptable rule: %v", iptableErr)
+							return iptableErr
+						}
+					}
+
+					// offMesh end
+					//if redirect, redirErr := NewRedirect(pi); redirErr != nil {
+					//	log.Errorf("Pod %s/%s redirect failed due to bad params: %v", podNamespace, podName, redirErr)
+					//} else {
+					//	// Get the constructor for the configured type of InterceptRuleMgr
+					//	interceptMgrCtor := GetInterceptRuleMgrCtor(interceptRuleMgrType)
+					//	if interceptMgrCtor == nil {
+					//		log.Errorf("Pod redirect failed due to unavailable InterceptRuleMgr of type %s",
+					//			interceptRuleMgrType)
+					//	} else {
+					//		redirect.hostNSEnterExec = conf.HostNSEnterExec
+					//		rulesMgr := interceptMgrCtor()
+					//		if err := rulesMgr.Program(podName, args.Netns, redirect); err != nil {
+					//			return err
+					//		}
+					//	}
+					//}
+				}
+			} else {
+				log.Infof("Pod %s/%s excluded because it only has %d containers", podNamespace, podName, len(pi.Containers))
+			}
+		} else {
+			log.Infof("Pod %s/%s excluded", podNamespace, podName)
+		}
+	} else {
+		log.Debugf("Not a kubernetes pod")
+	}
+
+	var result *cniv1.Result
+	if conf.PrevResult == nil {
+		result = &cniv1.Result{
+			CNIVersion: cniv1.ImplementedSpecVersion,
+		}
+	} else {
+		// Pass through the result for the next plugin
+		result = conf.PrevResult
+	}
+	return types.PrintResult(result, conf.CNIVersion)
 }
