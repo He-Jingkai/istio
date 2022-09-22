@@ -304,11 +304,28 @@ func CmdAdd(args *skel.CmdArgs) (err error) {
 					} else {
 						// TODO: support more options, such as noRedirectUID
 						log.Debugf("pod info:%+v， proxy info:%+v, redirect config:%+v", pod, proxy, redirect)
-						iptableErr = ipt.DeleteIPTableRedirect(pod.Status.PodIP, proxy.Status.PodIP, redirect.targetPort)
+						iptableErr = ipt.AddIPTableRedirect(pod.Status.PodIP, proxy.Status.PodIP, redirect.targetPort)
 						if iptableErr != nil {
-							log.Errorf("Failed to delete iptable rule: %v", iptableErr)
+							log.Errorf("Failed to add iptable rule: %v", iptableErr)
 							return iptableErr
 						}
+						// offMesh end
+						//if redirect, redirErr := NewRedirect(pi); redirErr != nil {
+						//	log.Errorf("Pod %s/%s redirect failed due to bad params: %v", podNamespace, podName, redirErr)
+						//} else {
+						//	// Get the constructor for the configured type of InterceptRuleMgr
+						//	interceptMgrCtor := GetInterceptRuleMgrCtor(interceptRuleMgrType)
+						//	if interceptMgrCtor == nil {
+						//		log.Errorf("Pod redirect failed due to unavailable InterceptRuleMgr of type %s",
+						//			interceptRuleMgrType)
+						//	} else {
+						//		redirect.hostNSEnterExec = conf.HostNSEnterExec
+						//		rulesMgr := interceptMgrCtor()
+						//		if err := rulesMgr.Program(podName, args.Netns, redirect); err != nil {
+						//			return err
+						//		}
+						//	}
+						//}
 					}
 				}
 			} else {
@@ -486,30 +503,12 @@ func CmdDelete(args *skel.CmdArgs) (err error) {
 					} else {
 						// TODO: support more options, such as noRedirectUID
 						log.Debugf("pod info:%+v， proxy info:%+v, redirect config:%+v", pod, proxy, redirect)
-						iptableErr = ipt.AddIPTableRedirect(pod.Status.PodIP, proxy.Status.PodIP, redirect.targetPort)
+						iptableErr = ipt.DeleteIPTableRedirect(pod.Status.PodIP, proxy.Status.PodIP, redirect.targetPort)
 						if iptableErr != nil {
-							log.Errorf("Failed to add iptable rule: %v", iptableErr)
+							log.Errorf("Failed to delete iptable rule: %v", iptableErr)
 							return iptableErr
 						}
 					}
-
-					// offMesh end
-					//if redirect, redirErr := NewRedirect(pi); redirErr != nil {
-					//	log.Errorf("Pod %s/%s redirect failed due to bad params: %v", podNamespace, podName, redirErr)
-					//} else {
-					//	// Get the constructor for the configured type of InterceptRuleMgr
-					//	interceptMgrCtor := GetInterceptRuleMgrCtor(interceptRuleMgrType)
-					//	if interceptMgrCtor == nil {
-					//		log.Errorf("Pod redirect failed due to unavailable InterceptRuleMgr of type %s",
-					//			interceptRuleMgrType)
-					//	} else {
-					//		redirect.hostNSEnterExec = conf.HostNSEnterExec
-					//		rulesMgr := interceptMgrCtor()
-					//		if err := rulesMgr.Program(podName, args.Netns, redirect); err != nil {
-					//			return err
-					//		}
-					//	}
-					//}
 				}
 			} else {
 				log.Infof("Pod %s/%s excluded because it only has %d containers", podNamespace, podName, len(pi.Containers))
