@@ -43,7 +43,6 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 		ISTIO_META_APP_CONTAINERS += container.Name
 	}
 
-	//TODO: 根据istio config文件自动生成
 	newPod := &corev1.Pod{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: `v1`,
@@ -54,6 +53,45 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 			Namespace: ProxyNamespace,
 		},
 		Spec: corev1.PodSpec{
+			InitContainers: []corev1.Container{{
+				Image: `docker.io/istio/proxyv2:1.15.0`,
+				Name:  `istio-validation`,
+				Resources: corev1.ResourceRequirements{
+					Limits:   corev1.ResourceList{corev1.ResourceLimitsCPU: cpuLimit, corev1.ResourceLimitsMemory: memoryLimit},
+					Requests: corev1.ResourceList{corev1.ResourceRequestsCPU: cpuRequest, corev1.ResourceRequestsMemory: memoryRequest},
+				},
+				SecurityContext: &corev1.SecurityContext{
+					Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{`ALL`}},
+					RunAsGroup:               &val1337,
+					RunAsUser:                &val1337,
+					RunAsNonRoot:             &valTure,
+					Privileged:               &valFalse,
+					ReadOnlyRootFilesystem:   &valTure,
+					AllowPrivilegeEscalation: &valFalse,
+				},
+				Args: []string{
+					`istio-iptables`,
+					`-p`,
+					`15001`,
+					`-z`,
+					`15006`,
+					`-u`,
+					`1337`,
+					`-m`,
+					`REDIRECT`,
+					`-i`,
+					`*`,
+					`-x`,
+					``,
+					`-b`,
+					`*`,
+					`-d`,
+					`15090,15021,15020`,
+					`--log_output_level=default:info`,
+					`--run-validation`,
+					`--skip-rule-apply`,
+				},
+			}},
 			Containers: []corev1.Container{{
 				Image: `docker.io/istio/proxyv2:1.15.0`,
 				Name:  `istio-proxy`,
@@ -209,12 +247,10 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 			RestartPolicy: corev1.RestartPolicyAlways,
 		},
 	}
-
 	_, err = clientSet.CoreV1().Pods(ProxyNamespace).Create(context.Background(), newPod, metav1.CreateOptions{})
 	if err != nil {
 		return &PodMeta{}, err
 	}
-
 	podMeta := PodMeta{
 		NameSpace: ProxyNamespace,
 		Name:      proxyName,
