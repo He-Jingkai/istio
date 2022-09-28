@@ -40,14 +40,15 @@ func Init() {
 
 func DistributeProxy(c echo.Context) error {
 	//get a new proxy from proxy pool
-	proxy, err := PopTopProxyFromPool()
+	podMeta := tools.PodMeta{
+		NameSpace: c.Param("namespace"),
+		Name:      c.Param("podName"),
+	}
+	proxy, err := PopTopProxyFromPool(&podMeta)
 	if err != nil {
 		return err
 	}
-	PodProxyMap[tools.PodMeta{
-		NameSpace: c.Param("namespace"),
-		Name:      c.Param("podName"),
-	}] = proxy
+	PodProxyMap[podMeta] = proxy
 	str, err := json.Marshal(*proxy)
 	if err != nil {
 		return err
@@ -68,8 +69,8 @@ func ReturnProxy(c echo.Context) error {
 
 //TODO: ProxyPool管理策略
 
-func AddNewProxyToPool() error {
-	proxy, err := tools.CreateNewProxy(clientSet)
+func AddNewProxyToPool(pod *tools.PodMeta) error {
+	proxy, err := tools.CreateNewProxy(pod, clientSet)
 	if err != nil {
 		log.Error("CreateNewProxy Error: ", err)
 	} else {
@@ -78,10 +79,10 @@ func AddNewProxyToPool() error {
 	return err
 }
 
-func PopTopProxyFromPool() (*tools.PodMeta, error) {
+func PopTopProxyFromPool(pod *tools.PodMeta) (*tools.PodMeta, error) {
 	var proxy *tools.PodMeta
 	if len(ProxyPool) == 0 {
-		err := AddNewProxyToPool()
+		err := AddNewProxyToPool(pod)
 		if err != nil {
 			return nil, err
 		}
@@ -92,5 +93,9 @@ func PopTopProxyFromPool() (*tools.PodMeta, error) {
 }
 
 func ReturnProxyToPool(proxy *tools.PodMeta) {
-	ProxyPool = append(ProxyPool, proxy)
+	err := tools.DeleteProxy(clientSet, proxy.Name)
+	if err != nil {
+		return
+	}
+	//ProxyPool = append(ProxyPool, proxy)
 }

@@ -2,6 +2,7 @@ package p_manager_tools
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -11,8 +12,7 @@ import (
 )
 
 // all the proxy's will be put on namespace ProxyNamespace
-/*Volumes:
- */
+
 const ProxyNamespace = `offmesh-istio-proxy`
 
 type PodMeta struct {
@@ -20,7 +20,11 @@ type PodMeta struct {
 	Name      string
 }
 
-func CreateNewProxy(clientSet *kubernetes.Clientset) (*PodMeta, error) {
+func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, error) {
+	podInfo, err := clientSet.CoreV1().Pods(pod.NameSpace).Get(context.Background(), pod.Name, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
 	proxyName := `proxy-` + uuid.New().String()
 	cpuLimit, _ := resource.ParseQuantity(`2`)
 	memoryLimit, _ := resource.ParseQuantity(`1Gi`)
@@ -28,7 +32,16 @@ func CreateNewProxy(clientSet *kubernetes.Clientset) (*PodMeta, error) {
 	memoryRequest, _ := resource.ParseQuantity(`40Mi`)
 	val420 := int32(420) //TODO:两个Volume共用一个是否会有问题
 	val43200 := int64(43200)
-	val3607 := int64(3607)
+	val1337 := int64(1337)
+	valTure := true
+	valFalse := false
+	ISTIO_META_APP_CONTAINERS := ``
+	for _, container := range podInfo.Spec.Containers {
+		if ISTIO_META_APP_CONTAINERS != `` {
+			ISTIO_META_APP_CONTAINERS += `,`
+		}
+		ISTIO_META_APP_CONTAINERS += container.Name
+	}
 
 	//TODO: 根据istio config文件自动生成
 	newPod := &corev1.Pod{
@@ -43,6 +56,7 @@ func CreateNewProxy(clientSet *kubernetes.Clientset) (*PodMeta, error) {
 		Spec: corev1.PodSpec{
 			Containers: []corev1.Container{{
 				Image: `docker.io/istio/proxyv2:1.15.0`,
+				Name:  `istio-proxy`,
 				Resources: corev1.ResourceRequirements{
 					Limits:   corev1.ResourceList{corev1.ResourceLimitsCPU: cpuLimit, corev1.ResourceLimitsMemory: memoryLimit},
 					Requests: corev1.ResourceList{corev1.ResourceRequestsCPU: cpuRequest, corev1.ResourceRequestsMemory: memoryRequest},
@@ -70,38 +84,70 @@ func CreateNewProxy(clientSet *kubernetes.Clientset) (*PodMeta, error) {
 					`--concurrency`,
 					`2`,
 				},
-				VolumeMounts: []corev1.VolumeMount{{
-					Name:      `istio-podinfo`,
-					MountPath: `/etc/istio/pod`,
-				}, {
-					Name:      `istio-envoy`,
-					MountPath: `/etc/istio/proxy`,
-				}, {
-					Name:      `istio-data`,
-					MountPath: `/var/lib/istio/data`,
-				}, {
-					Name:      `credential-socket`,
-					MountPath: `/var/run/secrets/credential-uds`,
-				}, {
-					Name:      `istiod-ca-cert`,
-					MountPath: `/var/run/secrets/istio`,
-				}, {
-					Name:      `kube-api-access-5xbm5`,
-					MountPath: `/var/run/secrets/kubernetes.io/serviceaccount`,
-				}, {
-					Name:      `istio-token`,
-					MountPath: `/var/run/secrets/tokens`,
-				}, {
-					Name:      `workload-certs`,
-					MountPath: `/var/run/secrets/workload-spiffe-credentials`,
-				}, {
-					Name:      `workload-socket`,
-					MountPath: `/var/run/secrets/workload-spiffe-uds`,
+				VolumeMounts: []corev1.VolumeMount{
+					{
+						Name:      `istio-podinfo`,
+						MountPath: `/etc/istio/pod`,
+					},
+					{
+						Name:      `istio-envoy`,
+						MountPath: `/etc/istio/proxy`,
+					},
+					{
+						Name:      `istio-data`,
+						MountPath: `/var/lib/istio/data`,
+					},
+					{
+						Name:      `credential-socket`,
+						MountPath: `/var/run/secrets/workload-uds`,
+					},
+					{
+						Name:      `istiod-ca-cert`,
+						MountPath: `/var/run/secrets/istio`,
+					},
+					{
+						Name:      `istio-token`,
+						MountPath: `/var/run/secrets/tokens`,
+					},
+					{
+						Name:      `workload-certs`,
+						MountPath: `/var/run/secrets/workload-spiffe-credentials`,
+					},
+					{
+						Name:      `workload-socket`,
+						MountPath: `/var/run/secrets/workload-spiffe-uds`,
+					},
 				},
+				Env: []corev1.EnvVar{
+					{Name: `JWT_POLICY`, Value: `third-party-jwt`},
+					{Name: `PILOT_CERT_PROVIDER`, Value: `istiod`},
+					{Name: `CA_ADDR`, Value: `istiod.istio-system.svc:15012`},
+					{Name: `POD_NAME`, Value: pod.Name},
+					{Name: `POD_NAMESPACE`, Value: pod.NameSpace},
+					{Name: `INSTANCE_IP`, Value: podInfo.Status.PodIP},
+					{Name: `SERVICE_ACCOUNT`, Value: `default`},
+					{Name: `HOST_IP`, Value: podInfo.Status.HostIP},
+					{Name: `PROXY_CONFIG`, Value: `{}`},
+					{Name: `ISTIO_META_APP_CONTAINERS`, Value: ISTIO_META_APP_CONTAINERS},
+					{Name: `ISTIO_META_CLUSTER_ID`, Value: `Kubernetes`},
+					{Name: `ISTIO_META_INTERCEPTION_MODE`, Value: `REDIRECT`},
+					{Name: `ISTIO_META_WORKLOAD_NAME`, Value: pod.Name},
+					{Name: `ISTIO_META_OWNER`, Value: fmt.Sprintf("kubernetes://apis/v1/namespaces/%s/pods/%s", pod.NameSpace, pod.Name)},
+					{Name: `ISTIO_META_MESH_ID`, Value: `cluster.local`},
+					{Name: `TRUST_DOMAIN`, Value: `cluster.local`},
 				},
-				//TODO: Environment and Port
-				Env:   []corev1.EnvVar{},
-				Ports: []corev1.ContainerPort{},
+				Ports: []corev1.ContainerPort{
+					{Name: `http-envoy-prom`, ContainerPort: 15090},
+				},
+				SecurityContext: &corev1.SecurityContext{
+					Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{`ALL`}},
+					RunAsGroup:               &val1337,
+					RunAsUser:                &val1337,
+					RunAsNonRoot:             &valTure,
+					Privileged:               &valFalse,
+					ReadOnlyRootFilesystem:   &valTure,
+					AllowPrivilegeEscalation: &valFalse,
+				},
 			}},
 			Volumes: []corev1.Volume{
 				{
@@ -159,42 +205,12 @@ func CreateNewProxy(clientSet *kubernetes.Clientset) (*PodMeta, error) {
 						},
 					},
 				},
-				{
-					Name: `kube-api-access-5xbm5`,
-					VolumeSource: corev1.VolumeSource{
-						Projected: &corev1.ProjectedVolumeSource{
-							DefaultMode: &val420,
-							Sources: []corev1.VolumeProjection{
-								{
-									ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
-										ExpirationSeconds: &val3607,
-										Path:              `token`,
-									},
-								},
-								{
-									ConfigMap: &corev1.ConfigMapProjection{
-										LocalObjectReference: corev1.LocalObjectReference{
-											Name: `kube-root-ca.crt`,
-										},
-										Items: []corev1.KeyToPath{{Key: `ca.crt`, Path: `ca.crt`}},
-									},
-								},
-								{
-									DownwardAPI: &corev1.DownwardAPIProjection{
-										Items: []corev1.DownwardAPIVolumeFile{
-											{FieldRef: &corev1.ObjectFieldSelector{FieldPath: `metadata.namespace`}},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
 			},
+			RestartPolicy: corev1.RestartPolicyAlways,
 		},
 	}
 
-	_, err := clientSet.CoreV1().Pods(ProxyNamespace).Create(context.Background(), newPod, metav1.CreateOptions{})
+	_, err = clientSet.CoreV1().Pods(ProxyNamespace).Create(context.Background(), newPod, metav1.CreateOptions{})
 	if err != nil {
 		return &PodMeta{}, err
 	}
