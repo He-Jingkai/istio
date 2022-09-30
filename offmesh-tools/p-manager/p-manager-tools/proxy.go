@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
+	// "k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
@@ -26,10 +26,10 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 		return nil, err
 	}
 	proxyName := `proxy-` + uuid.New().String()
-	cpuLimit, _ := resource.ParseQuantity(`2`)
-	memoryLimit, _ := resource.ParseQuantity(`1Gi`)
-	cpuRequest, _ := resource.ParseQuantity(`10m`)
-	memoryRequest, _ := resource.ParseQuantity(`40Mi`)
+	// cpuLimit, _ := resource.ParseQuantity(`2`)
+	// memoryLimit, _ := resource.ParseQuantity(`1Gi`)
+	// cpuRequest, _ := resource.ParseQuantity(`10m`)
+	// memoryRequest, _ := resource.ParseQuantity(`40Mi`)
 	val420 := int32(420) //TODO:两个Volume共用一个是否会有问题
 	val43200 := int64(43200)
 	val1337 := int64(1337)
@@ -53,52 +53,53 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 			Namespace: ProxyNamespace,
 		},
 		Spec: corev1.PodSpec{
-			InitContainers: []corev1.Container{{
-				Image: `docker.io/istio/proxyv2:1.15.0`,
-				Name:  `istio-validation`,
-				Resources: corev1.ResourceRequirements{
-					Limits:   corev1.ResourceList{corev1.ResourceLimitsCPU: cpuLimit, corev1.ResourceLimitsMemory: memoryLimit},
-					Requests: corev1.ResourceList{corev1.ResourceRequestsCPU: cpuRequest, corev1.ResourceRequestsMemory: memoryRequest},
-				},
-				SecurityContext: &corev1.SecurityContext{
-					Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{`ALL`}},
-					RunAsGroup:               &val1337,
-					RunAsUser:                &val1337,
-					RunAsNonRoot:             &valTure,
-					Privileged:               &valFalse,
-					ReadOnlyRootFilesystem:   &valTure,
-					AllowPrivilegeEscalation: &valFalse,
-				},
-				Args: []string{
-					`istio-iptables`,
-					`-p`,
-					`15001`,
-					`-z`,
-					`15006`,
-					`-u`,
-					`1337`,
-					`-m`,
-					`REDIRECT`,
-					`-i`,
-					`*`,
-					`-x`,
-					``,
-					`-b`,
-					`*`,
-					`-d`,
-					`15090,15021,15020`,
-					`--log_output_level=default:info`,
-					`--run-validation`,
-					`--skip-rule-apply`,
-				},
-			}},
+			NodeName: podInfo.Spec.NodeName,
+			// InitContainers: []corev1.Container{{
+			// 	Image: `docker.io/istio/proxyv2:1.15.0`,
+			// 	Name:  `istio-validation`,
+			// 	// Resources: corev1.ResourceRequirements{
+			// 	// 	Limits:   corev1.ResourceList{corev1.ResourceLimitsCPU: cpuLimit, corev1.ResourceLimitsMemory: memoryLimit},
+			// 	// 	Requests: corev1.ResourceList{corev1.ResourceRequestsCPU: cpuRequest, corev1.ResourceRequestsMemory: memoryRequest},
+			// 	// },
+			// 	SecurityContext: &corev1.SecurityContext{
+			// 		Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{`ALL`}},
+			// 		RunAsGroup:               &val1337,
+			// 		RunAsUser:                &val1337,
+			// 		RunAsNonRoot:             &valTure,
+			// 		Privileged:               &valFalse,
+			// 		ReadOnlyRootFilesystem:   &valTure,
+			// 		AllowPrivilegeEscalation: &valFalse,
+			// 	},
+			// 	Args: []string{
+			// 		`istio-iptables`,
+			// 		`-p`,
+			// 		`15001`,
+			// 		`-z`,
+			// 		`15006`,
+			// 		`-u`,
+			// 		`1337`,
+			// 		`-m`,
+			// 		`REDIRECT`,
+			// 		`-i`,
+			// 		`*`,
+			// 		`-x`,
+			// 		``,
+			// 		`-b`,
+			// 		`*`,
+			// 		`-d`,
+			// 		`15090,15021,15020`,
+			// 		`--log_output_level=default:info`,
+			// 		`--run-validation`,
+			// 		`--skip-rule-apply`,
+			// 	},
+			// }},
 			Containers: []corev1.Container{{
 				Image: `docker.io/istio/proxyv2:1.15.0`,
 				Name:  `istio-proxy`,
-				Resources: corev1.ResourceRequirements{
-					Limits:   corev1.ResourceList{corev1.ResourceLimitsCPU: cpuLimit, corev1.ResourceLimitsMemory: memoryLimit},
-					Requests: corev1.ResourceList{corev1.ResourceRequestsCPU: cpuRequest, corev1.ResourceRequestsMemory: memoryRequest},
-				},
+				// Resources: corev1.ResourceRequirements{
+				// 	Limits:   corev1.ResourceList{corev1.ResourceLimitsCPU: cpuLimit, corev1.ResourceLimitsMemory: memoryLimit},
+				// 	Requests: corev1.ResourceList{corev1.ResourceRequestsCPU: cpuRequest, corev1.ResourceRequestsMemory: memoryRequest},
+				// },
 				ReadinessProbe: &corev1.Probe{
 					ProbeHandler: corev1.ProbeHandler{
 						HTTPGet: &corev1.HTTPGetAction{
