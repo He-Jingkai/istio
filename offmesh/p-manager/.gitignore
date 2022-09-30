@@ -63,3 +63,4 @@ var/
 .DS_Store
 go.sum
 p-manager-test/
+p_manager

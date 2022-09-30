@@ -94,7 +94,7 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 			// 	},
 			// }},
 			Containers: []corev1.Container{{
-				Image: `docker.io/istio/proxyv2:1.15.0`,
+				Image: `docker.io/hejingkai/proxyv2:1.15-dev`,
 				Name:  `istio-proxy`,
 				// Resources: corev1.ResourceRequirements{
 				// 	Limits:   corev1.ResourceList{corev1.ResourceLimitsCPU: cpuLimit, corev1.ResourceLimitsMemory: memoryLimit},

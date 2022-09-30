@@ -19,10 +19,10 @@ import (
 	"errors"
 	"fmt"
 
-	"google.golang.org/grpc/codes"
+	// "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
-	"google.golang.org/grpc/status"
+	// "google.golang.org/grpc/status"
 
 	"istio.io/istio/pilot/pkg/features"
 	"istio.io/istio/pilot/pkg/model"
@@ -72,15 +72,15 @@ func (s *DiscoveryServer) authorize(con *Connection, identities []string) error 
 		return nil
 	}
 
-	if features.EnableXDSIdentityCheck && identities != nil {
-		// TODO: allow locking down, rejecting unauthenticated requests.
-		id, err := checkConnectionIdentity(con.proxy, identities)
-		if err != nil {
-			log.Warnf("Unauthorized XDS: %v with identity %v: %v", con.peerAddr, identities, err)
-			return status.Newf(codes.PermissionDenied, "authorization failed: %v", err).Err()
-		}
-		con.proxy.VerifiedIdentity = id
-	}
+	// if features.EnableXDSIdentityCheck && identities != nil {
+	// 	// TODO: allow locking down, rejecting unauthenticated requests.
+	// 	id, err := checkConnectionIdentity(con.proxy, identities)
+	// 	if err != nil {
+	// 		log.Warnf("Unauthorized XDS: %v with identity %v: %v", con.peerAddr, identities, err)
+	// 		return status.Newf(codes.PermissionDenied, "authorization failed: %v", err).Err()
+	// 	}
+	// 	con.proxy.VerifiedIdentity = id
+	// }
 	return nil
 }
 

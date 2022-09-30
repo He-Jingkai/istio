@@ -505,30 +505,30 @@ func (s *Server) initSDSServer() {
 	if s.kubeClient == nil {
 		return
 	}
-	if !features.EnableXDSIdentityCheck {
-		// Make sure we have security
-		log.Warnf("skipping Kubernetes credential reader; PILOT_ENABLE_XDS_IDENTITY_CHECK must be set to true for this feature.")
-	} else {
-		creds := kubecredentials.NewMulticluster(s.clusterID)
-		creds.AddSecretHandler(func(name string, namespace string) {
-			s.XDSServer.ConfigUpdate(&model.PushRequest{
-				Full: false,
-				ConfigsUpdated: map[model.ConfigKey]struct{}{
-					{
-						Kind:      kind.Secret,
-						Name:      name,
-						Namespace: namespace,
-					}: {},
-				},
-				Reason: []model.TriggerReason{model.SecretTrigger},
-			})
+	// if !features.EnableXDSIdentityCheck {
+	// 	// Make sure we have security
+	// 	log.Warnf("skipping Kubernetes credential reader; PILOT_ENABLE_XDS_IDENTITY_CHECK must be set to true for this feature.")
+	// } else {
+	creds := kubecredentials.NewMulticluster(s.clusterID)
+	creds.AddSecretHandler(func(name string, namespace string) {
+		s.XDSServer.ConfigUpdate(&model.PushRequest{
+			Full: false,
+			ConfigsUpdated: map[model.ConfigKey]struct{}{
+				{
+					Kind:      kind.Secret,
+					Name:      name,
+					Namespace: namespace,
+				}: {},
+			},
+			Reason: []model.TriggerReason{model.SecretTrigger},
 		})
-		s.XDSServer.Generators[v3.SecretType] = xds.NewSecretGen(creds, s.XDSServer.Cache, s.clusterID, s.environment.Mesh())
-		s.multiclusterController.AddHandler(creds)
-		if ecdsGen, found := s.XDSServer.Generators[v3.ExtensionConfigurationType]; found {
-			ecdsGen.(*xds.EcdsGenerator).SetCredController(creds)
-		}
+	})
+	s.XDSServer.Generators[v3.SecretType] = xds.NewSecretGen(creds, s.XDSServer.Cache, s.clusterID, s.environment.Mesh())
+	s.multiclusterController.AddHandler(creds)
+	if ecdsGen, found := s.XDSServer.Generators[v3.ExtensionConfigurationType]; found {
+		ecdsGen.(*xds.EcdsGenerator).SetCredController(creds)
 	}
+	// }
 }
 
 // initKubeClient creates the k8s client if running in an k8s environment.
