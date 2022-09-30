@@ -402,7 +402,7 @@ var (
 
 	EnableXDSIdentityCheck = env.RegisterBoolVar(
 		"PILOT_ENABLE_XDS_IDENTITY_CHECK",
-		true,
+		false,
 		"If enabled, pilot will authorize XDS clients, to ensure they are acting only as namespaces they have permissions for.",
 	).Get()
 
