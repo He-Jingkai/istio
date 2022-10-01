@@ -5,10 +5,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
-	tools "p_manager/p-manager-tools"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"net/http"
+	tools "p_manager/p-manager-tools"
 )
 
 var clientSet *kubernetes.Clientset
@@ -28,6 +28,8 @@ func main() {
 }
 
 func Init() {
+	PodProxyMap = make(map[tools.PodMeta]*tools.PodMeta)
+
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		panic(err.Error())
