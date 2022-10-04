@@ -117,7 +117,7 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 					`sidecar`,
 					`--domain`,
 					`$(POD_NAMESPACE).svc.cluster.local`,
-					`--proxyLogLevel=warning`,
+					`--proxyLogLevel=trace`,
 					`--proxyComponentLogLevel=misc:error`,
 					`--log_output_level=default:info`,
 					`--concurrency`,
@@ -177,6 +177,8 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 				},
 				Ports: []corev1.ContainerPort{
 					{Name: `http-envoy-prom`, ContainerPort: 15090},
+					{Name: `inbound`, ContainerPort: 15006},
+					{Name: `outbound`, ContainerPort: 15001},
 				},
 				SecurityContext: &corev1.SecurityContext{
 					Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{`ALL`}},
