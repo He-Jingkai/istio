@@ -185,7 +185,7 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 					RunAsGroup:               &val1337,
 					RunAsUser:                &val1337,
 					RunAsNonRoot:             &valTure,
-					Privileged:               &valFalse,
+					Privileged:               &valTure,
 					ReadOnlyRootFilesystem:   &valTure,
 					AllowPrivilegeEscalation: &valFalse,
 				},
