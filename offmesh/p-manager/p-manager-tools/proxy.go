@@ -3,11 +3,13 @@ package p_manager_tools
 import (
 	"context"
 	"fmt"
+
 	"github.com/google/uuid"
 	corev1 "k8s.io/api/core/v1"
+
 	// "k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
+	// "k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -34,7 +36,7 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 	val43200 := int64(43200)
 	val1337 := int64(1337)
 	valTure := true
-	valFalse := false
+	privileged := true
 	ISTIO_META_APP_CONTAINERS := ``
 	for _, container := range podInfo.Spec.Containers {
 		if ISTIO_META_APP_CONTAINERS != `` {
@@ -54,64 +56,9 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 		},
 		Spec: corev1.PodSpec{
 			NodeName: podInfo.Spec.NodeName,
-			// InitContainers: []corev1.Container{{
-			// 	Image: `docker.io/istio/proxyv2:1.15.0`,
-			// 	Name:  `istio-validation`,
-			// 	// Resources: corev1.ResourceRequirements{
-			// 	// 	Limits:   corev1.ResourceList{corev1.ResourceLimitsCPU: cpuLimit, corev1.ResourceLimitsMemory: memoryLimit},
-			// 	// 	Requests: corev1.ResourceList{corev1.ResourceRequestsCPU: cpuRequest, corev1.ResourceRequestsMemory: memoryRequest},
-			// 	// },
-			// 	SecurityContext: &corev1.SecurityContext{
-			// 		Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{`ALL`}},
-			// 		RunAsGroup:               &val1337,
-			// 		RunAsUser:                &val1337,
-			// 		RunAsNonRoot:             &valTure,
-			// 		Privileged:               &valFalse,
-			// 		ReadOnlyRootFilesystem:   &valTure,
-			// 		AllowPrivilegeEscalation: &valFalse,
-			// 	},
-			// 	Args: []string{
-			// 		`istio-iptables`,
-			// 		`-p`,
-			// 		`15001`,
-			// 		`-z`,
-			// 		`15006`,
-			// 		`-u`,
-			// 		`1337`,
-			// 		`-m`,
-			// 		`REDIRECT`,
-			// 		`-i`,
-			// 		`*`,
-			// 		`-x`,
-			// 		``,
-			// 		`-b`,
-			// 		`*`,
-			// 		`-d`,
-			// 		`15090,15021,15020`,
-			// 		`--log_output_level=default:info`,
-			// 		`--run-validation`,
-			// 		`--skip-rule-apply`,
-			// 	},
-			// }},
 			Containers: []corev1.Container{{
 				Image: `docker.io/hejingkai/proxyv2:1.15-dev`,
 				Name:  `istio-proxy`,
-				// Resources: corev1.ResourceRequirements{
-				// 	Limits:   corev1.ResourceList{corev1.ResourceLimitsCPU: cpuLimit, corev1.ResourceLimitsMemory: memoryLimit},
-				// 	Requests: corev1.ResourceList{corev1.ResourceRequestsCPU: cpuRequest, corev1.ResourceRequestsMemory: memoryRequest},
-				// },
-				ReadinessProbe: &corev1.Probe{
-					ProbeHandler: corev1.ProbeHandler{
-						HTTPGet: &corev1.HTTPGetAction{
-							Path: `/healthz/ready`,
-							Port: intstr.Parse(`15021`),
-						}},
-					InitialDelaySeconds: 1,
-					TimeoutSeconds:      3,
-					PeriodSeconds:       2,
-					SuccessThreshold:    1,
-					FailureThreshold:    30,
-				},
 				Args: []string{
 					`proxy`,
 					`sidecar`,
@@ -185,9 +132,9 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 					RunAsGroup:               &val1337,
 					RunAsUser:                &val1337,
 					RunAsNonRoot:             &valTure,
-					Privileged:               &valTure,
+					Privileged:               &privileged,
 					ReadOnlyRootFilesystem:   &valTure,
-					AllowPrivilegeEscalation: &valFalse,
+					AllowPrivilegeEscalation: &privileged,
 				},
 			}},
 			Volumes: []corev1.Volume{

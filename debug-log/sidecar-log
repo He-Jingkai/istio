@@ -1,0 +1,10 @@
+2022-10-08T07:36:09.056014Z	info	Sidecar injection request for iprule-test/iprule-client-pod
+2022-10-08T07:36:11.287849Z	info	ads	ADS: new connection for node:iprule-client-pod.iprule-test-2
+2022-10-08T07:36:11.288466Z	info	ads	CDS: PUSH request for node:iprule-client-pod.iprule-test resources:16 size:14.8kB cached:0/13
+2022-10-08T07:36:11.299239Z	info	ads	EDS: PUSH request for node:iprule-client-pod.iprule-test resources:13 size:2.1kB empty:0 cached:13/13
+2022-10-08T07:36:11.406903Z	info	ads	LDS: PUSH request for node:iprule-client-pod.iprule-test resources:14 size:37.6kB
+2022-10-08T07:36:11.429644Z	info	ads	RDS: PUSH request for node:iprule-client-pod.iprule-test resources:7 size:4.9kB cached:0/7
+2022-10-08T07:36:12.840733Z	info	ads	CDS: PUSH for node:iprule-client-pod.iprule-test resources:16 size:14.8kB cached:0/13
+2022-10-08T07:36:12.840981Z	info	ads	EDS: PUSH for node:iprule-client-pod.iprule-test resources:13 size:2.1kB empty:0 cached:13/13
+2022-10-08T07:36:12.842313Z	info	ads	LDS: PUSH for node:iprule-client-pod.iprule-test resources:14 size:37.6kB
+2022-10-08T07:36:12.842668Z	info	ads	RDS: PUSH for node:iprule-client-pod.iprule-test resources:7 size:4.9kB cached:0/7

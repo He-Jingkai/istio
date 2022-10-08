@@ -1,0 +1,5 @@
+2022-10-08T07:44:51.805870Z	info	ads	ADS: new connection for node:iprule-client-pod.iprule-test-3
+2022-10-08T07:44:51.806534Z	info	ads	CDS: PUSH request for node:iprule-client-pod.iprule-test resources:16 size:14.8kB cached:0/13
+2022-10-08T07:44:51.816751Z	info	ads	EDS: PUSH request for node:iprule-client-pod.iprule-test resources:13 size:2.1kB empty:0 cached:13/13
+2022-10-08T07:44:51.931331Z	info	ads	LDS: PUSH request for node:iprule-client-pod.iprule-test resources:14 size:37.6kB
+2022-10-08T07:44:51.965262Z	info	ads	RDS: PUSH request for node:iprule-client-pod.iprule-test resources:7 size:4.9kB cached:0/7
