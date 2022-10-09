@@ -5,63 +5,49 @@
    "bootstrap": {
     "node": {
      "id": "sidecar~10.32.0.6~iprule-client-pod.iprule-test~iprule-test.svc.cluster.local",
-     "cluster": "client.iprule-test",
+     "cluster": "iprule-client-pod.iprule-test",
      "metadata": {
-      "ISTIO_VERSION": "1.15-dev-hjk-2",
+      "WORKLOAD_NAME": "iprule-client-pod",
+      "PILOT_SAN": [
+       "istiod.istio-system.svc"
+      ],
+      "NAMESPACE": "iprule-test",
+      "CLUSTER_ID": "Kubernetes",
+      "ENVOY_PROMETHEUS_PORT": 15090,
+      "OWNER": "kubernetes://apis/v1/namespaces/iprule-test/pods/iprule-client-pod",
+      "ENVOY_STATUS_PORT": 15021,
+      "NAME": "iprule-client-pod",
+      "MESH_ID": "cluster.local",
+      "INTERCEPTION_MODE": "REDIRECT",
+      "SERVICE_ACCOUNT": "default",
+      "ISTIO_VERSION": "1.15-dev",
+      "APP_CONTAINERS": "iprule-client-container",
+      "INSTANCE_IPS": "10.32.0.6,10.32.0.8",
       "PROXY_CONFIG": {
-       "concurrency": 2,
-       "drainDuration": "45s",
        "terminationDrainDuration": "5s",
-       "statusPort": 15020,
-       "parentShutdownDuration": "60s",
-       "controlPlaneAuthPolicy": "MUTUAL_TLS",
-       "discoveryAddress": "istiod.istio-system.svc:15012",
-       "configPath": "./etc/istio/proxy",
+       "concurrency": 2,
        "tracing": {
         "zipkin": {
          "address": "zipkin.istio-system:9411"
         }
        },
+       "binaryPath": "/usr/local/bin/envoy",
        "proxyAdminPort": 15000,
+       "controlPlaneAuthPolicy": "MUTUAL_TLS",
+       "drainDuration": "45s",
+       "parentShutdownDuration": "60s",
        "serviceCluster": "istio-proxy",
+       "discoveryAddress": "istiod.istio-system.svc:15012",
+       "configPath": "./etc/istio/proxy",
        "statNameLength": 189,
-       "binaryPath": "/usr/local/bin/envoy"
+       "statusPort": 15020
       },
-      "OWNER": "kubernetes://apis/v1/namespaces/iprule-test/pods/iprule-client-pod",
-      "INTERCEPTION_MODE": "REDIRECT",
-      "WORKLOAD_NAME": "iprule-client-pod",
-      "ANNOTATIONS": {
-       "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"Pod\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"client\"},\"name\":\"iprule-client-pod\",\"namespace\":\"iprule-test\"},\"spec\":{\"containers\":[{\"image\":\"hejingkai/iprule_test_client\",\"name\":\"iprule-client-container\",\"ports\":[{\"containerPort\":80,\"name\":\"client-port\",\"protocol\":\"TCP\"}],\"resources\":{\"limits\":{\"cpu\":1,\"memory\":\"1000Mi\"},\"requests\":{\"cpu\":0.1,\"memory\":\"500Mi\"}}}],\"restartPolicy\":\"Always\"}}\n",
-       "kubectl.kubernetes.io/default-logs-container": "iprule-client-container",
-       "kubectl.kubernetes.io/default-container": "iprule-client-container",
-       "kubernetes.io/config.seen": "2022-10-08T07:36:09.077313467Z",
-       "kubernetes.io/config.source": "api",
-       "prometheus.io/path": "/stats/prometheus",
-       "prometheus.io/scrape": "true",
-       "sidecar.istio.io/status": "{\"initContainers\":[\"istio-init\"],\"containers\":[\"istio-proxy\"],\"volumes\":[\"workload-socket\",\"credential-socket\",\"workload-certs\",\"istio-envoy\",\"istio-data\",\"istio-podinfo\",\"istio-token\",\"istiod-ca-cert\"],\"imagePullSecrets\":null,\"revision\":\"default\"}",
-       "prometheus.io/port": "15020"
-      },
-      "POD_PORTS": "[{\"name\":\"client-port\",\"containerPort\":80,\"protocol\":\"TCP\"}]",
-      "PILOT_SAN": [
-       "istiod.istio-system.svc"
-      ],
-      "LABELS": {
-       "service.istio.io/canonical-name": "client",
-       "app": "client",
-       "security.istio.io/tlsMode": "istio",
-       "service.istio.io/canonical-revision": "latest"
-      },
-      "NAME": "iprule-client-pod",
-      "ISTIO_PROXY_SHA": "94bd57194ed66b70e231dbf22a7771a9e9e43a74",
-      "ENVOY_PROMETHEUS_PORT": 15090,
-      "MESH_ID": "cluster.local",
-      "ENVOY_STATUS_PORT": 15021,
-      "INSTANCE_IPS": "10.32.0.6",
-      "NAMESPACE": "iprule-test",
-      "APP_CONTAINERS": "iprule-client-container",
       "PROV_CERT": "var/run/secrets/istio/root-cert.pem",
-      "SERVICE_ACCOUNT": "default",
-      "CLUSTER_ID": "Kubernetes"
+      "ANNOTATIONS": {
+       "kubernetes.io/config.seen": "2022-10-08T07:44:50.759699921Z",
+       "kubernetes.io/config.source": "api"
+      },
+      "ISTIO_PROXY_SHA": "94bd57194ed66b70e231dbf22a7771a9e9e43a74"
      },
      "locality": {},
      "user_agent_name": "envoy",
@@ -72,28 +58,14 @@
        "patch": 2
       },
       "metadata": {
-       "ssl.version": "BoringSSL",
        "revision.status": "Clean",
-       "build.type": "RELEASE",
        "build.label": "dev",
-       "revision.sha": "94bd57194ed66b70e231dbf22a7771a9e9e43a74"
+       "revision.sha": "94bd57194ed66b70e231dbf22a7771a9e9e43a74",
+       "build.type": "RELEASE",
+       "ssl.version": "BoringSSL"
       }
      },
      "extensions": [
-      {
-       "name": "envoy.filters.network.upstream.metadata_exchange",
-       "category": "envoy.filters.upstream_network",
-       "type_urls": [
-        "envoy.tcp.metadataexchange.config.MetadataExchange"
-       ]
-      },
-      {
-       "name": "envoy.network.dns_resolver.cares",
-       "category": "envoy.network.dns_resolver",
-       "type_urls": [
-        "envoy.extensions.network.dns_resolver.cares.v3.CaresDnsResolverConfig"
-       ]
-      },
       {
        "name": "envoy.health_checkers.redis",
        "category": "envoy.health_checkers",
@@ -102,72 +74,39 @@
        ]
       },
       {
-       "name": "envoy.filters.udp.dns_filter",
-       "category": "envoy.filters.udp_listener",
+       "name": "auto",
+       "category": "envoy.thrift_proxy.transports"
+      },
+      {
+       "name": "framed",
+       "category": "envoy.thrift_proxy.transports"
+      },
+      {
+       "name": "header",
+       "category": "envoy.thrift_proxy.transports"
+      },
+      {
+       "name": "unframed",
+       "category": "envoy.thrift_proxy.transports"
+      },
+      {
+       "name": "envoy.wasm.runtime.null",
+       "category": "envoy.wasm.runtime"
+      },
+      {
+       "name": "envoy.wasm.runtime.v8",
+       "category": "envoy.wasm.runtime"
+      },
+      {
+       "name": "dubbo.hessian2",
+       "category": "envoy.dubbo_proxy.serializers"
+      },
+      {
+       "name": "envoy.filters.dubbo.router",
+       "category": "envoy.dubbo_proxy.filters",
        "type_urls": [
-        "envoy.extensions.filters.udp.dns_filter.v3.DnsFilterConfig"
+        "envoy.extensions.filters.network.dubbo_proxy.router.v3.Router"
        ]
-      },
-      {
-       "name": "envoy.filters.udp_listener.udp_proxy",
-       "category": "envoy.filters.udp_listener",
-       "type_urls": [
-        "envoy.extensions.filters.udp.udp_proxy.v3.UdpProxyConfig"
-       ]
-      },
-      {
-       "name": "envoy.internal_redirect_predicates.allow_listed_routes",
-       "category": "envoy.internal_redirect_predicates",
-       "type_urls": [
-        "envoy.extensions.internal_redirect.allow_listed_routes.v3.AllowListedRoutesConfig"
-       ]
-      },
-      {
-       "name": "envoy.internal_redirect_predicates.previous_routes",
-       "category": "envoy.internal_redirect_predicates",
-       "type_urls": [
-        "envoy.extensions.internal_redirect.previous_routes.v3.PreviousRoutesConfig"
-       ]
-      },
-      {
-       "name": "envoy.internal_redirect_predicates.safe_cross_scheme",
-       "category": "envoy.internal_redirect_predicates",
-       "type_urls": [
-        "envoy.extensions.internal_redirect.safe_cross_scheme.v3.SafeCrossSchemeConfig"
-       ]
-      },
-      {
-       "name": "envoy.watchdog.abort_action",
-       "category": "envoy.guarddog_actions",
-       "type_urls": [
-        "envoy.watchdog.v3.AbortActionConfig"
-       ]
-      },
-      {
-       "name": "envoy.watchdog.profile_action",
-       "category": "envoy.guarddog_actions",
-       "type_urls": [
-        "envoy.extensions.watchdog.profile_action.v3.ProfileActionConfig"
-       ]
-      },
-      {
-       "name": "envoy.key_value.file_based",
-       "category": "envoy.common.key_value",
-       "type_urls": [
-        "envoy.extensions.key_value.file_based.v3.FileBasedKeyValueStoreConfig"
-       ]
-      },
-      {
-       "name": "envoy.grpc_credentials.aws_iam",
-       "category": "envoy.grpc_credentials"
-      },
-      {
-       "name": "envoy.grpc_credentials.default",
-       "category": "envoy.grpc_credentials"
-      },
-      {
-       "name": "envoy.grpc_credentials.file_based_metadata",
-       "category": "envoy.grpc_credentials"
       },
       {
        "name": "envoy.bandwidth_limit",
@@ -540,11 +479,403 @@
        ]
       },
       {
+       "name": "envoy.filters.connection_pools.tcp.generic",
+       "category": "envoy.upstreams",
+       "type_urls": [
+        "envoy.extensions.upstreams.tcp.generic.v3.GenericConnectionPoolProto"
+       ]
+      },
+      {
+       "name": "envoy.resource_monitors.fixed_heap",
+       "category": "envoy.resource_monitors",
+       "type_urls": [
+        "envoy.extensions.resource_monitors.fixed_heap.v3.FixedHeapConfig"
+       ]
+      },
+      {
+       "name": "envoy.resource_monitors.injected_resource",
+       "category": "envoy.resource_monitors",
+       "type_urls": [
+        "envoy.extensions.resource_monitors.injected_resource.v3.InjectedResourceConfig"
+       ]
+      },
+      {
+       "name": "envoy.dynamic.ot",
+       "category": "envoy.tracers"
+      },
+      {
+       "name": "envoy.tracers.datadog",
+       "category": "envoy.tracers",
+       "type_urls": [
+        "envoy.config.trace.v3.DatadogConfig"
+       ]
+      },
+      {
+       "name": "envoy.tracers.dynamic_ot",
+       "category": "envoy.tracers",
+       "type_urls": [
+        "envoy.config.trace.v3.DynamicOtConfig"
+       ]
+      },
+      {
+       "name": "envoy.tracers.opencensus",
+       "category": "envoy.tracers",
+       "type_urls": [
+        "envoy.config.trace.v3.OpenCensusConfig"
+       ]
+      },
+      {
+       "name": "envoy.tracers.skywalking",
+       "category": "envoy.tracers",
+       "type_urls": [
+        "envoy.config.trace.v3.SkyWalkingConfig"
+       ]
+      },
+      {
+       "name": "envoy.tracers.xray",
+       "category": "envoy.tracers",
+       "type_urls": [
+        "envoy.config.trace.v3.XRayConfig"
+       ]
+      },
+      {
+       "name": "envoy.tracers.zipkin",
+       "category": "envoy.tracers",
+       "type_urls": [
+        "envoy.config.trace.v3.ZipkinConfig"
+       ]
+      },
+      {
+       "name": "envoy.zipkin",
+       "category": "envoy.tracers"
+      },
+      {
+       "name": "envoy.rate_limit_descriptors.expr",
+       "category": "envoy.rate_limit_descriptors",
+       "type_urls": [
+        "envoy.extensions.rate_limit_descriptors.expr.v3.Descriptor"
+       ]
+      },
+      {
+       "name": "envoy.http.stateful_session.cookie",
+       "category": "envoy.http.stateful_session",
+       "type_urls": [
+        "envoy.extensions.http.stateful_session.cookie.v3.CookieBasedSessionState"
+       ]
+      },
+      {
+       "name": "envoy.filters.udp.dns_filter",
+       "category": "envoy.filters.udp_listener",
+       "type_urls": [
+        "envoy.extensions.filters.udp.dns_filter.v3.DnsFilterConfig"
+       ]
+      },
+      {
+       "name": "envoy.filters.udp_listener.udp_proxy",
+       "category": "envoy.filters.udp_listener",
+       "type_urls": [
+        "envoy.extensions.filters.udp.udp_proxy.v3.UdpProxyConfig"
+       ]
+      },
+      {
        "name": "envoy.rbac.matchers.upstream_ip_port",
        "category": "envoy.rbac.matchers",
        "type_urls": [
         "envoy.extensions.rbac.matchers.upstream_ip_port.v3.UpstreamIpPortMatcher"
        ]
+      },
+      {
+       "name": "envoy.key_value.file_based",
+       "category": "envoy.common.key_value",
+       "type_urls": [
+        "envoy.extensions.key_value.file_based.v3.FileBasedKeyValueStoreConfig"
+       ]
+      },
+      {
+       "name": "envoy.retry_host_predicates.omit_canary_hosts",
+       "category": "envoy.retry_host_predicates",
+       "type_urls": [
+        "envoy.extensions.retry.host.omit_canary_hosts.v3.OmitCanaryHostsPredicate"
+       ]
+      },
+      {
+       "name": "envoy.retry_host_predicates.omit_host_metadata",
+       "category": "envoy.retry_host_predicates",
+       "type_urls": [
+        "envoy.extensions.retry.host.omit_host_metadata.v3.OmitHostMetadataConfig"
+       ]
+      },
+      {
+       "name": "envoy.retry_host_predicates.previous_hosts",
+       "category": "envoy.retry_host_predicates",
+       "type_urls": [
+        "envoy.extensions.retry.host.previous_hosts.v3.PreviousHostsPredicate"
+       ]
+      },
+      {
+       "name": "envoy.dog_statsd",
+       "category": "envoy.stats_sinks"
+      },
+      {
+       "name": "envoy.graphite_statsd",
+       "category": "envoy.stats_sinks"
+      },
+      {
+       "name": "envoy.metrics_service",
+       "category": "envoy.stats_sinks"
+      },
+      {
+       "name": "envoy.stat_sinks.dog_statsd",
+       "category": "envoy.stats_sinks",
+       "type_urls": [
+        "envoy.config.metrics.v3.DogStatsdSink"
+       ]
+      },
+      {
+       "name": "envoy.stat_sinks.graphite_statsd",
+       "category": "envoy.stats_sinks",
+       "type_urls": [
+        "envoy.extensions.stat_sinks.graphite_statsd.v3.GraphiteStatsdSink"
+       ]
+      },
+      {
+       "name": "envoy.stat_sinks.hystrix",
+       "category": "envoy.stats_sinks",
+       "type_urls": [
+        "envoy.config.metrics.v3.HystrixSink"
+       ]
+      },
+      {
+       "name": "envoy.stat_sinks.metrics_service",
+       "category": "envoy.stats_sinks",
+       "type_urls": [
+        "envoy.config.metrics.v3.MetricsServiceConfig"
+       ]
+      },
+      {
+       "name": "envoy.stat_sinks.statsd",
+       "category": "envoy.stats_sinks",
+       "type_urls": [
+        "envoy.config.metrics.v3.StatsdSink"
+       ]
+      },
+      {
+       "name": "envoy.stat_sinks.wasm",
+       "category": "envoy.stats_sinks",
+       "type_urls": [
+        "envoy.extensions.stat_sinks.wasm.v3.Wasm"
+       ]
+      },
+      {
+       "name": "envoy.statsd",
+       "category": "envoy.stats_sinks"
+      },
+      {
+       "name": "envoy.retry_priorities.previous_priorities",
+       "category": "envoy.retry_priorities",
+       "type_urls": [
+        "envoy.extensions.retry.priority.previous_priorities.v3.PreviousPrioritiesConfig"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.application_protocol",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.network.v3.ApplicationProtocolInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.destination_ip",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.network.v3.DestinationIPInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.destination_port",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.network.v3.DestinationPortInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.direct_source_ip",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.network.v3.DirectSourceIPInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.dns_san",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.ssl.v3.DnsSanInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.server_name",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.network.v3.ServerNameInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.source_ip",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.network.v3.SourceIPInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.source_port",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.network.v3.SourcePortInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.source_type",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.network.v3.SourceTypeInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.subject",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.ssl.v3.SubjectInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.transport_protocol",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.network.v3.TransportProtocolInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.inputs.uri_san",
+       "category": "envoy.matching.network.input",
+       "type_urls": [
+        "envoy.extensions.matching.common_inputs.ssl.v3.UriSanInput"
+       ]
+      },
+      {
+       "name": "envoy.matching.matchers.consistent_hashing",
+       "category": "envoy.matching.input_matchers",
+       "type_urls": [
+        "envoy.extensions.matching.input_matchers.consistent_hashing.v3.ConsistentHashing"
+       ]
+      },
+      {
+       "name": "envoy.matching.matchers.ip",
+       "category": "envoy.matching.input_matchers",
+       "type_urls": [
+        "envoy.extensions.matching.input_matchers.ip.v3.Ip"
+       ]
+      },
+      {
+       "name": "dubbo",
+       "category": "envoy.dubbo_proxy.protocols"
+      },
+      {
+       "name": "envoy.udp_packet_writer.default",
+       "category": "envoy.udp_packet_writer",
+       "type_urls": [
+        "envoy.extensions.udp_packet_writer.v3.UdpDefaultWriterFactory"
+       ]
+      },
+      {
+       "name": "envoy.udp_packet_writer.gso",
+       "category": "envoy.udp_packet_writer",
+       "type_urls": [
+        "envoy.extensions.udp_packet_writer.v3.UdpGsoBatchWriterFactory"
+       ]
+      },
+      {
+       "name": "envoy.quic.proof_source.filter_chain",
+       "category": "envoy.quic.proof_source",
+       "type_urls": [
+        "envoy.extensions.quic.proof_source.v3.ProofSourceConfig"
+       ]
+      },
+      {
+       "name": "envoy.access_loggers.file",
+       "category": "envoy.access_loggers",
+       "type_urls": [
+        "envoy.extensions.access_loggers.file.v3.FileAccessLog"
+       ]
+      },
+      {
+       "name": "envoy.access_loggers.http_grpc",
+       "category": "envoy.access_loggers",
+       "type_urls": [
+        "envoy.extensions.access_loggers.grpc.v3.HttpGrpcAccessLogConfig"
+       ]
+      },
+      {
+       "name": "envoy.access_loggers.open_telemetry",
+       "category": "envoy.access_loggers",
+       "type_urls": [
+        "envoy.extensions.access_loggers.open_telemetry.v3.OpenTelemetryAccessLogConfig"
+       ]
+      },
+      {
+       "name": "envoy.access_loggers.stderr",
+       "category": "envoy.access_loggers",
+       "type_urls": [
+        "envoy.extensions.access_loggers.stream.v3.StderrAccessLog"
+       ]
+      },
+      {
+       "name": "envoy.access_loggers.stdout",
+       "category": "envoy.access_loggers",
+       "type_urls": [
+        "envoy.extensions.access_loggers.stream.v3.StdoutAccessLog"
+       ]
+      },
+      {
+       "name": "envoy.access_loggers.tcp_grpc",
+       "category": "envoy.access_loggers",
+       "type_urls": [
+        "envoy.extensions.access_loggers.grpc.v3.TcpGrpcAccessLogConfig"
+       ]
+      },
+      {
+       "name": "envoy.access_loggers.wasm",
+       "category": "envoy.access_loggers",
+       "type_urls": [
+        "envoy.extensions.access_loggers.wasm.v3.WasmAccessLog"
+       ]
+      },
+      {
+       "name": "envoy.file_access_log",
+       "category": "envoy.access_loggers"
+      },
+      {
+       "name": "envoy.http_grpc_access_log",
+       "category": "envoy.access_loggers"
+      },
+      {
+       "name": "envoy.open_telemetry_access_log",
+       "category": "envoy.access_loggers"
+      },
+      {
+       "name": "envoy.stderr_access_log",
+       "category": "envoy.access_loggers"
+      },
+      {
+       "name": "envoy.stdout_access_log",
+       "category": "envoy.access_loggers"
+      },
+      {
+       "name": "envoy.tcp_grpc_access_log",
+       "category": "envoy.access_loggers"
+      },
+      {
+       "name": "envoy.wasm_access_log",
+       "category": "envoy.access_loggers"
       },
       {
        "name": "envoy.filters.sip.router",
@@ -554,31 +885,31 @@
        ]
       },
       {
-       "name": "envoy.matching.common_inputs.environment_variable",
-       "category": "envoy.matching.common_inputs",
+       "name": "envoy.internal_redirect_predicates.allow_listed_routes",
+       "category": "envoy.internal_redirect_predicates",
        "type_urls": [
-        "envoy.extensions.matching.common_inputs.environment_variable.v3.Config"
+        "envoy.extensions.internal_redirect.allow_listed_routes.v3.AllowListedRoutesConfig"
        ]
       },
       {
-       "name": "envoy.request_id.uuid",
-       "category": "envoy.request_id",
+       "name": "envoy.internal_redirect_predicates.previous_routes",
+       "category": "envoy.internal_redirect_predicates",
        "type_urls": [
-        "envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig"
+        "envoy.extensions.internal_redirect.previous_routes.v3.PreviousRoutesConfig"
        ]
       },
       {
-       "name": "envoy.compression.brotli.decompressor",
-       "category": "envoy.compression.decompressor",
+       "name": "envoy.internal_redirect_predicates.safe_cross_scheme",
+       "category": "envoy.internal_redirect_predicates",
        "type_urls": [
-        "envoy.extensions.compression.brotli.decompressor.v3.Brotli"
+        "envoy.extensions.internal_redirect.safe_cross_scheme.v3.SafeCrossSchemeConfig"
        ]
       },
       {
-       "name": "envoy.compression.gzip.decompressor",
-       "category": "envoy.compression.decompressor",
+       "name": "envoy.regex_engines.google_re2",
+       "category": "envoy.regex_engines",
        "type_urls": [
-        "envoy.extensions.compression.gzip.decompressor.v3.Gzip"
+        "envoy.extensions.regex_engines.v3.GoogleRE2"
        ]
       },
       {
@@ -596,6 +927,155 @@
        ]
       },
       {
+       "name": "envoy.http.stateful_header_formatters.preserve_case",
+       "category": "envoy.http.stateful_header_formatters",
+       "type_urls": [
+        "envoy.extensions.http.header_formatters.preserve_case.v3.PreserveCaseFormatterConfig"
+       ]
+      },
+      {
+       "name": "preserve_case",
+       "category": "envoy.http.stateful_header_formatters"
+      },
+      {
+       "name": "cryptomb",
+       "category": "envoy.tls.key_providers"
+      },
+      {
+       "name": "envoy.grpc_credentials.aws_iam",
+       "category": "envoy.grpc_credentials"
+      },
+      {
+       "name": "envoy.grpc_credentials.default",
+       "category": "envoy.grpc_credentials"
+      },
+      {
+       "name": "envoy.grpc_credentials.file_based_metadata",
+       "category": "envoy.grpc_credentials"
+      },
+      {
+       "name": "envoy.filters.thrift.header_to_metadata",
+       "category": "envoy.thrift_proxy.filters",
+       "type_urls": [
+        "envoy.extensions.filters.network.thrift_proxy.filters.header_to_metadata.v3.HeaderToMetadata"
+       ]
+      },
+      {
+       "name": "envoy.filters.thrift.rate_limit",
+       "category": "envoy.thrift_proxy.filters",
+       "type_urls": [
+        "envoy.extensions.filters.network.thrift_proxy.filters.ratelimit.v3.RateLimit"
+       ]
+      },
+      {
+       "name": "envoy.filters.thrift.router",
+       "category": "envoy.thrift_proxy.filters",
+       "type_urls": [
+        "envoy.extensions.filters.network.thrift_proxy.router.v3.Router"
+       ]
+      },
+      {
+       "name": "envoy.cluster.eds",
+       "category": "envoy.clusters"
+      },
+      {
+       "name": "envoy.cluster.logical_dns",
+       "category": "envoy.clusters"
+      },
+      {
+       "name": "envoy.cluster.original_dst",
+       "category": "envoy.clusters"
+      },
+      {
+       "name": "envoy.cluster.static",
+       "category": "envoy.clusters"
+      },
+      {
+       "name": "envoy.cluster.strict_dns",
+       "category": "envoy.clusters"
+      },
+      {
+       "name": "envoy.clusters.aggregate",
+       "category": "envoy.clusters"
+      },
+      {
+       "name": "envoy.clusters.dynamic_forward_proxy",
+       "category": "envoy.clusters"
+      },
+      {
+       "name": "envoy.clusters.redis",
+       "category": "envoy.clusters"
+      },
+      {
+       "name": "envoy.tls.cert_validator.default",
+       "category": "envoy.tls.cert_validator"
+      },
+      {
+       "name": "envoy.tls.cert_validator.spiffe",
+       "category": "envoy.tls.cert_validator"
+      },
+      {
+       "name": "envoy.route.early_data_policy.default",
+       "category": "envoy.route.early_data_policy",
+       "type_urls": [
+        "envoy.extensions.early_data.v3.DefaultEarlyDataPolicy"
+       ]
+      },
+      {
+       "name": "envoy.transport_sockets.alts",
+       "category": "envoy.transport_sockets.downstream",
+       "type_urls": [
+        "envoy.extensions.transport_sockets.alts.v3.Alts"
+       ]
+      },
+      {
+       "name": "envoy.transport_sockets.quic",
+       "category": "envoy.transport_sockets.downstream",
+       "type_urls": [
+        "envoy.extensions.transport_sockets.quic.v3.QuicDownstreamTransport"
+       ]
+      },
+      {
+       "name": "envoy.transport_sockets.raw_buffer",
+       "category": "envoy.transport_sockets.downstream",
+       "type_urls": [
+        "envoy.extensions.transport_sockets.raw_buffer.v3.RawBuffer"
+       ]
+      },
+      {
+       "name": "envoy.transport_sockets.starttls",
+       "category": "envoy.transport_sockets.downstream",
+       "type_urls": [
+        "envoy.extensions.transport_sockets.starttls.v3.StartTlsConfig"
+       ]
+      },
+      {
+       "name": "envoy.transport_sockets.tap",
+       "category": "envoy.transport_sockets.downstream",
+       "type_urls": [
+        "envoy.extensions.transport_sockets.tap.v3.Tap"
+       ]
+      },
+      {
+       "name": "envoy.transport_sockets.tls",
+       "category": "envoy.transport_sockets.downstream",
+       "type_urls": [
+        "envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext"
+       ]
+      },
+      {
+       "name": "raw_buffer",
+       "category": "envoy.transport_sockets.downstream"
+      },
+      {
+       "name": "starttls",
+       "category": "envoy.transport_sockets.downstream"
+      },
+      {
+       "name": "tls",
+       "category": "envoy.transport_sockets.downstream"
+      },
+      {
        "name": "envoy.extensions.http.cache.simple",
        "category": "envoy.http.cache",
        "type_urls": [
@@ -603,50 +1083,135 @@
        ]
       },
       {
-       "name": "envoy.udp_packet_writer.default",
-       "category": "envoy.udp_packet_writer",
+       "name": "envoy.matching.common_inputs.environment_variable",
+       "category": "envoy.matching.common_inputs",
        "type_urls": [
-        "envoy.extensions.udp_packet_writer.v3.UdpDefaultWriterFactory"
+        "envoy.extensions.matching.common_inputs.environment_variable.v3.Config"
        ]
       },
       {
-       "name": "envoy.udp_packet_writer.gso",
-       "category": "envoy.udp_packet_writer",
+       "name": "envoy.filters.listener.http_inspector",
+       "category": "envoy.filters.listener",
        "type_urls": [
-        "envoy.extensions.udp_packet_writer.v3.UdpGsoBatchWriterFactory"
+        "envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
        ]
       },
       {
-       "name": "envoy.http.stateful_session.cookie",
-       "category": "envoy.http.stateful_session",
+       "name": "envoy.filters.listener.original_dst",
+       "category": "envoy.filters.listener",
        "type_urls": [
-        "envoy.extensions.http.stateful_session.cookie.v3.CookieBasedSessionState"
+        "envoy.extensions.filters.listener.original_dst.v3.OriginalDst"
        ]
       },
       {
-       "name": "envoy.quic.crypto_stream.server.quiche",
-       "category": "envoy.quic.server.crypto_stream",
+       "name": "envoy.filters.listener.original_src",
+       "category": "envoy.filters.listener",
        "type_urls": [
-        "envoy.extensions.quic.crypto_stream.v3.CryptoServerStreamConfig"
+        "envoy.extensions.filters.listener.original_src.v3.OriginalSrc"
        ]
       },
       {
-       "name": "envoy.quic.proof_source.filter_chain",
-       "category": "envoy.quic.proof_source",
+       "name": "envoy.filters.listener.proxy_protocol",
+       "category": "envoy.filters.listener",
        "type_urls": [
-        "envoy.extensions.quic.proof_source.v3.ProofSourceConfig"
+        "envoy.extensions.filters.listener.proxy_protocol.v3.ProxyProtocol"
        ]
       },
       {
-       "name": "default",
-       "category": "network.connection.client"
+       "name": "envoy.filters.listener.tls_inspector",
+       "category": "envoy.filters.listener",
+       "type_urls": [
+        "envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
+       ]
       },
       {
-       "name": "envoy.regex_engines.google_re2",
-       "category": "envoy.regex_engines",
+       "name": "envoy.listener.http_inspector",
+       "category": "envoy.filters.listener"
+      },
+      {
+       "name": "envoy.listener.original_dst",
+       "category": "envoy.filters.listener"
+      },
+      {
+       "name": "envoy.listener.original_src",
+       "category": "envoy.filters.listener"
+      },
+      {
+       "name": "envoy.listener.proxy_protocol",
+       "category": "envoy.filters.listener"
+      },
+      {
+       "name": "envoy.listener.tls_inspector",
+       "category": "envoy.filters.listener"
+      },
+      {
+       "name": "envoy.filters.network.upstream.metadata_exchange",
+       "category": "envoy.filters.upstream_network",
        "type_urls": [
-        "envoy.extensions.regex_engines.v3.GoogleRE2"
+        "envoy.tcp.metadataexchange.config.MetadataExchange"
        ]
+      },
+      {
+       "name": "composite-action",
+       "category": "envoy.matching.action",
+       "type_urls": [
+        "envoy.extensions.filters.http.composite.v3.ExecuteFilterAction"
+       ]
+      },
+      {
+       "name": "skip",
+       "category": "envoy.matching.action",
+       "type_urls": [
+        "envoy.extensions.filters.common.matcher.action.v3.SkipFilter"
+       ]
+      },
+      {
+       "name": "envoy.compression.brotli.decompressor",
+       "category": "envoy.compression.decompressor",
+       "type_urls": [
+        "envoy.extensions.compression.brotli.decompressor.v3.Brotli"
+       ]
+      },
+      {
+       "name": "envoy.compression.gzip.decompressor",
+       "category": "envoy.compression.decompressor",
+       "type_urls": [
+        "envoy.extensions.compression.gzip.decompressor.v3.Gzip"
+       ]
+      },
+      {
+       "name": "envoy.compression.brotli.compressor",
+       "category": "envoy.compression.compressor",
+       "type_urls": [
+        "envoy.extensions.compression.brotli.compressor.v3.Brotli"
+       ]
+      },
+      {
+       "name": "envoy.compression.gzip.compressor",
+       "category": "envoy.compression.compressor",
+       "type_urls": [
+        "envoy.extensions.compression.gzip.compressor.v3.Gzip"
+       ]
+      },
+      {
+       "name": "auto",
+       "category": "envoy.thrift_proxy.protocols"
+      },
+      {
+       "name": "binary",
+       "category": "envoy.thrift_proxy.protocols"
+      },
+      {
+       "name": "binary/non-strict",
+       "category": "envoy.thrift_proxy.protocols"
+      },
+      {
+       "name": "compact",
+       "category": "envoy.thrift_proxy.protocols"
+      },
+      {
+       "name": "twitter",
+       "category": "envoy.thrift_proxy.protocols"
       },
       {
        "name": "envoy.matching.inputs.destination_ip",
@@ -745,33 +1310,6 @@
        "type_urls": [
         "envoy.extensions.matching.common_inputs.ssl.v3.UriSanInput"
        ]
-      },
-      {
-       "name": "envoy.rate_limit_descriptors.expr",
-       "category": "envoy.rate_limit_descriptors",
-       "type_urls": [
-        "envoy.extensions.rate_limit_descriptors.expr.v3.Descriptor"
-       ]
-      },
-      {
-       "name": "auto",
-       "category": "envoy.thrift_proxy.protocols"
-      },
-      {
-       "name": "binary",
-       "category": "envoy.thrift_proxy.protocols"
-      },
-      {
-       "name": "binary/non-strict",
-       "category": "envoy.thrift_proxy.protocols"
-      },
-      {
-       "name": "compact",
-       "category": "envoy.thrift_proxy.protocols"
-      },
-      {
-       "name": "twitter",
-       "category": "envoy.thrift_proxy.protocols"
       },
       {
        "name": "envoy.echo",
@@ -963,308 +1501,26 @@
        ]
       },
       {
-       "name": "envoy.access_loggers.extension_filters.cel",
-       "category": "envoy.access_loggers.extension_filters",
+       "name": "envoy.request_id.uuid",
+       "category": "envoy.request_id",
        "type_urls": [
-        "envoy.extensions.access_loggers.filters.cel.v3.ExpressionFilter"
+        "envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig"
        ]
       },
       {
-       "name": "envoy.wasm.runtime.null",
-       "category": "envoy.wasm.runtime"
+       "name": "envoy.ip",
+       "category": "envoy.resolvers"
       },
       {
-       "name": "envoy.wasm.runtime.v8",
-       "category": "envoy.wasm.runtime"
-      },
-      {
-       "name": "envoy.access_loggers.file",
-       "category": "envoy.access_loggers",
+       "name": "envoy.quic.crypto_stream.server.quiche",
+       "category": "envoy.quic.server.crypto_stream",
        "type_urls": [
-        "envoy.extensions.access_loggers.file.v3.FileAccessLog"
+        "envoy.extensions.quic.crypto_stream.v3.CryptoServerStreamConfig"
        ]
       },
       {
-       "name": "envoy.access_loggers.http_grpc",
-       "category": "envoy.access_loggers",
-       "type_urls": [
-        "envoy.extensions.access_loggers.grpc.v3.HttpGrpcAccessLogConfig"
-       ]
-      },
-      {
-       "name": "envoy.access_loggers.open_telemetry",
-       "category": "envoy.access_loggers",
-       "type_urls": [
-        "envoy.extensions.access_loggers.open_telemetry.v3.OpenTelemetryAccessLogConfig"
-       ]
-      },
-      {
-       "name": "envoy.access_loggers.stderr",
-       "category": "envoy.access_loggers",
-       "type_urls": [
-        "envoy.extensions.access_loggers.stream.v3.StderrAccessLog"
-       ]
-      },
-      {
-       "name": "envoy.access_loggers.stdout",
-       "category": "envoy.access_loggers",
-       "type_urls": [
-        "envoy.extensions.access_loggers.stream.v3.StdoutAccessLog"
-       ]
-      },
-      {
-       "name": "envoy.access_loggers.tcp_grpc",
-       "category": "envoy.access_loggers",
-       "type_urls": [
-        "envoy.extensions.access_loggers.grpc.v3.TcpGrpcAccessLogConfig"
-       ]
-      },
-      {
-       "name": "envoy.access_loggers.wasm",
-       "category": "envoy.access_loggers",
-       "type_urls": [
-        "envoy.extensions.access_loggers.wasm.v3.WasmAccessLog"
-       ]
-      },
-      {
-       "name": "envoy.file_access_log",
-       "category": "envoy.access_loggers"
-      },
-      {
-       "name": "envoy.http_grpc_access_log",
-       "category": "envoy.access_loggers"
-      },
-      {
-       "name": "envoy.open_telemetry_access_log",
-       "category": "envoy.access_loggers"
-      },
-      {
-       "name": "envoy.stderr_access_log",
-       "category": "envoy.access_loggers"
-      },
-      {
-       "name": "envoy.stdout_access_log",
-       "category": "envoy.access_loggers"
-      },
-      {
-       "name": "envoy.tcp_grpc_access_log",
-       "category": "envoy.access_loggers"
-      },
-      {
-       "name": "envoy.wasm_access_log",
-       "category": "envoy.access_loggers"
-      },
-      {
-       "name": "dubbo.hessian2",
-       "category": "envoy.dubbo_proxy.serializers"
-      },
-      {
-       "name": "envoy.tls.cert_validator.default",
-       "category": "envoy.tls.cert_validator"
-      },
-      {
-       "name": "envoy.tls.cert_validator.spiffe",
-       "category": "envoy.tls.cert_validator"
-      },
-      {
-       "name": "auto",
-       "category": "envoy.thrift_proxy.transports"
-      },
-      {
-       "name": "framed",
-       "category": "envoy.thrift_proxy.transports"
-      },
-      {
-       "name": "header",
-       "category": "envoy.thrift_proxy.transports"
-      },
-      {
-       "name": "unframed",
-       "category": "envoy.thrift_proxy.transports"
-      },
-      {
-       "name": "envoy.http.stateful_header_formatters.preserve_case",
-       "category": "envoy.http.stateful_header_formatters",
-       "type_urls": [
-        "envoy.extensions.http.header_formatters.preserve_case.v3.PreserveCaseFormatterConfig"
-       ]
-      },
-      {
-       "name": "preserve_case",
-       "category": "envoy.http.stateful_header_formatters"
-      },
-      {
-       "name": "cryptomb",
-       "category": "envoy.tls.key_providers"
-      },
-      {
-       "name": "envoy.route.early_data_policy.default",
-       "category": "envoy.route.early_data_policy",
-       "type_urls": [
-        "envoy.extensions.early_data.v3.DefaultEarlyDataPolicy"
-       ]
-      },
-      {
-       "name": "envoy.filters.listener.http_inspector",
-       "category": "envoy.filters.listener",
-       "type_urls": [
-        "envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
-       ]
-      },
-      {
-       "name": "envoy.filters.listener.original_dst",
-       "category": "envoy.filters.listener",
-       "type_urls": [
-        "envoy.extensions.filters.listener.original_dst.v3.OriginalDst"
-       ]
-      },
-      {
-       "name": "envoy.filters.listener.original_src",
-       "category": "envoy.filters.listener",
-       "type_urls": [
-        "envoy.extensions.filters.listener.original_src.v3.OriginalSrc"
-       ]
-      },
-      {
-       "name": "envoy.filters.listener.proxy_protocol",
-       "category": "envoy.filters.listener",
-       "type_urls": [
-        "envoy.extensions.filters.listener.proxy_protocol.v3.ProxyProtocol"
-       ]
-      },
-      {
-       "name": "envoy.filters.listener.tls_inspector",
-       "category": "envoy.filters.listener",
-       "type_urls": [
-        "envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
-       ]
-      },
-      {
-       "name": "envoy.listener.http_inspector",
-       "category": "envoy.filters.listener"
-      },
-      {
-       "name": "envoy.listener.original_dst",
-       "category": "envoy.filters.listener"
-      },
-      {
-       "name": "envoy.listener.original_src",
-       "category": "envoy.filters.listener"
-      },
-      {
-       "name": "envoy.listener.proxy_protocol",
-       "category": "envoy.filters.listener"
-      },
-      {
-       "name": "envoy.listener.tls_inspector",
-       "category": "envoy.filters.listener"
-      },
-      {
-       "name": "envoy.filters.thrift.header_to_metadata",
-       "category": "envoy.thrift_proxy.filters",
-       "type_urls": [
-        "envoy.extensions.filters.network.thrift_proxy.filters.header_to_metadata.v3.HeaderToMetadata"
-       ]
-      },
-      {
-       "name": "envoy.filters.thrift.rate_limit",
-       "category": "envoy.thrift_proxy.filters",
-       "type_urls": [
-        "envoy.extensions.filters.network.thrift_proxy.filters.ratelimit.v3.RateLimit"
-       ]
-      },
-      {
-       "name": "envoy.filters.thrift.router",
-       "category": "envoy.thrift_proxy.filters",
-       "type_urls": [
-        "envoy.extensions.filters.network.thrift_proxy.router.v3.Router"
-       ]
-      },
-      {
-       "name": "envoy.matching.matchers.consistent_hashing",
-       "category": "envoy.matching.input_matchers",
-       "type_urls": [
-        "envoy.extensions.matching.input_matchers.consistent_hashing.v3.ConsistentHashing"
-       ]
-      },
-      {
-       "name": "envoy.matching.matchers.ip",
-       "category": "envoy.matching.input_matchers",
-       "type_urls": [
-        "envoy.extensions.matching.input_matchers.ip.v3.Ip"
-       ]
-      },
-      {
-       "name": "envoy.compression.brotli.compressor",
-       "category": "envoy.compression.compressor",
-       "type_urls": [
-        "envoy.extensions.compression.brotli.compressor.v3.Brotli"
-       ]
-      },
-      {
-       "name": "envoy.compression.gzip.compressor",
-       "category": "envoy.compression.compressor",
-       "type_urls": [
-        "envoy.extensions.compression.gzip.compressor.v3.Gzip"
-       ]
-      },
-      {
-       "name": "dubbo",
-       "category": "envoy.dubbo_proxy.protocols"
-      },
-      {
-       "name": "envoy.transport_sockets.alts",
-       "category": "envoy.transport_sockets.downstream",
-       "type_urls": [
-        "envoy.extensions.transport_sockets.alts.v3.Alts"
-       ]
-      },
-      {
-       "name": "envoy.transport_sockets.quic",
-       "category": "envoy.transport_sockets.downstream",
-       "type_urls": [
-        "envoy.extensions.transport_sockets.quic.v3.QuicDownstreamTransport"
-       ]
-      },
-      {
-       "name": "envoy.transport_sockets.raw_buffer",
-       "category": "envoy.transport_sockets.downstream",
-       "type_urls": [
-        "envoy.extensions.transport_sockets.raw_buffer.v3.RawBuffer"
-       ]
-      },
-      {
-       "name": "envoy.transport_sockets.starttls",
-       "category": "envoy.transport_sockets.downstream",
-       "type_urls": [
-        "envoy.extensions.transport_sockets.starttls.v3.StartTlsConfig"
-       ]
-      },
-      {
-       "name": "envoy.transport_sockets.tap",
-       "category": "envoy.transport_sockets.downstream",
-       "type_urls": [
-        "envoy.extensions.transport_sockets.tap.v3.Tap"
-       ]
-      },
-      {
-       "name": "envoy.transport_sockets.tls",
-       "category": "envoy.transport_sockets.downstream",
-       "type_urls": [
-        "envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext"
-       ]
-      },
-      {
-       "name": "raw_buffer",
-       "category": "envoy.transport_sockets.downstream"
-      },
-      {
-       "name": "starttls",
-       "category": "envoy.transport_sockets.downstream"
-      },
-      {
-       "name": "tls",
-       "category": "envoy.transport_sockets.downstream"
+       "name": "default",
+       "category": "network.connection.client"
       },
       {
        "name": "envoy.transport_sockets.alts",
@@ -1328,178 +1584,10 @@
        "category": "envoy.transport_sockets.upstream"
       },
       {
-       "name": "envoy.retry_host_predicates.omit_canary_hosts",
-       "category": "envoy.retry_host_predicates",
+       "name": "envoy.network.dns_resolver.cares",
+       "category": "envoy.network.dns_resolver",
        "type_urls": [
-        "envoy.extensions.retry.host.omit_canary_hosts.v3.OmitCanaryHostsPredicate"
-       ]
-      },
-      {
-       "name": "envoy.retry_host_predicates.omit_host_metadata",
-       "category": "envoy.retry_host_predicates",
-       "type_urls": [
-        "envoy.extensions.retry.host.omit_host_metadata.v3.OmitHostMetadataConfig"
-       ]
-      },
-      {
-       "name": "envoy.retry_host_predicates.previous_hosts",
-       "category": "envoy.retry_host_predicates",
-       "type_urls": [
-        "envoy.extensions.retry.host.previous_hosts.v3.PreviousHostsPredicate"
-       ]
-      },
-      {
-       "name": "envoy.ip",
-       "category": "envoy.resolvers"
-      },
-      {
-       "name": "composite-action",
-       "category": "envoy.matching.action",
-       "type_urls": [
-        "envoy.extensions.filters.http.composite.v3.ExecuteFilterAction"
-       ]
-      },
-      {
-       "name": "skip",
-       "category": "envoy.matching.action",
-       "type_urls": [
-        "envoy.extensions.filters.common.matcher.action.v3.SkipFilter"
-       ]
-      },
-      {
-       "name": "envoy.filters.dubbo.router",
-       "category": "envoy.dubbo_proxy.filters",
-       "type_urls": [
-        "envoy.extensions.filters.network.dubbo_proxy.router.v3.Router"
-       ]
-      },
-      {
-       "name": "envoy.dynamic.ot",
-       "category": "envoy.tracers"
-      },
-      {
-       "name": "envoy.tracers.datadog",
-       "category": "envoy.tracers",
-       "type_urls": [
-        "envoy.config.trace.v3.DatadogConfig"
-       ]
-      },
-      {
-       "name": "envoy.tracers.dynamic_ot",
-       "category": "envoy.tracers",
-       "type_urls": [
-        "envoy.config.trace.v3.DynamicOtConfig"
-       ]
-      },
-      {
-       "name": "envoy.tracers.opencensus",
-       "category": "envoy.tracers",
-       "type_urls": [
-        "envoy.config.trace.v3.OpenCensusConfig"
-       ]
-      },
-      {
-       "name": "envoy.tracers.skywalking",
-       "category": "envoy.tracers",
-       "type_urls": [
-        "envoy.config.trace.v3.SkyWalkingConfig"
-       ]
-      },
-      {
-       "name": "envoy.tracers.xray",
-       "category": "envoy.tracers",
-       "type_urls": [
-        "envoy.config.trace.v3.XRayConfig"
-       ]
-      },
-      {
-       "name": "envoy.tracers.zipkin",
-       "category": "envoy.tracers",
-       "type_urls": [
-        "envoy.config.trace.v3.ZipkinConfig"
-       ]
-      },
-      {
-       "name": "envoy.zipkin",
-       "category": "envoy.tracers"
-      },
-      {
-       "name": "envoy.formatter.metadata",
-       "category": "envoy.formatter",
-       "type_urls": [
-        "envoy.extensions.formatter.metadata.v3.Metadata"
-       ]
-      },
-      {
-       "name": "envoy.formatter.req_without_query",
-       "category": "envoy.formatter",
-       "type_urls": [
-        "envoy.extensions.formatter.req_without_query.v3.ReqWithoutQuery"
-       ]
-      },
-      {
-       "name": "envoy.dog_statsd",
-       "category": "envoy.stats_sinks"
-      },
-      {
-       "name": "envoy.graphite_statsd",
-       "category": "envoy.stats_sinks"
-      },
-      {
-       "name": "envoy.metrics_service",
-       "category": "envoy.stats_sinks"
-      },
-      {
-       "name": "envoy.stat_sinks.dog_statsd",
-       "category": "envoy.stats_sinks",
-       "type_urls": [
-        "envoy.config.metrics.v3.DogStatsdSink"
-       ]
-      },
-      {
-       "name": "envoy.stat_sinks.graphite_statsd",
-       "category": "envoy.stats_sinks",
-       "type_urls": [
-        "envoy.extensions.stat_sinks.graphite_statsd.v3.GraphiteStatsdSink"
-       ]
-      },
-      {
-       "name": "envoy.stat_sinks.hystrix",
-       "category": "envoy.stats_sinks",
-       "type_urls": [
-        "envoy.config.metrics.v3.HystrixSink"
-       ]
-      },
-      {
-       "name": "envoy.stat_sinks.metrics_service",
-       "category": "envoy.stats_sinks",
-       "type_urls": [
-        "envoy.config.metrics.v3.MetricsServiceConfig"
-       ]
-      },
-      {
-       "name": "envoy.stat_sinks.statsd",
-       "category": "envoy.stats_sinks",
-       "type_urls": [
-        "envoy.config.metrics.v3.StatsdSink"
-       ]
-      },
-      {
-       "name": "envoy.stat_sinks.wasm",
-       "category": "envoy.stats_sinks",
-       "type_urls": [
-        "envoy.extensions.stat_sinks.wasm.v3.Wasm"
-       ]
-      },
-      {
-       "name": "envoy.statsd",
-       "category": "envoy.stats_sinks"
-      },
-      {
-       "name": "envoy.retry_priorities.previous_priorities",
-       "category": "envoy.retry_priorities",
-       "type_urls": [
-        "envoy.extensions.retry.priority.previous_priorities.v3.PreviousPrioritiesConfig"
+        "envoy.extensions.network.dns_resolver.cares.v3.CaresDnsResolverConfig"
        ]
       },
       {
@@ -1517,126 +1605,38 @@
        ]
       },
       {
-       "name": "envoy.matching.inputs.application_protocol",
-       "category": "envoy.matching.network.input",
+       "name": "envoy.formatter.metadata",
+       "category": "envoy.formatter",
        "type_urls": [
-        "envoy.extensions.matching.common_inputs.network.v3.ApplicationProtocolInput"
+        "envoy.extensions.formatter.metadata.v3.Metadata"
        ]
       },
       {
-       "name": "envoy.matching.inputs.destination_ip",
-       "category": "envoy.matching.network.input",
+       "name": "envoy.formatter.req_without_query",
+       "category": "envoy.formatter",
        "type_urls": [
-        "envoy.extensions.matching.common_inputs.network.v3.DestinationIPInput"
+        "envoy.extensions.formatter.req_without_query.v3.ReqWithoutQuery"
        ]
       },
       {
-       "name": "envoy.matching.inputs.destination_port",
-       "category": "envoy.matching.network.input",
+       "name": "envoy.access_loggers.extension_filters.cel",
+       "category": "envoy.access_loggers.extension_filters",
        "type_urls": [
-        "envoy.extensions.matching.common_inputs.network.v3.DestinationPortInput"
+        "envoy.extensions.access_loggers.filters.cel.v3.ExpressionFilter"
        ]
       },
       {
-       "name": "envoy.matching.inputs.direct_source_ip",
-       "category": "envoy.matching.network.input",
+       "name": "envoy.watchdog.abort_action",
+       "category": "envoy.guarddog_actions",
        "type_urls": [
-        "envoy.extensions.matching.common_inputs.network.v3.DirectSourceIPInput"
+        "envoy.watchdog.v3.AbortActionConfig"
        ]
       },
       {
-       "name": "envoy.matching.inputs.dns_san",
-       "category": "envoy.matching.network.input",
+       "name": "envoy.watchdog.profile_action",
+       "category": "envoy.guarddog_actions",
        "type_urls": [
-        "envoy.extensions.matching.common_inputs.ssl.v3.DnsSanInput"
-       ]
-      },
-      {
-       "name": "envoy.matching.inputs.server_name",
-       "category": "envoy.matching.network.input",
-       "type_urls": [
-        "envoy.extensions.matching.common_inputs.network.v3.ServerNameInput"
-       ]
-      },
-      {
-       "name": "envoy.matching.inputs.source_ip",
-       "category": "envoy.matching.network.input",
-       "type_urls": [
-        "envoy.extensions.matching.common_inputs.network.v3.SourceIPInput"
-       ]
-      },
-      {
-       "name": "envoy.matching.inputs.source_port",
-       "category": "envoy.matching.network.input",
-       "type_urls": [
-        "envoy.extensions.matching.common_inputs.network.v3.SourcePortInput"
-       ]
-      },
-      {
-       "name": "envoy.matching.inputs.source_type",
-       "category": "envoy.matching.network.input",
-       "type_urls": [
-        "envoy.extensions.matching.common_inputs.network.v3.SourceTypeInput"
-       ]
-      },
-      {
-       "name": "envoy.matching.inputs.subject",
-       "category": "envoy.matching.network.input",
-       "type_urls": [
-        "envoy.extensions.matching.common_inputs.ssl.v3.SubjectInput"
-       ]
-      },
-      {
-       "name": "envoy.matching.inputs.transport_protocol",
-       "category": "envoy.matching.network.input",
-       "type_urls": [
-        "envoy.extensions.matching.common_inputs.network.v3.TransportProtocolInput"
-       ]
-      },
-      {
-       "name": "envoy.matching.inputs.uri_san",
-       "category": "envoy.matching.network.input",
-       "type_urls": [
-        "envoy.extensions.matching.common_inputs.ssl.v3.UriSanInput"
-       ]
-      },
-      {
-       "name": "envoy.cluster.eds",
-       "category": "envoy.clusters"
-      },
-      {
-       "name": "envoy.cluster.logical_dns",
-       "category": "envoy.clusters"
-      },
-      {
-       "name": "envoy.cluster.original_dst",
-       "category": "envoy.clusters"
-      },
-      {
-       "name": "envoy.cluster.static",
-       "category": "envoy.clusters"
-      },
-      {
-       "name": "envoy.cluster.strict_dns",
-       "category": "envoy.clusters"
-      },
-      {
-       "name": "envoy.clusters.aggregate",
-       "category": "envoy.clusters"
-      },
-      {
-       "name": "envoy.clusters.dynamic_forward_proxy",
-       "category": "envoy.clusters"
-      },
-      {
-       "name": "envoy.clusters.redis",
-       "category": "envoy.clusters"
-      },
-      {
-       "name": "envoy.filters.connection_pools.tcp.generic",
-       "category": "envoy.upstreams",
-       "type_urls": [
-        "envoy.extensions.upstreams.tcp.generic.v3.GenericConnectionPoolProto"
+        "envoy.extensions.watchdog.profile_action.v3.ProfileActionConfig"
        ]
       },
       {
@@ -1649,20 +1649,6 @@
       {
        "name": "envoy.upstreams.http.http_protocol_options",
        "category": "envoy.upstream_options"
-      },
-      {
-       "name": "envoy.resource_monitors.fixed_heap",
-       "category": "envoy.resource_monitors",
-       "type_urls": [
-        "envoy.extensions.resource_monitors.fixed_heap.v3.FixedHeapConfig"
-       ]
-      },
-      {
-       "name": "envoy.resource_monitors.injected_resource",
-       "category": "envoy.resource_monitors",
-       "type_urls": [
-        "envoy.extensions.resource_monitors.injected_resource.v3.InjectedResourceConfig"
-       ]
       }
      ]
     },
@@ -2208,11 +2194,11 @@
       {
        "name": "global config",
        "static_layer": {
-        "overload.global_downstream_max_connections": "2147483647",
         "envoy.reloadable_features.no_extension_lookup_by_name": "false",
-        "envoy.deprecated_features:envoy.config.listener.v3.Listener.hidden_envoy_deprecated_use_original_dst": "true",
         "re2.max_program_size.error_level": "32768",
-        "envoy.reloadable_features.http_reject_path_with_fragment": "false"
+        "envoy.reloadable_features.http_reject_path_with_fragment": "false",
+        "envoy.deprecated_features:envoy.config.listener.v3.Listener.hidden_envoy_deprecated_use_original_dst": "true",
+        "overload.global_downstream_max_connections": "2147483647"
        }
       },
       {
@@ -2222,8 +2208,22 @@
      ]
     }
    },
-   "last_updated": "2022-10-08T07:36:11.243Z"
+   "last_updated": "2022-10-08T07:44:51.756Z"
   },
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
   {
    "@type": "type.googleapis.com/envoy.admin.v3.ClustersConfigDump",
    "version_info": "2022-10-08T07:31:27Z/5",
@@ -2254,7 +2254,7 @@
        ]
       }
      },
-     "last_updated": "2022-10-08T07:36:11.254Z"
+     "last_updated": "2022-10-08T07:44:51.770Z"
     },
     {
      "cluster": {
@@ -2282,7 +2282,7 @@
        ]
       }
      },
-     "last_updated": "2022-10-08T07:36:11.254Z"
+     "last_updated": "2022-10-08T07:44:51.769Z"
     },
     {
      "cluster": {
@@ -2317,7 +2317,7 @@
        }
       }
      },
-     "last_updated": "2022-10-08T07:36:11.254Z"
+     "last_updated": "2022-10-08T07:44:51.770Z"
     },
     {
      "cluster": {
@@ -2373,7 +2373,7 @@
        }
       }
      },
-     "last_updated": "2022-10-08T07:36:11.270Z"
+     "last_updated": "2022-10-08T07:44:51.785Z"
     },
     {
      "cluster": {
@@ -2404,7 +2404,7 @@
       },
       "respect_dns_ttl": true
      },
-     "last_updated": "2022-10-08T07:36:11.270Z"
+     "last_updated": "2022-10-08T07:44:51.786Z"
     }
    ],
    "dynamic_active_clusters": [
@@ -2416,7 +2416,7 @@
       "type": "STATIC",
       "connect_timeout": "10s"
      },
-     "last_updated": "2022-10-08T07:36:11.295Z"
+     "last_updated": "2022-10-08T07:44:51.814Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -2453,7 +2453,7 @@
        }
       }
      },
-     "last_updated": "2022-10-08T07:36:11.296Z"
+     "last_updated": "2022-10-08T07:44:51.815Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -2493,7 +2493,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.296Z"
+     "last_updated": "2022-10-08T07:44:51.815Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -2528,9 +2528,9 @@
          "default_original_port": 15010,
          "services": [
           {
-           "name": "istiod",
            "host": "istiod.istio-system.svc.cluster.local",
-           "namespace": "istio-system"
+           "namespace": "istio-system",
+           "name": "istiod"
           }
          ]
         }
@@ -2642,7 +2642,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.292Z"
+     "last_updated": "2022-10-08T07:44:51.812Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -2674,14 +2674,14 @@
       "metadata": {
        "filter_metadata": {
         "istio": {
-         "default_original_port": 15012,
          "services": [
           {
+           "host": "istiod.istio-system.svc.cluster.local",
            "namespace": "istio-system",
-           "name": "istiod",
-           "host": "istiod.istio-system.svc.cluster.local"
+           "name": "istiod"
           }
-         ]
+         ],
+         "default_original_port": 15012
         }
        }
       },
@@ -2782,7 +2782,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.293Z"
+     "last_updated": "2022-10-08T07:44:51.812Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -2814,14 +2814,14 @@
       "metadata": {
        "filter_metadata": {
         "istio": {
+         "default_original_port": 15014,
          "services": [
           {
            "host": "istiod.istio-system.svc.cluster.local",
            "namespace": "istio-system",
            "name": "istiod"
           }
-         ],
-         "default_original_port": 15014
+         ]
         }
        }
       },
@@ -2922,7 +2922,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.294Z"
+     "last_updated": "2022-10-08T07:44:51.813Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -2954,14 +2954,14 @@
       "metadata": {
        "filter_metadata": {
         "istio": {
-         "default_original_port": 15021,
          "services": [
           {
            "name": "istio-ingressgateway",
-           "host": "istio-ingressgateway.istio-system.svc.cluster.local",
-           "namespace": "istio-system"
+           "namespace": "istio-system",
+           "host": "istio-ingressgateway.istio-system.svc.cluster.local"
           }
-         ]
+         ],
+         "default_original_port": 15021
         }
        }
       },
@@ -3071,7 +3071,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.294Z"
+     "last_updated": "2022-10-08T07:44:51.813Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -3106,9 +3106,9 @@
          "default_original_port": 443,
          "services": [
           {
+           "name": "istio-ingressgateway",
            "host": "istio-ingressgateway.istio-system.svc.cluster.local",
-           "namespace": "istio-system",
-           "name": "istio-ingressgateway"
+           "namespace": "istio-system"
           }
          ]
         }
@@ -3211,7 +3211,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.295Z"
+     "last_updated": "2022-10-08T07:44:51.814Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -3243,14 +3243,14 @@
       "metadata": {
        "filter_metadata": {
         "istio": {
+         "default_original_port": 443,
          "services": [
           {
            "host": "istiod.istio-system.svc.cluster.local",
-           "name": "istiod",
-           "namespace": "istio-system"
+           "namespace": "istio-system",
+           "name": "istiod"
           }
-         ],
-         "default_original_port": 443
+         ]
         }
        }
       },
@@ -3351,7 +3351,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.293Z"
+     "last_updated": "2022-10-08T07:44:51.812Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -3386,9 +3386,9 @@
          "default_original_port": 443,
          "services": [
           {
-           "namespace": "default",
+           "host": "kubernetes.default.svc.cluster.local",
            "name": "kubernetes",
-           "host": "kubernetes.default.svc.cluster.local"
+           "namespace": "default"
           }
          ]
         }
@@ -3485,7 +3485,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.290Z"
+     "last_updated": "2022-10-08T07:44:51.809Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -3625,7 +3625,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.291Z"
+     "last_updated": "2022-10-08T07:44:51.809Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -3657,14 +3657,14 @@
       "metadata": {
        "filter_metadata": {
         "istio": {
-         "default_original_port": 8000,
          "services": [
           {
+           "host": "hello-world-client-service.breakdown-test.svc.cluster.local",
            "name": "hello-world-client-service",
-           "namespace": "breakdown-test",
-           "host": "hello-world-client-service.breakdown-test.svc.cluster.local"
+           "namespace": "breakdown-test"
           }
-         ]
+         ],
+         "default_original_port": 8000
         }
        }
       },
@@ -3768,7 +3768,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.292Z"
+     "last_updated": "2022-10-08T07:44:51.811Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -3803,9 +3803,9 @@
          "default_original_port": 8080,
          "services": [
           {
-           "host": "hello-world-server-service.breakdown-test.svc.cluster.local",
            "name": "hello-world-server-service",
-           "namespace": "breakdown-test"
+           "namespace": "breakdown-test",
+           "host": "hello-world-server-service.breakdown-test.svc.cluster.local"
           }
          ]
         }
@@ -3911,7 +3911,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.291Z"
+     "last_updated": "2022-10-08T07:44:51.810Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -3946,9 +3946,9 @@
          "default_original_port": 80,
          "services": [
           {
+           "name": "istio-ingressgateway",
            "namespace": "istio-system",
-           "host": "istio-ingressgateway.istio-system.svc.cluster.local",
-           "name": "istio-ingressgateway"
+           "host": "istio-ingressgateway.istio-system.svc.cluster.local"
           }
          ]
         }
@@ -4060,7 +4060,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.295Z"
+     "last_updated": "2022-10-08T07:44:51.814Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -4094,9 +4094,9 @@
         "istio": {
          "services": [
           {
+           "name": "p-manager-svc",
            "host": "p-manager-svc.p-manager.svc.cluster.local",
-           "namespace": "p-manager",
-           "name": "p-manager-svc"
+           "namespace": "p-manager"
           }
          ],
          "default_original_port": 80
@@ -4200,7 +4200,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.292Z"
+     "last_updated": "2022-10-08T07:44:51.811Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -4234,9 +4234,9 @@
         "istio": {
          "services": [
           {
-           "name": "kube-dns",
+           "host": "kube-dns.kube-system.svc.cluster.local",
            "namespace": "kube-system",
-           "host": "kube-dns.kube-system.svc.cluster.local"
+           "name": "kube-dns"
           }
          ],
          "default_original_port": 9153
@@ -4349,7 +4349,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.291Z"
+     "last_updated": "2022-10-08T07:44:51.810Z"
     }
    ]
   },
@@ -4408,7 +4408,7 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.276Z"
+     "last_updated": "2022-10-08T07:44:51.792Z"
     },
     {
      "listener": {
@@ -4461,68 +4461,10 @@
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.276Z"
+     "last_updated": "2022-10-08T07:44:51.793Z"
     }
    ],
    "dynamic_listeners": [
-    {
-     "name": "10.99.226.237_443",
-     "active_state": {
-      "version_info": "2022-10-08T07:31:27Z/5",
-      "listener": {
-       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
-       "name": "10.99.226.237_443",
-       "address": {
-        "socket_address": {
-         "address": "10.99.226.237",
-         "port_value": 443
-        }
-       },
-       "filter_chains": [
-        {
-         "filters": [
-          {
-           "name": "istio.stats",
-           "typed_config": {
-            "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-            "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
-            "value": {
-             "config": {
-              "root_id": "stats_outbound",
-              "vm_config": {
-               "vm_id": "tcp_stats_outbound",
-               "runtime": "envoy.wasm.runtime.null",
-               "code": {
-                "local": {
-                 "inline_string": "envoy.wasm.stats"
-                }
-               }
-              },
-              "configuration": {
-               "@type": "type.googleapis.com/google.protobuf.StringValue",
-               "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-              }
-             }
-            }
-           }
-          },
-          {
-           "name": "envoy.filters.network.tcp_proxy",
-           "typed_config": {
-            "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
-            "stat_prefix": "outbound|443||istiod.istio-system.svc.cluster.local",
-            "cluster": "outbound|443||istiod.istio-system.svc.cluster.local"
-           }
-          }
-         ]
-        }
-       ],
-       "traffic_direction": "OUTBOUND",
-       "bind_to_port": false
-      },
-      "last_updated": "2022-10-08T07:36:11.410Z"
-     }
-    },
     {
      "name": "10.96.0.1_443",
      "active_state": {
@@ -4578,65 +4520,7 @@
        "traffic_direction": "OUTBOUND",
        "bind_to_port": false
       },
-      "last_updated": "2022-10-08T07:36:11.410Z"
-     }
-    },
-    {
-     "name": "10.96.0.10_53",
-     "active_state": {
-      "version_info": "2022-10-08T07:31:27Z/5",
-      "listener": {
-       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
-       "name": "10.96.0.10_53",
-       "address": {
-        "socket_address": {
-         "address": "10.96.0.10",
-         "port_value": 53
-        }
-       },
-       "filter_chains": [
-        {
-         "filters": [
-          {
-           "name": "istio.stats",
-           "typed_config": {
-            "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-            "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
-            "value": {
-             "config": {
-              "root_id": "stats_outbound",
-              "vm_config": {
-               "vm_id": "tcp_stats_outbound",
-               "runtime": "envoy.wasm.runtime.null",
-               "code": {
-                "local": {
-                 "inline_string": "envoy.wasm.stats"
-                }
-               }
-              },
-              "configuration": {
-               "@type": "type.googleapis.com/google.protobuf.StringValue",
-               "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-              }
-             }
-            }
-           }
-          },
-          {
-           "name": "envoy.filters.network.tcp_proxy",
-           "typed_config": {
-            "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
-            "stat_prefix": "outbound|53||kube-dns.kube-system.svc.cluster.local",
-            "cluster": "outbound|53||kube-dns.kube-system.svc.cluster.local"
-           }
-          }
-         ]
-        }
-       ],
-       "traffic_direction": "OUTBOUND",
-       "bind_to_port": false
-      },
-      "last_updated": "2022-10-08T07:36:11.410Z"
+      "last_updated": "2022-10-08T07:44:51.935Z"
      }
     },
     {
@@ -4694,7 +4578,7 @@
        "traffic_direction": "OUTBOUND",
        "bind_to_port": false
       },
-      "last_updated": "2022-10-08T07:36:11.411Z"
+      "last_updated": "2022-10-08T07:44:51.935Z"
      }
     },
     {
@@ -4752,7 +4636,1369 @@
        "traffic_direction": "OUTBOUND",
        "bind_to_port": false
       },
-      "last_updated": "2022-10-08T07:36:11.411Z"
+      "last_updated": "2022-10-08T07:44:51.936Z"
+     }
+    },
+    {
+     "name": "10.96.0.10_53",
+     "active_state": {
+      "version_info": "2022-10-08T07:31:27Z/5",
+      "listener": {
+       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
+       "name": "10.96.0.10_53",
+       "address": {
+        "socket_address": {
+         "address": "10.96.0.10",
+         "port_value": 53
+        }
+       },
+       "filter_chains": [
+        {
+         "filters": [
+          {
+           "name": "istio.stats",
+           "typed_config": {
+            "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+            "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
+            "value": {
+             "config": {
+              "root_id": "stats_outbound",
+              "vm_config": {
+               "vm_id": "tcp_stats_outbound",
+               "runtime": "envoy.wasm.runtime.null",
+               "code": {
+                "local": {
+                 "inline_string": "envoy.wasm.stats"
+                }
+               }
+              },
+              "configuration": {
+               "@type": "type.googleapis.com/google.protobuf.StringValue",
+               "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+              }
+             }
+            }
+           }
+          },
+          {
+           "name": "envoy.filters.network.tcp_proxy",
+           "typed_config": {
+            "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
+            "stat_prefix": "outbound|53||kube-dns.kube-system.svc.cluster.local",
+            "cluster": "outbound|53||kube-dns.kube-system.svc.cluster.local"
+           }
+          }
+         ]
+        }
+       ],
+       "traffic_direction": "OUTBOUND",
+       "bind_to_port": false
+      },
+      "last_updated": "2022-10-08T07:44:51.936Z"
+     }
+    },
+    {
+     "name": "10.99.226.237_443",
+     "active_state": {
+      "version_info": "2022-10-08T07:31:27Z/5",
+      "listener": {
+       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
+       "name": "10.99.226.237_443",
+       "address": {
+        "socket_address": {
+         "address": "10.99.226.237",
+         "port_value": 443
+        }
+       },
+       "filter_chains": [
+        {
+         "filters": [
+          {
+           "name": "istio.stats",
+           "typed_config": {
+            "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+            "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
+            "value": {
+             "config": {
+              "root_id": "stats_outbound",
+              "vm_config": {
+               "vm_id": "tcp_stats_outbound",
+               "runtime": "envoy.wasm.runtime.null",
+               "code": {
+                "local": {
+                 "inline_string": "envoy.wasm.stats"
+                }
+               }
+              },
+              "configuration": {
+               "@type": "type.googleapis.com/google.protobuf.StringValue",
+               "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+              }
+             }
+            }
+           }
+          },
+          {
+           "name": "envoy.filters.network.tcp_proxy",
+           "typed_config": {
+            "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
+            "stat_prefix": "outbound|443||istiod.istio-system.svc.cluster.local",
+            "cluster": "outbound|443||istiod.istio-system.svc.cluster.local"
+           }
+          }
+         ]
+        }
+       ],
+       "traffic_direction": "OUTBOUND",
+       "bind_to_port": false
+      },
+      "last_updated": "2022-10-08T07:44:51.937Z"
+     }
+    },
+    {
+     "name": "10.98.82.84_8080",
+     "active_state": {
+      "version_info": "2022-10-08T07:31:27Z/5",
+      "listener": {
+       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
+       "name": "10.98.82.84_8080",
+       "address": {
+        "socket_address": {
+         "address": "10.98.82.84",
+         "port_value": 8080
+        }
+       },
+       "filter_chains": [
+        {
+         "filter_chain_match": {
+          "transport_protocol": "raw_buffer",
+          "application_protocols": [
+           "http/1.1",
+           "h2c"
+          ]
+         },
+         "filters": [
+          {
+           "name": "envoy.filters.network.http_connection_manager",
+           "typed_config": {
+            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
+            "stat_prefix": "outbound_10.98.82.84_8080",
+            "rds": {
+             "config_source": {
+              "ads": {},
+              "initial_fetch_timeout": "0s",
+              "resource_api_version": "V3"
+             },
+             "route_config_name": "hello-world-server-service.breakdown-test.svc.cluster.local:8080"
+            },
+            "http_filters": [
+             {
+              "name": "istio.metadata_exchange",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "config": {
+                "vm_config": {
+                 "runtime": "envoy.wasm.runtime.null",
+                 "code": {
+                  "local": {
+                   "inline_string": "envoy.wasm.metadata_exchange"
+                  }
+                 }
+                },
+                "configuration": {
+                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
+                }
+               }
+              }
+             },
+             {
+              "name": "istio.alpn",
+              "typed_config": {
+               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
+               "alpn_override": [
+                {
+                 "alpn_override": [
+                  "istio-http/1.0",
+                  "istio",
+                  "http/1.0"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP11",
+                 "alpn_override": [
+                  "istio-http/1.1",
+                  "istio",
+                  "http/1.1"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP2",
+                 "alpn_override": [
+                  "istio-h2",
+                  "istio",
+                  "h2"
+                 ]
+                }
+               ]
+              }
+             },
+             {
+              "name": "envoy.filters.http.fault",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
+              }
+             },
+             {
+              "name": "envoy.filters.http.cors",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
+              }
+             },
+             {
+              "name": "istio.stats",
+              "typed_config": {
+               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "value": {
+                "config": {
+                 "root_id": "stats_outbound",
+                 "vm_config": {
+                  "vm_id": "stats_outbound",
+                  "runtime": "envoy.wasm.runtime.null",
+                  "code": {
+                   "local": {
+                    "inline_string": "envoy.wasm.stats"
+                   }
+                  }
+                 },
+                 "configuration": {
+                  "@type": "type.googleapis.com/google.protobuf.StringValue",
+                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+                 }
+                }
+               }
+              }
+             },
+             {
+              "name": "envoy.filters.http.router",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
+              }
+             }
+            ],
+            "tracing": {
+             "client_sampling": {
+              "value": 100
+             },
+             "random_sampling": {
+              "value": 1
+             },
+             "overall_sampling": {
+              "value": 100
+             },
+             "custom_tags": [
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.canonical_revision",
+               "literal": {
+                "value": "latest"
+               }
+              },
+              {
+               "tag": "istio.canonical_service",
+               "literal": {
+                "value": "unknown"
+               }
+              },
+              {
+               "tag": "istio.mesh_id",
+               "literal": {
+                "value": "cluster.local"
+               }
+              },
+              {
+               "tag": "istio.namespace",
+               "literal": {
+                "value": "iprule-test"
+               }
+              }
+             ]
+            },
+            "use_remote_address": false,
+            "upgrade_configs": [
+             {
+              "upgrade_type": "websocket"
+             }
+            ],
+            "stream_idle_timeout": "0s",
+            "normalize_path": true,
+            "request_id_extension": {
+             "typed_config": {
+              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
+              "use_request_id_for_trace_sampling": true
+             }
+            },
+            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
+           }
+          }
+         ]
+        }
+       ],
+       "listener_filters": [
+        {
+         "name": "envoy.filters.listener.tls_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
+         }
+        },
+        {
+         "name": "envoy.filters.listener.http_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
+         }
+        }
+       ],
+       "listener_filters_timeout": "0s",
+       "traffic_direction": "OUTBOUND",
+       "continue_on_listener_filters_timeout": true,
+       "default_filter_chain": {
+        "filters": [
+         {
+          "name": "istio.stats",
+          "typed_config": {
+           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
+           "value": {
+            "config": {
+             "root_id": "stats_outbound",
+             "vm_config": {
+              "vm_id": "tcp_stats_outbound",
+              "runtime": "envoy.wasm.runtime.null",
+              "code": {
+               "local": {
+                "inline_string": "envoy.wasm.stats"
+               }
+              }
+             },
+             "configuration": {
+              "@type": "type.googleapis.com/google.protobuf.StringValue",
+              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+             }
+            }
+           }
+          }
+         },
+         {
+          "name": "envoy.filters.network.tcp_proxy",
+          "typed_config": {
+           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
+           "stat_prefix": "outbound|8080||hello-world-server-service.breakdown-test.svc.cluster.local",
+           "cluster": "outbound|8080||hello-world-server-service.breakdown-test.svc.cluster.local"
+          }
+         }
+        ]
+       },
+       "bind_to_port": false
+      },
+      "last_updated": "2022-10-08T07:44:51.941Z"
+     }
+    },
+    {
+     "name": "10.98.230.181_15021",
+     "active_state": {
+      "version_info": "2022-10-08T07:31:27Z/5",
+      "listener": {
+       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
+       "name": "10.98.230.181_15021",
+       "address": {
+        "socket_address": {
+         "address": "10.98.230.181",
+         "port_value": 15021
+        }
+       },
+       "filter_chains": [
+        {
+         "filter_chain_match": {
+          "transport_protocol": "raw_buffer",
+          "application_protocols": [
+           "http/1.1",
+           "h2c"
+          ]
+         },
+         "filters": [
+          {
+           "name": "envoy.filters.network.http_connection_manager",
+           "typed_config": {
+            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
+            "stat_prefix": "outbound_10.98.230.181_15021",
+            "rds": {
+             "config_source": {
+              "ads": {},
+              "initial_fetch_timeout": "0s",
+              "resource_api_version": "V3"
+             },
+             "route_config_name": "istio-ingressgateway.istio-system.svc.cluster.local:15021"
+            },
+            "http_filters": [
+             {
+              "name": "istio.metadata_exchange",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "config": {
+                "vm_config": {
+                 "runtime": "envoy.wasm.runtime.null",
+                 "code": {
+                  "local": {
+                   "inline_string": "envoy.wasm.metadata_exchange"
+                  }
+                 }
+                },
+                "configuration": {
+                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
+                }
+               }
+              }
+             },
+             {
+              "name": "istio.alpn",
+              "typed_config": {
+               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
+               "alpn_override": [
+                {
+                 "alpn_override": [
+                  "istio-http/1.0",
+                  "istio",
+                  "http/1.0"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP11",
+                 "alpn_override": [
+                  "istio-http/1.1",
+                  "istio",
+                  "http/1.1"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP2",
+                 "alpn_override": [
+                  "istio-h2",
+                  "istio",
+                  "h2"
+                 ]
+                }
+               ]
+              }
+             },
+             {
+              "name": "envoy.filters.http.fault",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
+              }
+             },
+             {
+              "name": "envoy.filters.http.cors",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
+              }
+             },
+             {
+              "name": "istio.stats",
+              "typed_config": {
+               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "value": {
+                "config": {
+                 "root_id": "stats_outbound",
+                 "vm_config": {
+                  "vm_id": "stats_outbound",
+                  "runtime": "envoy.wasm.runtime.null",
+                  "code": {
+                   "local": {
+                    "inline_string": "envoy.wasm.stats"
+                   }
+                  }
+                 },
+                 "configuration": {
+                  "@type": "type.googleapis.com/google.protobuf.StringValue",
+                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+                 }
+                }
+               }
+              }
+             },
+             {
+              "name": "envoy.filters.http.router",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
+              }
+             }
+            ],
+            "tracing": {
+             "client_sampling": {
+              "value": 100
+             },
+             "random_sampling": {
+              "value": 1
+             },
+             "overall_sampling": {
+              "value": 100
+             },
+             "custom_tags": [
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.canonical_revision",
+               "literal": {
+                "value": "latest"
+               }
+              },
+              {
+               "tag": "istio.canonical_service",
+               "literal": {
+                "value": "unknown"
+               }
+              },
+              {
+               "tag": "istio.mesh_id",
+               "literal": {
+                "value": "cluster.local"
+               }
+              },
+              {
+               "tag": "istio.namespace",
+               "literal": {
+                "value": "iprule-test"
+               }
+              }
+             ]
+            },
+            "use_remote_address": false,
+            "upgrade_configs": [
+             {
+              "upgrade_type": "websocket"
+             }
+            ],
+            "stream_idle_timeout": "0s",
+            "normalize_path": true,
+            "request_id_extension": {
+             "typed_config": {
+              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
+              "use_request_id_for_trace_sampling": true
+             }
+            },
+            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
+           }
+          }
+         ]
+        }
+       ],
+       "listener_filters": [
+        {
+         "name": "envoy.filters.listener.tls_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
+         }
+        },
+        {
+         "name": "envoy.filters.listener.http_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
+         }
+        }
+       ],
+       "listener_filters_timeout": "0s",
+       "traffic_direction": "OUTBOUND",
+       "continue_on_listener_filters_timeout": true,
+       "default_filter_chain": {
+        "filters": [
+         {
+          "name": "istio.stats",
+          "typed_config": {
+           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
+           "value": {
+            "config": {
+             "root_id": "stats_outbound",
+             "vm_config": {
+              "vm_id": "tcp_stats_outbound",
+              "runtime": "envoy.wasm.runtime.null",
+              "code": {
+               "local": {
+                "inline_string": "envoy.wasm.stats"
+               }
+              }
+             },
+             "configuration": {
+              "@type": "type.googleapis.com/google.protobuf.StringValue",
+              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+             }
+            }
+           }
+          }
+         },
+         {
+          "name": "envoy.filters.network.tcp_proxy",
+          "typed_config": {
+           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
+           "stat_prefix": "outbound|15021||istio-ingressgateway.istio-system.svc.cluster.local",
+           "cluster": "outbound|15021||istio-ingressgateway.istio-system.svc.cluster.local"
+          }
+         }
+        ]
+       },
+       "bind_to_port": false
+      },
+      "last_updated": "2022-10-08T07:44:51.943Z"
+     }
+    },
+    {
+     "name": "0.0.0.0_15014",
+     "active_state": {
+      "version_info": "2022-10-08T07:31:27Z/5",
+      "listener": {
+       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
+       "name": "0.0.0.0_15014",
+       "address": {
+        "socket_address": {
+         "address": "0.0.0.0",
+         "port_value": 15014
+        }
+       },
+       "filter_chains": [
+        {
+         "filter_chain_match": {
+          "transport_protocol": "raw_buffer",
+          "application_protocols": [
+           "http/1.1",
+           "h2c"
+          ]
+         },
+         "filters": [
+          {
+           "name": "envoy.filters.network.http_connection_manager",
+           "typed_config": {
+            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
+            "stat_prefix": "outbound_0.0.0.0_15014",
+            "rds": {
+             "config_source": {
+              "ads": {},
+              "initial_fetch_timeout": "0s",
+              "resource_api_version": "V3"
+             },
+             "route_config_name": "15014"
+            },
+            "http_filters": [
+             {
+              "name": "istio.metadata_exchange",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "config": {
+                "vm_config": {
+                 "runtime": "envoy.wasm.runtime.null",
+                 "code": {
+                  "local": {
+                   "inline_string": "envoy.wasm.metadata_exchange"
+                  }
+                 }
+                },
+                "configuration": {
+                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
+                }
+               }
+              }
+             },
+             {
+              "name": "istio.alpn",
+              "typed_config": {
+               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
+               "alpn_override": [
+                {
+                 "alpn_override": [
+                  "istio-http/1.0",
+                  "istio",
+                  "http/1.0"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP11",
+                 "alpn_override": [
+                  "istio-http/1.1",
+                  "istio",
+                  "http/1.1"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP2",
+                 "alpn_override": [
+                  "istio-h2",
+                  "istio",
+                  "h2"
+                 ]
+                }
+               ]
+              }
+             },
+             {
+              "name": "envoy.filters.http.fault",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
+              }
+             },
+             {
+              "name": "envoy.filters.http.cors",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
+              }
+             },
+             {
+              "name": "istio.stats",
+              "typed_config": {
+               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "value": {
+                "config": {
+                 "root_id": "stats_outbound",
+                 "vm_config": {
+                  "vm_id": "stats_outbound",
+                  "runtime": "envoy.wasm.runtime.null",
+                  "code": {
+                   "local": {
+                    "inline_string": "envoy.wasm.stats"
+                   }
+                  }
+                 },
+                 "configuration": {
+                  "@type": "type.googleapis.com/google.protobuf.StringValue",
+                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+                 }
+                }
+               }
+              }
+             },
+             {
+              "name": "envoy.filters.http.router",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
+              }
+             }
+            ],
+            "tracing": {
+             "client_sampling": {
+              "value": 100
+             },
+             "random_sampling": {
+              "value": 1
+             },
+             "overall_sampling": {
+              "value": 100
+             },
+             "custom_tags": [
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.canonical_revision",
+               "literal": {
+                "value": "latest"
+               }
+              },
+              {
+               "tag": "istio.canonical_service",
+               "literal": {
+                "value": "unknown"
+               }
+              },
+              {
+               "tag": "istio.mesh_id",
+               "literal": {
+                "value": "cluster.local"
+               }
+              },
+              {
+               "tag": "istio.namespace",
+               "literal": {
+                "value": "iprule-test"
+               }
+              }
+             ]
+            },
+            "use_remote_address": false,
+            "upgrade_configs": [
+             {
+              "upgrade_type": "websocket"
+             }
+            ],
+            "stream_idle_timeout": "0s",
+            "normalize_path": true,
+            "request_id_extension": {
+             "typed_config": {
+              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
+              "use_request_id_for_trace_sampling": true
+             }
+            },
+            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
+           }
+          }
+         ]
+        }
+       ],
+       "listener_filters": [
+        {
+         "name": "envoy.filters.listener.tls_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
+         }
+        },
+        {
+         "name": "envoy.filters.listener.http_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
+         }
+        }
+       ],
+       "listener_filters_timeout": "0s",
+       "traffic_direction": "OUTBOUND",
+       "continue_on_listener_filters_timeout": true,
+       "default_filter_chain": {
+        "filter_chain_match": {},
+        "filters": [
+         {
+          "name": "istio.stats",
+          "typed_config": {
+           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
+           "value": {
+            "config": {
+             "root_id": "stats_outbound",
+             "vm_config": {
+              "vm_id": "tcp_stats_outbound",
+              "runtime": "envoy.wasm.runtime.null",
+              "code": {
+               "local": {
+                "inline_string": "envoy.wasm.stats"
+               }
+              }
+             },
+             "configuration": {
+              "@type": "type.googleapis.com/google.protobuf.StringValue",
+              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+             }
+            }
+           }
+          }
+         },
+         {
+          "name": "envoy.filters.network.tcp_proxy",
+          "typed_config": {
+           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
+           "stat_prefix": "PassthroughCluster",
+           "cluster": "PassthroughCluster"
+          }
+         }
+        ],
+        "name": "PassthroughFilterChain"
+       },
+       "bind_to_port": false
+      },
+      "last_updated": "2022-10-08T07:44:51.944Z"
+     }
+    },
+    {
+     "name": "10.96.0.10_9153",
+     "active_state": {
+      "version_info": "2022-10-08T07:31:27Z/5",
+      "listener": {
+       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
+       "name": "10.96.0.10_9153",
+       "address": {
+        "socket_address": {
+         "address": "10.96.0.10",
+         "port_value": 9153
+        }
+       },
+       "filter_chains": [
+        {
+         "filter_chain_match": {
+          "transport_protocol": "raw_buffer",
+          "application_protocols": [
+           "http/1.1",
+           "h2c"
+          ]
+         },
+         "filters": [
+          {
+           "name": "envoy.filters.network.http_connection_manager",
+           "typed_config": {
+            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
+            "stat_prefix": "outbound_10.96.0.10_9153",
+            "rds": {
+             "config_source": {
+              "ads": {},
+              "initial_fetch_timeout": "0s",
+              "resource_api_version": "V3"
+             },
+             "route_config_name": "kube-dns.kube-system.svc.cluster.local:9153"
+            },
+            "http_filters": [
+             {
+              "name": "istio.metadata_exchange",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "config": {
+                "vm_config": {
+                 "runtime": "envoy.wasm.runtime.null",
+                 "code": {
+                  "local": {
+                   "inline_string": "envoy.wasm.metadata_exchange"
+                  }
+                 }
+                },
+                "configuration": {
+                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
+                }
+               }
+              }
+             },
+             {
+              "name": "istio.alpn",
+              "typed_config": {
+               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
+               "alpn_override": [
+                {
+                 "alpn_override": [
+                  "istio-http/1.0",
+                  "istio",
+                  "http/1.0"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP11",
+                 "alpn_override": [
+                  "istio-http/1.1",
+                  "istio",
+                  "http/1.1"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP2",
+                 "alpn_override": [
+                  "istio-h2",
+                  "istio",
+                  "h2"
+                 ]
+                }
+               ]
+              }
+             },
+             {
+              "name": "envoy.filters.http.fault",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
+              }
+             },
+             {
+              "name": "envoy.filters.http.cors",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
+              }
+             },
+             {
+              "name": "istio.stats",
+              "typed_config": {
+               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "value": {
+                "config": {
+                 "root_id": "stats_outbound",
+                 "vm_config": {
+                  "vm_id": "stats_outbound",
+                  "runtime": "envoy.wasm.runtime.null",
+                  "code": {
+                   "local": {
+                    "inline_string": "envoy.wasm.stats"
+                   }
+                  }
+                 },
+                 "configuration": {
+                  "@type": "type.googleapis.com/google.protobuf.StringValue",
+                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+                 }
+                }
+               }
+              }
+             },
+             {
+              "name": "envoy.filters.http.router",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
+              }
+             }
+            ],
+            "tracing": {
+             "client_sampling": {
+              "value": 100
+             },
+             "random_sampling": {
+              "value": 1
+             },
+             "overall_sampling": {
+              "value": 100
+             },
+             "custom_tags": [
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.canonical_revision",
+               "literal": {
+                "value": "latest"
+               }
+              },
+              {
+               "tag": "istio.canonical_service",
+               "literal": {
+                "value": "unknown"
+               }
+              },
+              {
+               "tag": "istio.mesh_id",
+               "literal": {
+                "value": "cluster.local"
+               }
+              },
+              {
+               "tag": "istio.namespace",
+               "literal": {
+                "value": "iprule-test"
+               }
+              }
+             ]
+            },
+            "use_remote_address": false,
+            "upgrade_configs": [
+             {
+              "upgrade_type": "websocket"
+             }
+            ],
+            "stream_idle_timeout": "0s",
+            "normalize_path": true,
+            "request_id_extension": {
+             "typed_config": {
+              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
+              "use_request_id_for_trace_sampling": true
+             }
+            },
+            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
+           }
+          }
+         ]
+        }
+       ],
+       "listener_filters": [
+        {
+         "name": "envoy.filters.listener.tls_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
+         }
+        },
+        {
+         "name": "envoy.filters.listener.http_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
+         }
+        }
+       ],
+       "listener_filters_timeout": "0s",
+       "traffic_direction": "OUTBOUND",
+       "continue_on_listener_filters_timeout": true,
+       "default_filter_chain": {
+        "filters": [
+         {
+          "name": "istio.stats",
+          "typed_config": {
+           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
+           "value": {
+            "config": {
+             "root_id": "stats_outbound",
+             "vm_config": {
+              "vm_id": "tcp_stats_outbound",
+              "runtime": "envoy.wasm.runtime.null",
+              "code": {
+               "local": {
+                "inline_string": "envoy.wasm.stats"
+               }
+              }
+             },
+             "configuration": {
+              "@type": "type.googleapis.com/google.protobuf.StringValue",
+              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+             }
+            }
+           }
+          }
+         },
+         {
+          "name": "envoy.filters.network.tcp_proxy",
+          "typed_config": {
+           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
+           "stat_prefix": "outbound|9153||kube-dns.kube-system.svc.cluster.local",
+           "cluster": "outbound|9153||kube-dns.kube-system.svc.cluster.local"
+          }
+         }
+        ]
+       },
+       "bind_to_port": false
+      },
+      "last_updated": "2022-10-08T07:44:51.946Z"
      }
     },
     {
@@ -4970,7 +6216,7 @@
               {
                "tag": "istio.canonical_service",
                "literal": {
-                "value": "client"
+                "value": "unknown"
                }
               },
               {
@@ -5063,7 +6309,320 @@
        },
        "bind_to_port": false
       },
-      "last_updated": "2022-10-08T07:36:11.414Z"
+      "last_updated": "2022-10-08T07:44:51.948Z"
+     }
+    },
+    {
+     "name": "0.0.0.0_80",
+     "active_state": {
+      "version_info": "2022-10-08T07:31:27Z/5",
+      "listener": {
+       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
+       "name": "0.0.0.0_80",
+       "address": {
+        "socket_address": {
+         "address": "0.0.0.0",
+         "port_value": 80
+        }
+       },
+       "filter_chains": [
+        {
+         "filter_chain_match": {
+          "transport_protocol": "raw_buffer",
+          "application_protocols": [
+           "http/1.1",
+           "h2c"
+          ]
+         },
+         "filters": [
+          {
+           "name": "envoy.filters.network.http_connection_manager",
+           "typed_config": {
+            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
+            "stat_prefix": "outbound_0.0.0.0_80",
+            "rds": {
+             "config_source": {
+              "ads": {},
+              "initial_fetch_timeout": "0s",
+              "resource_api_version": "V3"
+             },
+             "route_config_name": "80"
+            },
+            "http_filters": [
+             {
+              "name": "istio.metadata_exchange",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "config": {
+                "vm_config": {
+                 "runtime": "envoy.wasm.runtime.null",
+                 "code": {
+                  "local": {
+                   "inline_string": "envoy.wasm.metadata_exchange"
+                  }
+                 }
+                },
+                "configuration": {
+                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
+                }
+               }
+              }
+             },
+             {
+              "name": "istio.alpn",
+              "typed_config": {
+               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
+               "alpn_override": [
+                {
+                 "alpn_override": [
+                  "istio-http/1.0",
+                  "istio",
+                  "http/1.0"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP11",
+                 "alpn_override": [
+                  "istio-http/1.1",
+                  "istio",
+                  "http/1.1"
+                 ]
+                },
+                {
+                 "upstream_protocol": "HTTP2",
+                 "alpn_override": [
+                  "istio-h2",
+                  "istio",
+                  "h2"
+                 ]
+                }
+               ]
+              }
+             },
+             {
+              "name": "envoy.filters.http.fault",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
+              }
+             },
+             {
+              "name": "envoy.filters.http.cors",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
+              }
+             },
+             {
+              "name": "istio.stats",
+              "typed_config": {
+               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
+               "value": {
+                "config": {
+                 "root_id": "stats_outbound",
+                 "vm_config": {
+                  "vm_id": "stats_outbound",
+                  "runtime": "envoy.wasm.runtime.null",
+                  "code": {
+                   "local": {
+                    "inline_string": "envoy.wasm.stats"
+                   }
+                  }
+                 },
+                 "configuration": {
+                  "@type": "type.googleapis.com/google.protobuf.StringValue",
+                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+                 }
+                }
+               }
+              }
+             },
+             {
+              "name": "envoy.filters.http.router",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
+              }
+             }
+            ],
+            "tracing": {
+             "client_sampling": {
+              "value": 100
+             },
+             "random_sampling": {
+              "value": 1
+             },
+             "overall_sampling": {
+              "value": 100
+             },
+             "custom_tags": [
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.allow_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_allow_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.name",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.authorization.dry_run.deny_policy.result",
+               "metadata": {
+                "kind": {
+                 "request": {}
+                },
+                "metadata_key": {
+                 "key": "envoy.filters.http.rbac",
+                 "path": [
+                  {
+                   "key": "istio_dry_run_deny_shadow_engine_result"
+                  }
+                 ]
+                }
+               }
+              },
+              {
+               "tag": "istio.canonical_revision",
+               "literal": {
+                "value": "latest"
+               }
+              },
+              {
+               "tag": "istio.canonical_service",
+               "literal": {
+                "value": "unknown"
+               }
+              },
+              {
+               "tag": "istio.mesh_id",
+               "literal": {
+                "value": "cluster.local"
+               }
+              },
+              {
+               "tag": "istio.namespace",
+               "literal": {
+                "value": "iprule-test"
+               }
+              }
+             ]
+            },
+            "use_remote_address": false,
+            "upgrade_configs": [
+             {
+              "upgrade_type": "websocket"
+             }
+            ],
+            "stream_idle_timeout": "0s",
+            "normalize_path": true,
+            "request_id_extension": {
+             "typed_config": {
+              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
+              "use_request_id_for_trace_sampling": true
+             }
+            },
+            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
+           }
+          }
+         ]
+        }
+       ],
+       "listener_filters": [
+        {
+         "name": "envoy.filters.listener.tls_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
+         }
+        },
+        {
+         "name": "envoy.filters.listener.http_inspector",
+         "typed_config": {
+          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
+         }
+        }
+       ],
+       "listener_filters_timeout": "0s",
+       "traffic_direction": "OUTBOUND",
+       "continue_on_listener_filters_timeout": true,
+       "default_filter_chain": {
+        "filter_chain_match": {},
+        "filters": [
+         {
+          "name": "istio.stats",
+          "typed_config": {
+           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
+           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
+           "value": {
+            "config": {
+             "root_id": "stats_outbound",
+             "vm_config": {
+              "vm_id": "tcp_stats_outbound",
+              "runtime": "envoy.wasm.runtime.null",
+              "code": {
+               "local": {
+                "inline_string": "envoy.wasm.stats"
+               }
+              }
+             },
+             "configuration": {
+              "@type": "type.googleapis.com/google.protobuf.StringValue",
+              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
+             }
+            }
+           }
+          }
+         },
+         {
+          "name": "envoy.filters.network.tcp_proxy",
+          "typed_config": {
+           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
+           "stat_prefix": "PassthroughCluster",
+           "cluster": "PassthroughCluster"
+          }
+         }
+        ],
+        "name": "PassthroughFilterChain"
+       },
+       "bind_to_port": false
+      },
+      "last_updated": "2022-10-08T07:44:51.950Z"
      }
     },
     {
@@ -5289,7 +6848,7 @@
               {
                "tag": "istio.canonical_service",
                "literal": {
-                "value": "client"
+                "value": "unknown"
                }
               },
               {
@@ -5384,1566 +6943,7 @@
        },
        "bind_to_port": false
       },
-      "last_updated": "2022-10-08T07:36:11.415Z"
-     }
-    },
-    {
-     "name": "0.0.0.0_15014",
-     "active_state": {
-      "version_info": "2022-10-08T07:31:27Z/5",
-      "listener": {
-       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
-       "name": "0.0.0.0_15014",
-       "address": {
-        "socket_address": {
-         "address": "0.0.0.0",
-         "port_value": 15014
-        }
-       },
-       "filter_chains": [
-        {
-         "filter_chain_match": {
-          "transport_protocol": "raw_buffer",
-          "application_protocols": [
-           "http/1.1",
-           "h2c"
-          ]
-         },
-         "filters": [
-          {
-           "name": "envoy.filters.network.http_connection_manager",
-           "typed_config": {
-            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
-            "stat_prefix": "outbound_0.0.0.0_15014",
-            "rds": {
-             "config_source": {
-              "ads": {},
-              "initial_fetch_timeout": "0s",
-              "resource_api_version": "V3"
-             },
-             "route_config_name": "15014"
-            },
-            "http_filters": [
-             {
-              "name": "istio.metadata_exchange",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "config": {
-                "vm_config": {
-                 "runtime": "envoy.wasm.runtime.null",
-                 "code": {
-                  "local": {
-                   "inline_string": "envoy.wasm.metadata_exchange"
-                  }
-                 }
-                },
-                "configuration": {
-                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
-                }
-               }
-              }
-             },
-             {
-              "name": "istio.alpn",
-              "typed_config": {
-               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
-               "alpn_override": [
-                {
-                 "alpn_override": [
-                  "istio-http/1.0",
-                  "istio",
-                  "http/1.0"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP11",
-                 "alpn_override": [
-                  "istio-http/1.1",
-                  "istio",
-                  "http/1.1"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP2",
-                 "alpn_override": [
-                  "istio-h2",
-                  "istio",
-                  "h2"
-                 ]
-                }
-               ]
-              }
-             },
-             {
-              "name": "envoy.filters.http.fault",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
-              }
-             },
-             {
-              "name": "envoy.filters.http.cors",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
-              }
-             },
-             {
-              "name": "istio.stats",
-              "typed_config": {
-               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "value": {
-                "config": {
-                 "root_id": "stats_outbound",
-                 "vm_config": {
-                  "vm_id": "stats_outbound",
-                  "runtime": "envoy.wasm.runtime.null",
-                  "code": {
-                   "local": {
-                    "inline_string": "envoy.wasm.stats"
-                   }
-                  }
-                 },
-                 "configuration": {
-                  "@type": "type.googleapis.com/google.protobuf.StringValue",
-                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-                 }
-                }
-               }
-              }
-             },
-             {
-              "name": "envoy.filters.http.router",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
-              }
-             }
-            ],
-            "tracing": {
-             "client_sampling": {
-              "value": 100
-             },
-             "random_sampling": {
-              "value": 1
-             },
-             "overall_sampling": {
-              "value": 100
-             },
-             "custom_tags": [
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.canonical_revision",
-               "literal": {
-                "value": "latest"
-               }
-              },
-              {
-               "tag": "istio.canonical_service",
-               "literal": {
-                "value": "client"
-               }
-              },
-              {
-               "tag": "istio.mesh_id",
-               "literal": {
-                "value": "cluster.local"
-               }
-              },
-              {
-               "tag": "istio.namespace",
-               "literal": {
-                "value": "iprule-test"
-               }
-              }
-             ]
-            },
-            "use_remote_address": false,
-            "upgrade_configs": [
-             {
-              "upgrade_type": "websocket"
-             }
-            ],
-            "stream_idle_timeout": "0s",
-            "normalize_path": true,
-            "request_id_extension": {
-             "typed_config": {
-              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
-              "use_request_id_for_trace_sampling": true
-             }
-            },
-            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
-           }
-          }
-         ]
-        }
-       ],
-       "listener_filters": [
-        {
-         "name": "envoy.filters.listener.tls_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
-         }
-        },
-        {
-         "name": "envoy.filters.listener.http_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
-         }
-        }
-       ],
-       "listener_filters_timeout": "0s",
-       "traffic_direction": "OUTBOUND",
-       "continue_on_listener_filters_timeout": true,
-       "default_filter_chain": {
-        "filter_chain_match": {},
-        "filters": [
-         {
-          "name": "istio.stats",
-          "typed_config": {
-           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
-           "value": {
-            "config": {
-             "root_id": "stats_outbound",
-             "vm_config": {
-              "vm_id": "tcp_stats_outbound",
-              "runtime": "envoy.wasm.runtime.null",
-              "code": {
-               "local": {
-                "inline_string": "envoy.wasm.stats"
-               }
-              }
-             },
-             "configuration": {
-              "@type": "type.googleapis.com/google.protobuf.StringValue",
-              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-             }
-            }
-           }
-          }
-         },
-         {
-          "name": "envoy.filters.network.tcp_proxy",
-          "typed_config": {
-           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
-           "stat_prefix": "PassthroughCluster",
-           "cluster": "PassthroughCluster"
-          }
-         }
-        ],
-        "name": "PassthroughFilterChain"
-       },
-       "bind_to_port": false
-      },
-      "last_updated": "2022-10-08T07:36:11.416Z"
-     }
-    },
-    {
-     "name": "10.96.0.10_9153",
-     "active_state": {
-      "version_info": "2022-10-08T07:31:27Z/5",
-      "listener": {
-       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
-       "name": "10.96.0.10_9153",
-       "address": {
-        "socket_address": {
-         "address": "10.96.0.10",
-         "port_value": 9153
-        }
-       },
-       "filter_chains": [
-        {
-         "filter_chain_match": {
-          "transport_protocol": "raw_buffer",
-          "application_protocols": [
-           "http/1.1",
-           "h2c"
-          ]
-         },
-         "filters": [
-          {
-           "name": "envoy.filters.network.http_connection_manager",
-           "typed_config": {
-            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
-            "stat_prefix": "outbound_10.96.0.10_9153",
-            "rds": {
-             "config_source": {
-              "ads": {},
-              "initial_fetch_timeout": "0s",
-              "resource_api_version": "V3"
-             },
-             "route_config_name": "kube-dns.kube-system.svc.cluster.local:9153"
-            },
-            "http_filters": [
-             {
-              "name": "istio.metadata_exchange",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "config": {
-                "vm_config": {
-                 "runtime": "envoy.wasm.runtime.null",
-                 "code": {
-                  "local": {
-                   "inline_string": "envoy.wasm.metadata_exchange"
-                  }
-                 }
-                },
-                "configuration": {
-                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
-                }
-               }
-              }
-             },
-             {
-              "name": "istio.alpn",
-              "typed_config": {
-               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
-               "alpn_override": [
-                {
-                 "alpn_override": [
-                  "istio-http/1.0",
-                  "istio",
-                  "http/1.0"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP11",
-                 "alpn_override": [
-                  "istio-http/1.1",
-                  "istio",
-                  "http/1.1"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP2",
-                 "alpn_override": [
-                  "istio-h2",
-                  "istio",
-                  "h2"
-                 ]
-                }
-               ]
-              }
-             },
-             {
-              "name": "envoy.filters.http.fault",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
-              }
-             },
-             {
-              "name": "envoy.filters.http.cors",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
-              }
-             },
-             {
-              "name": "istio.stats",
-              "typed_config": {
-               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "value": {
-                "config": {
-                 "root_id": "stats_outbound",
-                 "vm_config": {
-                  "vm_id": "stats_outbound",
-                  "runtime": "envoy.wasm.runtime.null",
-                  "code": {
-                   "local": {
-                    "inline_string": "envoy.wasm.stats"
-                   }
-                  }
-                 },
-                 "configuration": {
-                  "@type": "type.googleapis.com/google.protobuf.StringValue",
-                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-                 }
-                }
-               }
-              }
-             },
-             {
-              "name": "envoy.filters.http.router",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
-              }
-             }
-            ],
-            "tracing": {
-             "client_sampling": {
-              "value": 100
-             },
-             "random_sampling": {
-              "value": 1
-             },
-             "overall_sampling": {
-              "value": 100
-             },
-             "custom_tags": [
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.canonical_revision",
-               "literal": {
-                "value": "latest"
-               }
-              },
-              {
-               "tag": "istio.canonical_service",
-               "literal": {
-                "value": "client"
-               }
-              },
-              {
-               "tag": "istio.mesh_id",
-               "literal": {
-                "value": "cluster.local"
-               }
-              },
-              {
-               "tag": "istio.namespace",
-               "literal": {
-                "value": "iprule-test"
-               }
-              }
-             ]
-            },
-            "use_remote_address": false,
-            "upgrade_configs": [
-             {
-              "upgrade_type": "websocket"
-             }
-            ],
-            "stream_idle_timeout": "0s",
-            "normalize_path": true,
-            "request_id_extension": {
-             "typed_config": {
-              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
-              "use_request_id_for_trace_sampling": true
-             }
-            },
-            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
-           }
-          }
-         ]
-        }
-       ],
-       "listener_filters": [
-        {
-         "name": "envoy.filters.listener.tls_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
-         }
-        },
-        {
-         "name": "envoy.filters.listener.http_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
-         }
-        }
-       ],
-       "listener_filters_timeout": "0s",
-       "traffic_direction": "OUTBOUND",
-       "continue_on_listener_filters_timeout": true,
-       "default_filter_chain": {
-        "filters": [
-         {
-          "name": "istio.stats",
-          "typed_config": {
-           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
-           "value": {
-            "config": {
-             "root_id": "stats_outbound",
-             "vm_config": {
-              "vm_id": "tcp_stats_outbound",
-              "runtime": "envoy.wasm.runtime.null",
-              "code": {
-               "local": {
-                "inline_string": "envoy.wasm.stats"
-               }
-              }
-             },
-             "configuration": {
-              "@type": "type.googleapis.com/google.protobuf.StringValue",
-              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-             }
-            }
-           }
-          }
-         },
-         {
-          "name": "envoy.filters.network.tcp_proxy",
-          "typed_config": {
-           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
-           "stat_prefix": "outbound|9153||kube-dns.kube-system.svc.cluster.local",
-           "cluster": "outbound|9153||kube-dns.kube-system.svc.cluster.local"
-          }
-         }
-        ]
-       },
-       "bind_to_port": false
-      },
-      "last_updated": "2022-10-08T07:36:11.417Z"
-     }
-    },
-    {
-     "name": "10.98.82.84_8080",
-     "active_state": {
-      "version_info": "2022-10-08T07:31:27Z/5",
-      "listener": {
-       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
-       "name": "10.98.82.84_8080",
-       "address": {
-        "socket_address": {
-         "address": "10.98.82.84",
-         "port_value": 8080
-        }
-       },
-       "filter_chains": [
-        {
-         "filter_chain_match": {
-          "transport_protocol": "raw_buffer",
-          "application_protocols": [
-           "http/1.1",
-           "h2c"
-          ]
-         },
-         "filters": [
-          {
-           "name": "envoy.filters.network.http_connection_manager",
-           "typed_config": {
-            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
-            "stat_prefix": "outbound_10.98.82.84_8080",
-            "rds": {
-             "config_source": {
-              "ads": {},
-              "initial_fetch_timeout": "0s",
-              "resource_api_version": "V3"
-             },
-             "route_config_name": "hello-world-server-service.breakdown-test.svc.cluster.local:8080"
-            },
-            "http_filters": [
-             {
-              "name": "istio.metadata_exchange",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "config": {
-                "vm_config": {
-                 "runtime": "envoy.wasm.runtime.null",
-                 "code": {
-                  "local": {
-                   "inline_string": "envoy.wasm.metadata_exchange"
-                  }
-                 }
-                },
-                "configuration": {
-                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
-                }
-               }
-              }
-             },
-             {
-              "name": "istio.alpn",
-              "typed_config": {
-               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
-               "alpn_override": [
-                {
-                 "alpn_override": [
-                  "istio-http/1.0",
-                  "istio",
-                  "http/1.0"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP11",
-                 "alpn_override": [
-                  "istio-http/1.1",
-                  "istio",
-                  "http/1.1"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP2",
-                 "alpn_override": [
-                  "istio-h2",
-                  "istio",
-                  "h2"
-                 ]
-                }
-               ]
-              }
-             },
-             {
-              "name": "envoy.filters.http.fault",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
-              }
-             },
-             {
-              "name": "envoy.filters.http.cors",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
-              }
-             },
-             {
-              "name": "istio.stats",
-              "typed_config": {
-               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "value": {
-                "config": {
-                 "root_id": "stats_outbound",
-                 "vm_config": {
-                  "vm_id": "stats_outbound",
-                  "runtime": "envoy.wasm.runtime.null",
-                  "code": {
-                   "local": {
-                    "inline_string": "envoy.wasm.stats"
-                   }
-                  }
-                 },
-                 "configuration": {
-                  "@type": "type.googleapis.com/google.protobuf.StringValue",
-                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-                 }
-                }
-               }
-              }
-             },
-             {
-              "name": "envoy.filters.http.router",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
-              }
-             }
-            ],
-            "tracing": {
-             "client_sampling": {
-              "value": 100
-             },
-             "random_sampling": {
-              "value": 1
-             },
-             "overall_sampling": {
-              "value": 100
-             },
-             "custom_tags": [
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.canonical_revision",
-               "literal": {
-                "value": "latest"
-               }
-              },
-              {
-               "tag": "istio.canonical_service",
-               "literal": {
-                "value": "client"
-               }
-              },
-              {
-               "tag": "istio.mesh_id",
-               "literal": {
-                "value": "cluster.local"
-               }
-              },
-              {
-               "tag": "istio.namespace",
-               "literal": {
-                "value": "iprule-test"
-               }
-              }
-             ]
-            },
-            "use_remote_address": false,
-            "upgrade_configs": [
-             {
-              "upgrade_type": "websocket"
-             }
-            ],
-            "stream_idle_timeout": "0s",
-            "normalize_path": true,
-            "request_id_extension": {
-             "typed_config": {
-              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
-              "use_request_id_for_trace_sampling": true
-             }
-            },
-            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
-           }
-          }
-         ]
-        }
-       ],
-       "listener_filters": [
-        {
-         "name": "envoy.filters.listener.tls_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
-         }
-        },
-        {
-         "name": "envoy.filters.listener.http_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
-         }
-        }
-       ],
-       "listener_filters_timeout": "0s",
-       "traffic_direction": "OUTBOUND",
-       "continue_on_listener_filters_timeout": true,
-       "default_filter_chain": {
-        "filters": [
-         {
-          "name": "istio.stats",
-          "typed_config": {
-           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
-           "value": {
-            "config": {
-             "root_id": "stats_outbound",
-             "vm_config": {
-              "vm_id": "tcp_stats_outbound",
-              "runtime": "envoy.wasm.runtime.null",
-              "code": {
-               "local": {
-                "inline_string": "envoy.wasm.stats"
-               }
-              }
-             },
-             "configuration": {
-              "@type": "type.googleapis.com/google.protobuf.StringValue",
-              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-             }
-            }
-           }
-          }
-         },
-         {
-          "name": "envoy.filters.network.tcp_proxy",
-          "typed_config": {
-           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
-           "stat_prefix": "outbound|8080||hello-world-server-service.breakdown-test.svc.cluster.local",
-           "cluster": "outbound|8080||hello-world-server-service.breakdown-test.svc.cluster.local"
-          }
-         }
-        ]
-       },
-       "bind_to_port": false
-      },
-      "last_updated": "2022-10-08T07:36:11.418Z"
-     }
-    },
-    {
-     "name": "0.0.0.0_80",
-     "active_state": {
-      "version_info": "2022-10-08T07:31:27Z/5",
-      "listener": {
-       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
-       "name": "0.0.0.0_80",
-       "address": {
-        "socket_address": {
-         "address": "0.0.0.0",
-         "port_value": 80
-        }
-       },
-       "filter_chains": [
-        {
-         "filter_chain_match": {
-          "transport_protocol": "raw_buffer",
-          "application_protocols": [
-           "http/1.1",
-           "h2c"
-          ]
-         },
-         "filters": [
-          {
-           "name": "envoy.filters.network.http_connection_manager",
-           "typed_config": {
-            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
-            "stat_prefix": "outbound_0.0.0.0_80",
-            "rds": {
-             "config_source": {
-              "ads": {},
-              "initial_fetch_timeout": "0s",
-              "resource_api_version": "V3"
-             },
-             "route_config_name": "80"
-            },
-            "http_filters": [
-             {
-              "name": "istio.metadata_exchange",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "config": {
-                "vm_config": {
-                 "runtime": "envoy.wasm.runtime.null",
-                 "code": {
-                  "local": {
-                   "inline_string": "envoy.wasm.metadata_exchange"
-                  }
-                 }
-                },
-                "configuration": {
-                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
-                }
-               }
-              }
-             },
-             {
-              "name": "istio.alpn",
-              "typed_config": {
-               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
-               "alpn_override": [
-                {
-                 "alpn_override": [
-                  "istio-http/1.0",
-                  "istio",
-                  "http/1.0"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP11",
-                 "alpn_override": [
-                  "istio-http/1.1",
-                  "istio",
-                  "http/1.1"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP2",
-                 "alpn_override": [
-                  "istio-h2",
-                  "istio",
-                  "h2"
-                 ]
-                }
-               ]
-              }
-             },
-             {
-              "name": "envoy.filters.http.fault",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
-              }
-             },
-             {
-              "name": "envoy.filters.http.cors",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
-              }
-             },
-             {
-              "name": "istio.stats",
-              "typed_config": {
-               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "value": {
-                "config": {
-                 "root_id": "stats_outbound",
-                 "vm_config": {
-                  "vm_id": "stats_outbound",
-                  "runtime": "envoy.wasm.runtime.null",
-                  "code": {
-                   "local": {
-                    "inline_string": "envoy.wasm.stats"
-                   }
-                  }
-                 },
-                 "configuration": {
-                  "@type": "type.googleapis.com/google.protobuf.StringValue",
-                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-                 }
-                }
-               }
-              }
-             },
-             {
-              "name": "envoy.filters.http.router",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
-              }
-             }
-            ],
-            "tracing": {
-             "client_sampling": {
-              "value": 100
-             },
-             "random_sampling": {
-              "value": 1
-             },
-             "overall_sampling": {
-              "value": 100
-             },
-             "custom_tags": [
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.canonical_revision",
-               "literal": {
-                "value": "latest"
-               }
-              },
-              {
-               "tag": "istio.canonical_service",
-               "literal": {
-                "value": "client"
-               }
-              },
-              {
-               "tag": "istio.mesh_id",
-               "literal": {
-                "value": "cluster.local"
-               }
-              },
-              {
-               "tag": "istio.namespace",
-               "literal": {
-                "value": "iprule-test"
-               }
-              }
-             ]
-            },
-            "use_remote_address": false,
-            "upgrade_configs": [
-             {
-              "upgrade_type": "websocket"
-             }
-            ],
-            "stream_idle_timeout": "0s",
-            "normalize_path": true,
-            "request_id_extension": {
-             "typed_config": {
-              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
-              "use_request_id_for_trace_sampling": true
-             }
-            },
-            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
-           }
-          }
-         ]
-        }
-       ],
-       "listener_filters": [
-        {
-         "name": "envoy.filters.listener.tls_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
-         }
-        },
-        {
-         "name": "envoy.filters.listener.http_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
-         }
-        }
-       ],
-       "listener_filters_timeout": "0s",
-       "traffic_direction": "OUTBOUND",
-       "continue_on_listener_filters_timeout": true,
-       "default_filter_chain": {
-        "filter_chain_match": {},
-        "filters": [
-         {
-          "name": "istio.stats",
-          "typed_config": {
-           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
-           "value": {
-            "config": {
-             "root_id": "stats_outbound",
-             "vm_config": {
-              "vm_id": "tcp_stats_outbound",
-              "runtime": "envoy.wasm.runtime.null",
-              "code": {
-               "local": {
-                "inline_string": "envoy.wasm.stats"
-               }
-              }
-             },
-             "configuration": {
-              "@type": "type.googleapis.com/google.protobuf.StringValue",
-              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-             }
-            }
-           }
-          }
-         },
-         {
-          "name": "envoy.filters.network.tcp_proxy",
-          "typed_config": {
-           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
-           "stat_prefix": "PassthroughCluster",
-           "cluster": "PassthroughCluster"
-          }
-         }
-        ],
-        "name": "PassthroughFilterChain"
-       },
-       "bind_to_port": false
-      },
-      "last_updated": "2022-10-08T07:36:11.419Z"
-     }
-    },
-    {
-     "name": "10.98.230.181_15021",
-     "active_state": {
-      "version_info": "2022-10-08T07:31:27Z/5",
-      "listener": {
-       "@type": "type.googleapis.com/envoy.config.listener.v3.Listener",
-       "name": "10.98.230.181_15021",
-       "address": {
-        "socket_address": {
-         "address": "10.98.230.181",
-         "port_value": 15021
-        }
-       },
-       "filter_chains": [
-        {
-         "filter_chain_match": {
-          "transport_protocol": "raw_buffer",
-          "application_protocols": [
-           "http/1.1",
-           "h2c"
-          ]
-         },
-         "filters": [
-          {
-           "name": "envoy.filters.network.http_connection_manager",
-           "typed_config": {
-            "@type": "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager",
-            "stat_prefix": "outbound_10.98.230.181_15021",
-            "rds": {
-             "config_source": {
-              "ads": {},
-              "initial_fetch_timeout": "0s",
-              "resource_api_version": "V3"
-             },
-             "route_config_name": "istio-ingressgateway.istio-system.svc.cluster.local:15021"
-            },
-            "http_filters": [
-             {
-              "name": "istio.metadata_exchange",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "config": {
-                "vm_config": {
-                 "runtime": "envoy.wasm.runtime.null",
-                 "code": {
-                  "local": {
-                   "inline_string": "envoy.wasm.metadata_exchange"
-                  }
-                 }
-                },
-                "configuration": {
-                 "@type": "type.googleapis.com/envoy.tcp.metadataexchange.config.MetadataExchange"
-                }
-               }
-              }
-             },
-             {
-              "name": "istio.alpn",
-              "typed_config": {
-               "@type": "type.googleapis.com/istio.envoy.config.filter.http.alpn.v2alpha1.FilterConfig",
-               "alpn_override": [
-                {
-                 "alpn_override": [
-                  "istio-http/1.0",
-                  "istio",
-                  "http/1.0"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP11",
-                 "alpn_override": [
-                  "istio-http/1.1",
-                  "istio",
-                  "http/1.1"
-                 ]
-                },
-                {
-                 "upstream_protocol": "HTTP2",
-                 "alpn_override": [
-                  "istio-h2",
-                  "istio",
-                  "h2"
-                 ]
-                }
-               ]
-              }
-             },
-             {
-              "name": "envoy.filters.http.fault",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault"
-              }
-             },
-             {
-              "name": "envoy.filters.http.cors",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"
-              }
-             },
-             {
-              "name": "istio.stats",
-              "typed_config": {
-               "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-               "type_url": "type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm",
-               "value": {
-                "config": {
-                 "root_id": "stats_outbound",
-                 "vm_config": {
-                  "vm_id": "stats_outbound",
-                  "runtime": "envoy.wasm.runtime.null",
-                  "code": {
-                   "local": {
-                    "inline_string": "envoy.wasm.stats"
-                   }
-                  }
-                 },
-                 "configuration": {
-                  "@type": "type.googleapis.com/google.protobuf.StringValue",
-                  "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-                 }
-                }
-               }
-              }
-             },
-             {
-              "name": "envoy.filters.http.router",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
-              }
-             }
-            ],
-            "tracing": {
-             "client_sampling": {
-              "value": 100
-             },
-             "random_sampling": {
-              "value": 1
-             },
-             "overall_sampling": {
-              "value": 100
-             },
-             "custom_tags": [
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.allow_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_allow_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.name",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_effective_policy_id"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.authorization.dry_run.deny_policy.result",
-               "metadata": {
-                "kind": {
-                 "request": {}
-                },
-                "metadata_key": {
-                 "key": "envoy.filters.http.rbac",
-                 "path": [
-                  {
-                   "key": "istio_dry_run_deny_shadow_engine_result"
-                  }
-                 ]
-                }
-               }
-              },
-              {
-               "tag": "istio.canonical_revision",
-               "literal": {
-                "value": "latest"
-               }
-              },
-              {
-               "tag": "istio.canonical_service",
-               "literal": {
-                "value": "client"
-               }
-              },
-              {
-               "tag": "istio.mesh_id",
-               "literal": {
-                "value": "cluster.local"
-               }
-              },
-              {
-               "tag": "istio.namespace",
-               "literal": {
-                "value": "iprule-test"
-               }
-              }
-             ]
-            },
-            "use_remote_address": false,
-            "upgrade_configs": [
-             {
-              "upgrade_type": "websocket"
-             }
-            ],
-            "stream_idle_timeout": "0s",
-            "normalize_path": true,
-            "request_id_extension": {
-             "typed_config": {
-              "@type": "type.googleapis.com/envoy.extensions.request_id.uuid.v3.UuidRequestIdConfig",
-              "use_request_id_for_trace_sampling": true
-             }
-            },
-            "path_with_escaped_slashes_action": "KEEP_UNCHANGED"
-           }
-          }
-         ]
-        }
-       ],
-       "listener_filters": [
-        {
-         "name": "envoy.filters.listener.tls_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
-         }
-        },
-        {
-         "name": "envoy.filters.listener.http_inspector",
-         "typed_config": {
-          "@type": "type.googleapis.com/envoy.extensions.filters.listener.http_inspector.v3.HttpInspector"
-         }
-        }
-       ],
-       "listener_filters_timeout": "0s",
-       "traffic_direction": "OUTBOUND",
-       "continue_on_listener_filters_timeout": true,
-       "default_filter_chain": {
-        "filters": [
-         {
-          "name": "istio.stats",
-          "typed_config": {
-           "@type": "type.googleapis.com/udpa.type.v1.TypedStruct",
-           "type_url": "type.googleapis.com/envoy.extensions.filters.network.wasm.v3.Wasm",
-           "value": {
-            "config": {
-             "root_id": "stats_outbound",
-             "vm_config": {
-              "vm_id": "tcp_stats_outbound",
-              "runtime": "envoy.wasm.runtime.null",
-              "code": {
-               "local": {
-                "inline_string": "envoy.wasm.stats"
-               }
-              }
-             },
-             "configuration": {
-              "@type": "type.googleapis.com/google.protobuf.StringValue",
-              "value": "{\n  \"debug\": \"false\",\n  \"stat_prefix\": \"istio\"\n}\n"
-             }
-            }
-           }
-          }
-         },
-         {
-          "name": "envoy.filters.network.tcp_proxy",
-          "typed_config": {
-           "@type": "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy",
-           "stat_prefix": "outbound|15021||istio-ingressgateway.istio-system.svc.cluster.local",
-           "cluster": "outbound|15021||istio-ingressgateway.istio-system.svc.cluster.local"
-          }
-         }
-        ]
-       },
-       "bind_to_port": false
-      },
-      "last_updated": "2022-10-08T07:36:11.420Z"
+      "last_updated": "2022-10-08T07:44:51.952Z"
      }
     },
     {
@@ -7043,7 +7043,7 @@
        "use_original_dst": true,
        "traffic_direction": "OUTBOUND"
       },
-      "last_updated": "2022-10-08T07:36:11.421Z"
+      "last_updated": "2022-10-08T07:44:51.953Z"
      }
     },
     {
@@ -7315,7 +7315,7 @@
               {
                "tag": "istio.canonical_service",
                "literal": {
-                "value": "client"
+                "value": "unknown"
                }
               },
               {
@@ -7639,7 +7639,7 @@
               {
                "tag": "istio.canonical_service",
                "literal": {
-                "value": "client"
+                "value": "unknown"
                }
               },
               {
@@ -7961,7 +7961,7 @@
        "traffic_direction": "INBOUND",
        "continue_on_listener_filters_timeout": true
       },
-      "last_updated": "2022-10-08T07:36:11.428Z"
+      "last_updated": "2022-10-08T07:44:51.964Z"
      }
     }
    ]
@@ -7984,52 +7984,17 @@
         "routes": [
          {
           "match": {
-           "prefix": "/stats/prometheus"
+           "prefix": "/healthz/ready"
           },
           "route": {
-           "cluster": "prometheus_stats"
+           "cluster": "agent"
           }
          }
         ]
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.276Z"
-    },
-    {
-     "route_config": {
-      "@type": "type.googleapis.com/envoy.config.route.v3.RouteConfiguration",
-      "name": "InboundPassthroughClusterIpv4",
-      "virtual_hosts": [
-       {
-        "name": "inbound|http|0",
-        "domains": [
-         "*"
-        ],
-        "routes": [
-         {
-          "match": {
-           "prefix": "/"
-          },
-          "route": {
-           "cluster": "InboundPassthroughClusterIpv4",
-           "timeout": "0s",
-           "max_stream_duration": {
-            "max_stream_duration": "0s",
-            "grpc_timeout_header_max": "0s"
-           }
-          },
-          "decorator": {
-           "operation": ":0/*"
-          },
-          "name": "default"
-         }
-        ]
-       }
-      ],
-      "validate_clusters": false
-     },
-     "last_updated": "2022-10-08T07:36:11.424Z"
+     "last_updated": "2022-10-08T07:44:51.793Z"
     },
     {
      "route_config": {
@@ -8043,17 +8008,17 @@
         "routes": [
          {
           "match": {
-           "prefix": "/healthz/ready"
+           "prefix": "/stats/prometheus"
           },
           "route": {
-           "cluster": "agent"
+           "cluster": "prometheus_stats"
           }
          }
         ]
        }
       ]
      },
-     "last_updated": "2022-10-08T07:36:11.276Z"
+     "last_updated": "2022-10-08T07:44:51.792Z"
     },
     {
      "route_config": {
@@ -8088,116 +8053,45 @@
       ],
       "validate_clusters": false
      },
-     "last_updated": "2022-10-08T07:36:11.426Z"
+     "last_updated": "2022-10-08T07:44:51.957Z"
+    },
+    {
+     "route_config": {
+      "@type": "type.googleapis.com/envoy.config.route.v3.RouteConfiguration",
+      "name": "InboundPassthroughClusterIpv4",
+      "virtual_hosts": [
+       {
+        "name": "inbound|http|0",
+        "domains": [
+         "*"
+        ],
+        "routes": [
+         {
+          "match": {
+           "prefix": "/"
+          },
+          "route": {
+           "cluster": "InboundPassthroughClusterIpv4",
+           "timeout": "0s",
+           "max_stream_duration": {
+            "max_stream_duration": "0s",
+            "grpc_timeout_header_max": "0s"
+           }
+          },
+          "decorator": {
+           "operation": ":0/*"
+          },
+          "name": "default"
+         }
+        ]
+       }
+      ],
+      "validate_clusters": false
+     },
+     "last_updated": "2022-10-08T07:44:51.960Z"
     }
    ],
    "dynamic_route_configs": [
-    {
-     "version_info": "2022-10-08T07:31:27Z/5",
-     "route_config": {
-      "@type": "type.googleapis.com/envoy.config.route.v3.RouteConfiguration",
-      "name": "hello-world-client-service.breakdown-test.svc.cluster.local:8000",
-      "virtual_hosts": [
-       {
-        "name": "hello-world-client-service.breakdown-test.svc.cluster.local:8000",
-        "domains": [
-         "*"
-        ],
-        "routes": [
-         {
-          "match": {
-           "prefix": "/"
-          },
-          "route": {
-           "cluster": "outbound|8000||hello-world-client-service.breakdown-test.svc.cluster.local",
-           "timeout": "0s",
-           "retry_policy": {
-            "retry_on": "connect-failure,refused-stream,unavailable,cancelled,retriable-status-codes",
-            "num_retries": 2,
-            "retry_host_predicate": [
-             {
-              "name": "envoy.retry_host_predicates.previous_hosts",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.retry.host.previous_hosts.v3.PreviousHostsPredicate"
-              }
-             }
-            ],
-            "host_selection_retry_max_attempts": "5",
-            "retriable_status_codes": [
-             503
-            ]
-           },
-           "max_stream_duration": {
-            "max_stream_duration": "0s",
-            "grpc_timeout_header_max": "0s"
-           }
-          },
-          "decorator": {
-           "operation": "hello-world-client-service.breakdown-test.svc.cluster.local:8000/*"
-          },
-          "name": "default"
-         }
-        ],
-        "include_request_attempt_count": true
-       }
-      ],
-      "validate_clusters": false
-     },
-     "last_updated": "2022-10-08T07:36:11.430Z"
-    },
-    {
-     "version_info": "2022-10-08T07:31:27Z/5",
-     "route_config": {
-      "@type": "type.googleapis.com/envoy.config.route.v3.RouteConfiguration",
-      "name": "kube-dns.kube-system.svc.cluster.local:9153",
-      "virtual_hosts": [
-       {
-        "name": "kube-dns.kube-system.svc.cluster.local:9153",
-        "domains": [
-         "*"
-        ],
-        "routes": [
-         {
-          "match": {
-           "prefix": "/"
-          },
-          "route": {
-           "cluster": "outbound|9153||kube-dns.kube-system.svc.cluster.local",
-           "timeout": "0s",
-           "retry_policy": {
-            "retry_on": "connect-failure,refused-stream,unavailable,cancelled,retriable-status-codes",
-            "num_retries": 2,
-            "retry_host_predicate": [
-             {
-              "name": "envoy.retry_host_predicates.previous_hosts",
-              "typed_config": {
-               "@type": "type.googleapis.com/envoy.extensions.retry.host.previous_hosts.v3.PreviousHostsPredicate"
-              }
-             }
-            ],
-            "host_selection_retry_max_attempts": "5",
-            "retriable_status_codes": [
-             503
-            ]
-           },
-           "max_stream_duration": {
-            "max_stream_duration": "0s",
-            "grpc_timeout_header_max": "0s"
-           }
-          },
-          "decorator": {
-           "operation": "kube-dns.kube-system.svc.cluster.local:9153/*"
-          },
-          "name": "default"
-         }
-        ],
-        "include_request_attempt_count": true
-       }
-      ],
-      "validate_clusters": false
-     },
-     "last_updated": "2022-10-08T07:36:11.430Z"
-    },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
      "route_config": {
@@ -8249,7 +8143,7 @@
       ],
       "validate_clusters": false
      },
-     "last_updated": "2022-10-08T07:36:11.430Z"
+     "last_updated": "2022-10-08T07:44:51.966Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -8329,16 +8223,16 @@
       ],
       "validate_clusters": false
      },
-     "last_updated": "2022-10-08T07:36:11.430Z"
+     "last_updated": "2022-10-08T07:44:51.966Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
      "route_config": {
       "@type": "type.googleapis.com/envoy.config.route.v3.RouteConfiguration",
-      "name": "15010",
+      "name": "hello-world-client-service.breakdown-test.svc.cluster.local:8000",
       "virtual_hosts": [
        {
-        "name": "allow_any",
+        "name": "hello-world-client-service.breakdown-test.svc.cluster.local:8000",
         "domains": [
          "*"
         ],
@@ -8348,34 +8242,7 @@
            "prefix": "/"
           },
           "route": {
-           "cluster": "PassthroughCluster",
-           "timeout": "0s",
-           "max_grpc_timeout": "0s"
-          },
-          "name": "allow_any"
-         }
-        ],
-        "include_request_attempt_count": true
-       },
-       {
-        "name": "istiod.istio-system.svc.cluster.local:15010",
-        "domains": [
-         "istiod.istio-system.svc.cluster.local",
-         "istiod.istio-system.svc.cluster.local:15010",
-         "istiod.istio-system",
-         "istiod.istio-system:15010",
-         "istiod.istio-system.svc",
-         "istiod.istio-system.svc:15010",
-         "10.99.226.237",
-         "10.99.226.237:15010"
-        ],
-        "routes": [
-         {
-          "match": {
-           "prefix": "/"
-          },
-          "route": {
-           "cluster": "outbound|15010||istiod.istio-system.svc.cluster.local",
+           "cluster": "outbound|8000||hello-world-client-service.breakdown-test.svc.cluster.local",
            "timeout": "0s",
            "retry_policy": {
             "retry_on": "connect-failure,refused-stream,unavailable,cancelled,retriable-status-codes",
@@ -8399,7 +8266,7 @@
            }
           },
           "decorator": {
-           "operation": "istiod.istio-system.svc.cluster.local:15010/*"
+           "operation": "hello-world-client-service.breakdown-test.svc.cluster.local:8000/*"
           },
           "name": "default"
          }
@@ -8409,7 +8276,7 @@
       ],
       "validate_clusters": false
      },
-     "last_updated": "2022-10-08T07:36:11.430Z"
+     "last_updated": "2022-10-08T07:44:51.966Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -8538,7 +8405,7 @@
       ],
       "validate_clusters": false
      },
-     "last_updated": "2022-10-08T07:36:11.430Z"
+     "last_updated": "2022-10-08T07:44:51.966Z"
     },
     {
      "version_info": "2022-10-08T07:31:27Z/5",
@@ -8591,7 +8458,140 @@
       ],
       "validate_clusters": false
      },
-     "last_updated": "2022-10-08T07:36:11.430Z"
+     "last_updated": "2022-10-08T07:44:51.966Z"
+    },
+    {
+     "version_info": "2022-10-08T07:31:27Z/5",
+     "route_config": {
+      "@type": "type.googleapis.com/envoy.config.route.v3.RouteConfiguration",
+      "name": "kube-dns.kube-system.svc.cluster.local:9153",
+      "virtual_hosts": [
+       {
+        "name": "kube-dns.kube-system.svc.cluster.local:9153",
+        "domains": [
+         "*"
+        ],
+        "routes": [
+         {
+          "match": {
+           "prefix": "/"
+          },
+          "route": {
+           "cluster": "outbound|9153||kube-dns.kube-system.svc.cluster.local",
+           "timeout": "0s",
+           "retry_policy": {
+            "retry_on": "connect-failure,refused-stream,unavailable,cancelled,retriable-status-codes",
+            "num_retries": 2,
+            "retry_host_predicate": [
+             {
+              "name": "envoy.retry_host_predicates.previous_hosts",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.retry.host.previous_hosts.v3.PreviousHostsPredicate"
+              }
+             }
+            ],
+            "host_selection_retry_max_attempts": "5",
+            "retriable_status_codes": [
+             503
+            ]
+           },
+           "max_stream_duration": {
+            "max_stream_duration": "0s",
+            "grpc_timeout_header_max": "0s"
+           }
+          },
+          "decorator": {
+           "operation": "kube-dns.kube-system.svc.cluster.local:9153/*"
+          },
+          "name": "default"
+         }
+        ],
+        "include_request_attempt_count": true
+       }
+      ],
+      "validate_clusters": false
+     },
+     "last_updated": "2022-10-08T07:44:51.966Z"
+    },
+    {
+     "version_info": "2022-10-08T07:31:27Z/5",
+     "route_config": {
+      "@type": "type.googleapis.com/envoy.config.route.v3.RouteConfiguration",
+      "name": "15010",
+      "virtual_hosts": [
+       {
+        "name": "allow_any",
+        "domains": [
+         "*"
+        ],
+        "routes": [
+         {
+          "match": {
+           "prefix": "/"
+          },
+          "route": {
+           "cluster": "PassthroughCluster",
+           "timeout": "0s",
+           "max_grpc_timeout": "0s"
+          },
+          "name": "allow_any"
+         }
+        ],
+        "include_request_attempt_count": true
+       },
+       {
+        "name": "istiod.istio-system.svc.cluster.local:15010",
+        "domains": [
+         "istiod.istio-system.svc.cluster.local",
+         "istiod.istio-system.svc.cluster.local:15010",
+         "istiod.istio-system",
+         "istiod.istio-system:15010",
+         "istiod.istio-system.svc",
+         "istiod.istio-system.svc:15010",
+         "10.99.226.237",
+         "10.99.226.237:15010"
+        ],
+        "routes": [
+         {
+          "match": {
+           "prefix": "/"
+          },
+          "route": {
+           "cluster": "outbound|15010||istiod.istio-system.svc.cluster.local",
+           "timeout": "0s",
+           "retry_policy": {
+            "retry_on": "connect-failure,refused-stream,unavailable,cancelled,retriable-status-codes",
+            "num_retries": 2,
+            "retry_host_predicate": [
+             {
+              "name": "envoy.retry_host_predicates.previous_hosts",
+              "typed_config": {
+               "@type": "type.googleapis.com/envoy.extensions.retry.host.previous_hosts.v3.PreviousHostsPredicate"
+              }
+             }
+            ],
+            "host_selection_retry_max_attempts": "5",
+            "retriable_status_codes": [
+             503
+            ]
+           },
+           "max_stream_duration": {
+            "max_stream_duration": "0s",
+            "grpc_timeout_header_max": "0s"
+           }
+          },
+          "decorator": {
+           "operation": "istiod.istio-system.svc.cluster.local:15010/*"
+          },
+          "name": "default"
+         }
+        ],
+        "include_request_attempt_count": true
+       }
+      ],
+      "validate_clusters": false
+     },
+     "last_updated": "2022-10-08T07:44:51.966Z"
     }
    ]
   },
@@ -8600,13 +8600,13 @@
    "dynamic_active_secrets": [
     {
      "name": "default",
-     "last_updated": "2022-10-08T07:36:11.399Z",
+     "last_updated": "2022-10-08T07:44:51.924Z",
      "secret": {
       "@type": "type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.Secret",
       "name": "default",
       "tls_certificate": {
        "certificate_chain": {
-        "inline_bytes": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURSRENDQWl5Z0F3SUJBZ0lRZlRQRlNzMTVGMFlWM0xMTjBLVUZEakFOQmdrcWhraUc5dzBCQVFzRkFEQVkKTVJZd0ZBWURWUVFLRXcxamJIVnpkR1Z5TG14dlkyRnNNQjRYRFRJeU1UQXdPREEzTXpReE1Wb1hEVEl5TVRBdwpPVEEzTXpZeE1Wb3dBRENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFOaW14Mnp4CmYrdFlVcnVsYlNoUWJxWXNtdU9zMUxpVmgzam01WnRSMkRoSmFJZjNsakRTTXk0bXQwVzUxajh6a0wwSHIrbnIKS3JaeFNUZEx1SndOWUhNK0VMQTY1aUhzMEl4enRsK3VMSlo5dE1SS21JQmZsQ3R2aGVySW9WcDVmVEZXUi9YSAphTG1vMElPMG5NcW5oYnNrSWtmTzJodUt3STV5MGx1bU1JTk5WNFhDNDM0Y1BSWDlaa2VvRy9vRWJFdDJmS0xCClIxS1pzRjJkYm1LLzNHOXRuK0Z5dmloTFVhRWYxRHVpdERMbGlYL2loUzFQR24xdDd3NFlYSkp5MmsrMG5mbXkKTVF6SjFrUGxaZERFTUNBVG5qMFEyOFlVV1F4TU81U0EySkFMVldjMVhZUy9LNEFnb0hZV0pYMTZoZzd6SjNzRQpaZkRpSEpvRlpCTnpkTGtDQXdFQUFhT0JvVENCbmpBT0JnTlZIUThCQWY4RUJBTUNCYUF3SFFZRFZSMGxCQll3CkZBWUlLd1lCQlFVSEF3RUdDQ3NHQVFVRkJ3TUNNQXdHQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVUKWjkyVTh3dG02d2RzY2FiUm5YVzlZdW1nSG1vd1BnWURWUjBSQVFIL0JEUXdNb1l3YzNCcFptWmxPaTh2WTJ4MQpjM1JsY2k1c2IyTmhiQzl1Y3k5cGNISjFiR1V0ZEdWemRDOXpZUzlrWldaaGRXeDBNQTBHQ1NxR1NJYjNEUUVCCkN3VUFBNElCQVFDamdhS0FrMXRDY2txbWkyRlRrcVNJZnhkbXBYWmkzK1ZyY0dPenVOTDIzVVRwam4xQzc5clMKNkg2Zk40SC9ReDlPak85dWdxcThGejZOVkl3OTVBMnROTjdFc1g0R3p5S014Y1VwQkxGVUozUUd0TFdmZUNKVwp1azhwODJhbEZvY05YVHdlcHF4WHlHdk51QjI0Z2lCS202SGhRS2FpeHBFVCtaV0NjdTJic0tiWFc3eDJMbmNtCm96Y2cvYzd6RUZ2OGZSOXlRRjBPVmpuTmxkSDg2b0lIRDJWcjRYa3lqWUd1Q3c0S2czcUpaMTZSNUtFVlQvS1oKTG5JUi9SY3crcW5TNDYxeWZCVXhvRjlBcVVDQkN1ZlZ1VzdwTXNXcC9HZjYwU0orQ2JaQ05SeE5ucHkvb1VFMworRWszM1dYUWNWTVhOcENRUHlxVm9zdHdSNnREOWpCUAotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tQkVHSU4gQ0VSVElGSUNBVEUtLS0tLQpNSUlDL0RDQ0FlU2dBd0lCQWdJUVBmMlgrKzBNSkJ6YVlhaDZpOXdSTGpBTkJna3Foa2lHOXcwQkFRc0ZBREFZCk1SWXdGQVlEVlFRS0V3MWpiSFZ6ZEdWeUxteHZZMkZzTUI0WERUSXlNRGt4TVRBNU16TXdPVm9YRFRNeU1Ea3cKT0RBNU16TXdPVm93R0RFV01CUUdBMVVFQ2hNTlkyeDFjM1JsY2k1c2IyTmhiRENDQVNJd0RRWUpLb1pJaHZjTgpBUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTUhHSjUrQ3BNTjZxRm01KzA1S3p4L3JUSGhKOTBRUlVlOU1sNlZwCk1ZWDl1b3NPWFk5SUVaL3Y1TTdxRHB5d1Rhd3kxYnhRSzlidGJoMHc3Wkx0R2RNU0d3dlY1YlJwMEdCMWVDL2sKTHZRZE44bHFsTngxZGc4dTBPdFh6SkZ6Z1Q2L3lMV0J5TU05K01NM2Rod0t3OXA4VVJpeDlmVmxFVGhhb3dUNgpCRWxUYThWd3dVdm9oM0cwcjQ3c2JySW9oVnhLVWQrT3kyczVaNTNRazBUeXl5U2lwc0J2a1QvdFI2bDFmbGxHCkFTS0pPTW1QQ1plVEFJc0FBSWhMTXgvelVlWVA0Z1B5ajh1Y0wrcEVselpzdU9VU05kd1l0eitxSm5jOVNEdXoKVlRMOUNhSW1tQjlsOWlTWjNEaXk5b3RlYnE0aWkxWktJS1lOZHozMnRYNXVJM3NDQXdFQUFhTkNNRUF3RGdZRApWUjBQQVFIL0JBUURBZ0lFTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFRkdmZGxQTUxadXNICmJIR20wWjExdldMcG9CNXFNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUF4Z1BsUEdWN0p1b24rbm5nTGxRbTIKVVY3UUNhMnNueER5dFd3RFM3dzhIdnBYOE8zMXBZbi9UY3JMSkpXRklEakg0VXFybzZqVXBvRkJRREROcU1wegpMUkxKTmpjYTNRak9IeVAzVFVsVUF0ekVHSXZ2NlljQXVjaG83UUd6T21iWE15OUorVEVTbXc3c2E3TGFydUFPClpNSHNRaDBnelZwRmRzb2ZMOFd1MlpCSXg2bEI0ak55d01xa2h1Mmd6NDdwM0F1Z3dBNW0zWS9TdnBNK2E4SnIKOUhUVnFhODlwS0YwRGQ1TGZPSnk2SXlCVzZhWUhyZmxVeVF0Y1ZMajBZanpTdWhmcUNvOEhMVVYrUWhUYmtVNQpJUndJN3dhWVA0STdmUjAyaXRuWWxnc1hZbEpBMWxHS0UyS2ZTZFFpUWtYdlo4LzFQdlQ5WXZjT2E4WXpMRi9GCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+        "inline_bytes": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURUVENDQWpXZ0F3SUJBZ0lSQUw3Y0l6NU9maEpRcGZIaG5JOEFtZzR3RFFZSktvWklodmNOQVFFTEJRQXcKR0RFV01CUUdBMVVFQ2hNTlkyeDFjM1JsY2k1c2IyTmhiREFlRncweU1qRXdNRGd3TnpReU5URmFGdzB5TWpFdwpNRGt3TnpRME5URmFNQUF3Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRREF0M1R5CkxxdVJ0dGtsTkh2bkZmeHZPNUZpZi9QNUZQdGl2THVjeTd0NDhLRkl5bHZLUURnUi9EQmRwK0JpbWFpamd6RU8KTGlKNGVVQVVURjJXSG11NVd4K3JpM2VjNG51RU4wNnZVU1Ntd0lsemREV0lGUDlkZkFzNzFLbVphQkIwdzBTKwo3SWczNHBNLzRmTytYYWJMWVVSdnhGYnl3Z3BrZlBuK045OW4rNURPY0hsNEoxTnB2b1VWRDhMcDNDWUlXZVZjCncvb3V4MkY1aFB5dzdXVkdxK0d3VEMzWVF0SW9oUU12R3hoMzJYa3F1ajQ3VUY0aUpKQmxKWkxHNFZhVStmVWUKbmxFVTMrN3pYblA4OFVWWGxqZ3dNOGxRQ05SNXd4OGE2VFhsdCtHa1FETkhSTkFHakxDNzNWR2EwZ0thVFdISwp3Tmt4enl0cUk4V2Erb0JGQWdNQkFBR2pnYWt3Z2FZd0RnWURWUjBQQVFIL0JBUURBZ1dnTUIwR0ExVWRKUVFXCk1CUUdDQ3NHQVFVRkJ3TUJCZ2dyQmdFRkJRY0RBakFNQmdOVkhSTUJBZjhFQWpBQU1COEdBMVVkSXdRWU1CYUEKRkdmZGxQTUxadXNIYkhHbTBaMTF2V0xwb0I1cU1FWUdBMVVkRVFFQi93UThNRHFHT0hOd2FXWm1aVG92TDJOcwpkWE4wWlhJdWJHOWpZV3d2Ym5NdmIyWm1iV1Z6YUMxcGMzUnBieTF3Y205NGVTOXpZUzlrWldaaGRXeDBNQTBHCkNTcUdTSWIzRFFFQkN3VUFBNElCQVFDaC9sNXZtVEN5RTEzemFxOGpSQWNpOFgrVWlMYXRKQkJGeXIwbktxaGMKdEpxRFdEQ2g1K25wdHhkNnpWbTUyMk1vWFM3eGdQVXRkY3BDOXpQeDFvalhZNk9OdHYxV0ZyZDBvLzlzcUlhVgoveUgvYWRRcjBFalNOUll4ZW1vTERVdWNXM2Y5VC9mZHh5Z2tsa2RYUkdrNEV4TGZBVzNxYkd2blVtYUNrL2o0CkhEUXpjWTFUc0tzeU1xbjI5MXdGQWlSV1gzVVRQMC9YN1BrcVgxTXBNVGwrUmx6TFJvYUE0RzRhbDZmVDUyTWkKOU5XNEJSa2xTLzhSdktvTkJZYU56dkxsRGJaNTJ1OWJqeW1oNHl4SHM1N2kvUUlwbmNiRmlVUnRFSFNudmZNYgpYQll3QW15eVZjNVhXbUFxQTUyLzhOSFEzMFZ2MkdRWUwvLzZzaENIdmMwegotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tQkVHSU4gQ0VSVElGSUNBVEUtLS0tLQpNSUlDL0RDQ0FlU2dBd0lCQWdJUVBmMlgrKzBNSkJ6YVlhaDZpOXdSTGpBTkJna3Foa2lHOXcwQkFRc0ZBREFZCk1SWXdGQVlEVlFRS0V3MWpiSFZ6ZEdWeUxteHZZMkZzTUI0WERUSXlNRGt4TVRBNU16TXdPVm9YRFRNeU1Ea3cKT0RBNU16TXdPVm93R0RFV01CUUdBMVVFQ2hNTlkyeDFjM1JsY2k1c2IyTmhiRENDQVNJd0RRWUpLb1pJaHZjTgpBUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTUhHSjUrQ3BNTjZxRm01KzA1S3p4L3JUSGhKOTBRUlVlOU1sNlZwCk1ZWDl1b3NPWFk5SUVaL3Y1TTdxRHB5d1Rhd3kxYnhRSzlidGJoMHc3Wkx0R2RNU0d3dlY1YlJwMEdCMWVDL2sKTHZRZE44bHFsTngxZGc4dTBPdFh6SkZ6Z1Q2L3lMV0J5TU05K01NM2Rod0t3OXA4VVJpeDlmVmxFVGhhb3dUNgpCRWxUYThWd3dVdm9oM0cwcjQ3c2JySW9oVnhLVWQrT3kyczVaNTNRazBUeXl5U2lwc0J2a1QvdFI2bDFmbGxHCkFTS0pPTW1QQ1plVEFJc0FBSWhMTXgvelVlWVA0Z1B5ajh1Y0wrcEVselpzdU9VU05kd1l0eitxSm5jOVNEdXoKVlRMOUNhSW1tQjlsOWlTWjNEaXk5b3RlYnE0aWkxWktJS1lOZHozMnRYNXVJM3NDQXdFQUFhTkNNRUF3RGdZRApWUjBQQVFIL0JBUURBZ0lFTUE4R0ExVWRFd0VCL3dRRk1BTUJBZjh3SFFZRFZSME9CQllFRkdmZGxQTUxadXNICmJIR20wWjExdldMcG9CNXFNQTBHQ1NxR1NJYjNEUUVCQ3dVQUE0SUJBUUF4Z1BsUEdWN0p1b24rbm5nTGxRbTIKVVY3UUNhMnNueER5dFd3RFM3dzhIdnBYOE8zMXBZbi9UY3JMSkpXRklEakg0VXFybzZqVXBvRkJRREROcU1wegpMUkxKTmpjYTNRak9IeVAzVFVsVUF0ekVHSXZ2NlljQXVjaG83UUd6T21iWE15OUorVEVTbXc3c2E3TGFydUFPClpNSHNRaDBnelZwRmRzb2ZMOFd1MlpCSXg2bEI0ak55d01xa2h1Mmd6NDdwM0F1Z3dBNW0zWS9TdnBNK2E4SnIKOUhUVnFhODlwS0YwRGQ1TGZPSnk2SXlCVzZhWUhyZmxVeVF0Y1ZMajBZanpTdWhmcUNvOEhMVVYrUWhUYmtVNQpJUndJN3dhWVA0STdmUjAyaXRuWWxnc1hZbEpBMWxHS0UyS2ZTZFFpUWtYdlo4LzFQdlQ5WXZjT2E4WXpMRi9GCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
        },
        "private_key": {
         "inline_bytes": "W3JlZGFjdGVkXQ=="
@@ -8616,7 +8616,7 @@
     },
     {
      "name": "ROOTCA",
-     "last_updated": "2022-10-08T07:36:11.403Z",
+     "last_updated": "2022-10-08T07:44:51.929Z",
      "secret": {
       "@type": "type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.Secret",
       "name": "ROOTCA",
@@ -8628,7 +8628,6 @@
      }
     }
    ]
-  }``
+  }
  ]
 }
-

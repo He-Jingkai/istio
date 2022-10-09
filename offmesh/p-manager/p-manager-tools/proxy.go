@@ -36,6 +36,7 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 	val43200 := int64(43200)
 	val1337 := int64(1337)
 	valTure := true
+	readOnlyFS := false
 	privileged := true
 	ISTIO_META_APP_CONTAINERS := ``
 	for _, container := range podInfo.Spec.Containers {
@@ -133,7 +134,7 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 					RunAsUser:                &val1337,
 					RunAsNonRoot:             &valTure,
 					Privileged:               &privileged,
-					ReadOnlyRootFilesystem:   &valTure,
+					ReadOnlyRootFilesystem:   &readOnlyFS,
 					AllowPrivilegeEscalation: &privileged,
 				},
 			}},

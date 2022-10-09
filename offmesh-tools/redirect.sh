@@ -1,9 +1,9 @@
 PROXY_NAME=$1 #test
-POD_IP=$2 #10.32.0.8
-PROXY_IP=$3 #10.32.0.11
+POD_IP=$2 #10.32.0.6
+PROXY_IP=$3 #10.32.0.8
 
 
-# iptables -t nat -A PREROUTING -p tcp -s $POD_IP -j DNAT --to-destination $PROXY_IP:15001
+iptables -t nat -A PREROUTING -p tcp -s $POD_IP -j DNAT --to-destination $PROXY_IP:15001
 
 iptables -t nat -N IPRULE_REDIRECT-$PROXY_NAME
 iptables -t nat -A IPRULE_REDIRECT-$PROXY_NAME -p tcp --dport 15020 -j DNAT --to-destination $PROXY_IP:15020
