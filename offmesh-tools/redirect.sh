@@ -20,10 +20,3 @@ iptables -t nat -A INBOUND_OUTPUT-$PROXY_NAME -p tcp -j IPRULE_REDIRECT-$PROXY_N
 
 iptables -t nat -A OUTPUT -p tcp -d $POD_IP -j INBOUND_OUTPUT-$PROXY_NAME
 iptables -t nat -A PREROUTING -p tcp -d $POD_IP -j INBOUND_PREROUTING-$PROXY_NAME
-
-
-
-
-
-
-#但是envoy中的filter针对sidecar的定制化程度过高
