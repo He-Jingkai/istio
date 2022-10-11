@@ -1,7 +1,7 @@
 {
  "@type": "type.googleapis.com/envoy.admin.v3.ClustersConfigDump",
- "version_info": "2022-10-08T07:31:27Z/5",
- "static_clusters": [{
+ "static_clusters": [
+  {
   "cluster": {
    "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
    "name": "agent",
@@ -24,7 +24,7 @@
    }
   },
   "last_updated": "2022-10-08T07:44:51.770Z"
- },
+  },
   {
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
@@ -159,18 +159,16 @@
    "last_updated": "2022-10-08T07:44:51.786Z"
   }
  ],
- "dynamic_active_clusters": [{
-  "version_info": "2022-10-08T07:31:27Z/5",
+ "dynamic_active_clusters": [
+  {
   "cluster": {
    "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
    "name": "BlackHoleCluster",
    "type": "STATIC",
    "connect_timeout": "10s"
+  }
   },
-  "last_updated": "2022-10-08T07:44:51.814Z"
- },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "InboundPassthroughClusterIpv4",
@@ -201,11 +199,9 @@
       }
      }
     }
-   },
-   "last_updated": "2022-10-08T07:44:51.815Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "PassthroughCluster",
@@ -371,11 +367,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.812Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|15012||istiod.istio-system.svc.cluster.local",
@@ -496,11 +490,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.812Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|15014||istiod.istio-system.svc.cluster.local",
@@ -621,11 +613,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.813Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|15021||istio-ingressgateway.istio-system.svc.cluster.local",
@@ -880,11 +870,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.814Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|443||istiod.istio-system.svc.cluster.local",
@@ -1005,11 +993,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.812Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|443||kubernetes.default.svc.cluster.local",
@@ -1126,11 +1112,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.809Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|53||kube-dns.kube-system.svc.cluster.local",
@@ -1381,11 +1365,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.811Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|8080||hello-world-server-service.breakdown-test.svc.cluster.local",
@@ -1511,11 +1493,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.810Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|80||istio-ingressgateway.istio-system.svc.cluster.local",
@@ -1645,11 +1625,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.814Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|80||p-manager-svc.p-manager.svc.cluster.local",
@@ -1770,11 +1748,9 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.811Z"
+   }
   },
   {
-   "version_info": "2022-10-08T07:31:27Z/5",
    "cluster": {
     "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
     "name": "outbound|9153||kube-dns.kube-system.svc.cluster.local",
@@ -1904,8 +1880,7 @@
       }
      }
     ]
-   },
-   "last_updated": "2022-10-08T07:44:51.810Z"
+   }
   }
  ]
 }
