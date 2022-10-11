@@ -14,3 +14,5 @@ kubectl delete pod -n offmesh-istio-proxy
 kubectl logs -n offmesh-istio-proxy 
 kubectl label namespace iprule-test istio-injection=disabled --overwrite
 kubectl label namespace iprule-test istio-injection=enabled --overwrite
+
+10.32.0.11
