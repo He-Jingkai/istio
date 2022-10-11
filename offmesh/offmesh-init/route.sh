@@ -10,23 +10,26 @@ PROXY_IP=$2
 #     -P INPUT ACCEPT
 #     -P OUTPUT ACCEPT
 #     -P POSTROUTING ACCEPT
-#     -N ISTIO_INBOUND
-#     -N ISTIO_IN_REDIRECT
 #     -N ISTIO_OUTPUT
 #     -N ISTIO_REDIRECT
+
+#     -N ISTIO_INBOUND
 #     -A PREROUTING -p tcp -j ISTIO_INBOUND
-#     -A OUTPUT -p tcp -j ISTIO_OUTPUT
 #     -A ISTIO_INBOUND -p tcp -m tcp --dport 22 -j RETURN
 #     -A ISTIO_INBOUND -p tcp -m tcp --dport 15020 -j RETURN
 #     -A ISTIO_INBOUND -p tcp -j ISTIO_IN_REDIRECT
+
+#     -N ISTIO_IN_REDIRECT
 #     -A ISTIO_IN_REDIRECT -p tcp -j REDIRECT --to-ports 15006
-#     -A ISTIO_OUTPUT -s 127.0.0.6/32 -o lo -j RETURN
 #     -A ISTIO_OUTPUT ! -d 127.0.0.1/32 -o lo -j ISTIO_IN_REDIRECT
+
+#     -A OUTPUT -p tcp -j ISTIO_OUTPUT
+#     -A ISTIO_OUTPUT -s 127.0.0.6/32 -o lo -j RETURN
 #     -A ISTIO_OUTPUT -m owner --uid-owner 1337 -j RETURN
 #     -A ISTIO_OUTPUT -m owner --gid-owner 1337 -j RETURN
-#-A ISTIO_OUTPUT -d 127.0.0.1/32 -j RETURN
-#-A ISTIO_OUTPUT -j ISTIO_REDIRECT
-#-A ISTIO_REDIRECT -p tcp -j REDIRECT --to-ports 15001
+#     -A ISTIO_OUTPUT -d 127.0.0.1/32 -j RETURN
+#     -A ISTIO_OUTPUT -j ISTIO_REDIRECT
+#     -A ISTIO_REDIRECT -p tcp -j REDIRECT --to-ports 15001
 
 # STEP 1: mark all the pockets to route
 
