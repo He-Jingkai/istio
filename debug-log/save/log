@@ -1,0 +1,150 @@
+2022-10-11T12:19:20.653589Z	debug	envoy filter	original_dst: new connection accepted
+2022-10-11T12:19:20.653620Z	trace	envoy filter	original_dst: set destination to 10.32.0.5:80
+2022-10-11T12:19:20.653623Z	debug	envoy filter	tls inspector: new connection accepted
+2022-10-11T12:19:20.653660Z	trace	envoy filter	onFileEvent: 1
+2022-10-11T12:19:20.653671Z	trace	envoy filter	recv returned: 73
+2022-10-11T12:19:20.653675Z	trace	envoy filter	tls inspector: recv: 73
+2022-10-11T12:19:20.653684Z	debug	envoy filter	http inspector: new connection accepted
+2022-10-11T12:19:20.653693Z	trace	envoy filter	onFileEvent: 1
+2022-10-11T12:19:20.653697Z	trace	envoy filter	recv returned: 73
+2022-10-11T12:19:20.653712Z	trace	envoy filter	http inspector: http_parser parsed 15 chars, error code: 0
+2022-10-11T12:19:20.653720Z	trace	envoy filter	http inspector: done: true
+2022-10-11T12:19:20.653724Z	trace	envoy filter	http inspector: set application protocol to http/1.1
+2022-10-11T12:19:20.653780Z	debug	envoy conn_handler	[C8] new connection from 10.32.0.2:38962
+2022-10-11T12:19:20.653791Z	trace	envoy main	item added to deferred deletion list (size=1)
+2022-10-11T12:19:20.653795Z	trace	envoy main	clearing deferred deletion list (size=1)
+2022-10-11T12:19:20.653801Z	trace	envoy connection	[C8] socket event: 3
+2022-10-11T12:19:20.653804Z	trace	envoy connection	[C8] write ready
+2022-10-11T12:19:20.653808Z	trace	envoy connection	[C8] read ready. dispatch_buffered_data=0
+2022-10-11T12:19:20.653819Z	trace	envoy connection	[C8] read returns: 73
+2022-10-11T12:19:20.653833Z	trace	envoy connection	[C8] read error: Resource temporarily unavailable
+2022-10-11T12:19:20.653838Z	trace	envoy filter	Alpn Protocol Not Found. Expected istio-peer-exchange, Got 
+2022-10-11T12:19:20.653854Z	trace	envoy http	[C8] parsing 73 bytes
+2022-10-11T12:19:20.653865Z	trace	envoy http	[C8] message begin
+2022-10-11T12:19:20.653870Z	debug	envoy http	[C8] new stream
+2022-10-11T12:19:20.653887Z	trace	envoy http	[C8] completed header: key=Host value=10.32.0.5
+2022-10-11T12:19:20.653902Z	trace	envoy http	[C8] completed header: key=User-Agent value=curl/7.81.0
+2022-10-11T12:19:20.653909Z	trace	envoy http	[C8] onHeadersCompleteBase
+2022-10-11T12:19:20.653912Z	trace	envoy http	[C8] completed header: key=Accept value=*/*
+2022-10-11T12:19:20.653918Z	trace	envoy http	[C8] Server: onHeadersComplete size=3
+2022-10-11T12:19:20.653925Z	trace	envoy http	[C8] message complete
+2022-10-11T12:19:20.653939Z	debug	envoy http	[C8][S9663562306288894161] request headers complete (end_stream=true):
+':authority', '10.32.0.5'
+':path', '/'
+':method', 'GET'
+'user-agent', 'curl/7.81.0'
+'accept', '*/*'
+
+2022-10-11T12:19:20.653943Z	debug	envoy http	[C8][S9663562306288894161] request end stream
+2022-10-11T12:19:20.653965Z	debug	envoy connection	[C8] current connecting state: false
+2022-10-11T12:19:20.654043Z	trace	envoy http	[C8][S9663562306288894161] decode headers called: filter=istio.metadata_exchange status=0
+2022-10-11T12:19:20.654055Z	trace	envoy http	[C8][S9663562306288894161] decode headers called: filter=envoy.filters.http.fault status=0
+2022-10-11T12:19:20.654058Z	trace	envoy http	[C8][S9663562306288894161] decode headers called: filter=envoy.filters.http.cors status=0
+2022-10-11T12:19:20.654068Z	trace	envoy http	[C8][S9663562306288894161] decode headers called: filter=istio.stats status=0
+2022-10-11T12:19:20.654076Z	debug	envoy router	[C8][S9663562306288894161] cluster 'InboundPassthroughClusterIpv4' match for URL '/'
+2022-10-11T12:19:20.654098Z	debug	envoy upstream	transport socket match, socket default selected for host with address 10.32.0.5:80
+2022-10-11T12:19:20.654109Z	debug	envoy upstream	Created host 10.32.0.5:80.
+2022-10-11T12:19:20.654150Z	debug	envoy router	[C8][S9663562306288894161] router decoding headers:
+':authority', '10.32.0.5'
+':path', '/'
+':method', 'GET'
+':scheme', 'http'
+'user-agent', 'curl/7.81.0'
+'accept', '*/*'
+'x-forwarded-proto', 'http'
+'x-request-id', '72b8378c-8553-4f5d-8eb4-a84e15fda707'
+
+2022-10-11T12:19:20.654165Z	debug	envoy upstream	addHost() adding 10.32.0.5:80
+2022-10-11T12:19:20.654166Z	debug	envoy pool	queueing stream due to no available connections (ready=0 busy=0 connecting=0)
+2022-10-11T12:19:20.654266Z	debug	envoy upstream	membership update for TLS cluster InboundPassthroughClusterIpv4 added 1 removed 0
+2022-10-11T12:19:20.654283Z	debug	envoy upstream	re-creating local LB for TLS cluster InboundPassthroughClusterIpv4
+2022-10-11T12:19:20.654266Z	debug	envoy pool	trying to create new connection
+2022-10-11T12:19:20.654267Z	debug	envoy upstream	membership update for TLS cluster InboundPassthroughClusterIpv4 added 1 removed 0
+2022-10-11T12:19:20.654394Z	debug	envoy upstream	re-creating local LB for TLS cluster InboundPassthroughClusterIpv4
+2022-10-11T12:19:20.654324Z	trace	envoy pool	ConnPoolImplBase 0x55fdeb7f4e00, ready_clients_.size(): 0, busy_clients_.size(): 0, connecting_clients_.size(): 0, connecting_stream_capacity_: 0, num_active_streams_: 0, pending_streams_.size(): 1 per upstream preconnect ratio: 1
+2022-10-11T12:19:20.654435Z	debug	envoy pool	creating a new connection (connecting=0)
+2022-10-11T12:19:20.654522Z	debug	envoy connection	[C9] current connecting state: true
+2022-10-11T12:19:20.654531Z	debug	envoy client	[C9] connecting
+2022-10-11T12:19:20.654534Z	debug	envoy connection	[C9] connecting to 10.32.0.5:80
+2022-10-11T12:19:20.654674Z	debug	envoy connection	[C9] connection in progress
+2022-10-11T12:19:20.654686Z	trace	envoy pool	not creating a new connection, shouldCreateNewConnection returned false.
+2022-10-11T12:19:20.654693Z	trace	envoy http	[C8][S9663562306288894161] decode headers called: filter=envoy.filters.http.router status=1
+2022-10-11T12:19:20.654701Z	trace	envoy http	[C8] parsed 73 bytes
+2022-10-11T12:19:20.654713Z	debug	envoy upstream	membership update for TLS cluster InboundPassthroughClusterIpv4 added 1 removed 0
+2022-10-11T12:19:20.654721Z	debug	envoy upstream	re-creating local LB for TLS cluster InboundPassthroughClusterIpv4
+2022-10-11T12:19:20.911743Z	debug	envoy main	flushing stats
+2022-10-11T12:19:20.919174Z	trace	envoy upstream	Stale original dst hosts cleanup triggered.
+2022-10-11T12:19:20.919190Z	trace	envoy upstream	Cleaning up stale original dst hosts.
+2022-10-11T12:19:20.919194Z	trace	envoy upstream	Keeping active host 10.32.0.5:80.
+2022-10-11T12:19:20.919197Z	trace	envoy upstream	Stale original dst hosts cleanup triggered.
+2022-10-11T12:19:23.710964Z	trace	envoy connection	[C9] socket event: 3
+2022-10-11T12:19:23.710991Z	trace	envoy connection	[C9] write ready
+2022-10-11T12:19:23.711005Z	debug	envoy connection	[C9] delayed connect error: 113
+2022-10-11T12:19:23.711010Z	debug	envoy connection	[C9] closing socket: 0
+2022-10-11T12:19:23.711032Z	trace	envoy connection	[C9] raising connection event 0
+2022-10-11T12:19:23.711038Z	debug	envoy client	[C9] disconnect. resetting 0 pending requests
+2022-10-11T12:19:23.711046Z	debug	envoy pool	[C9] client disconnected, failure reason: delayed connect error: 113
+2022-10-11T12:19:23.711061Z	debug	envoy router	[C8][S9663562306288894161] upstream reset: reset reason: connection failure, transport failure reason: delayed connect error: 113
+2022-10-11T12:19:23.711099Z	trace	envoy main	item added to deferred deletion list (size=1)
+2022-10-11T12:19:23.711115Z	debug	envoy http	[C8][S9663562306288894161] Sending local reply with details upstream_reset_before_response_started{connection_failure,delayed_connect_error:_113}
+2022-10-11T12:19:23.711138Z	trace	envoy http	[C8][S9663562306288894161] encode headers called: filter=istio.stats status=0
+2022-10-11T12:19:23.711148Z	trace	envoy http	[C8][S9663562306288894161] encode headers called: filter=envoy.filters.http.cors status=0
+2022-10-11T12:19:23.711151Z	trace	envoy http	[C8][S9663562306288894161] encode headers called: filter=envoy.filters.http.fault status=0
+2022-10-11T12:19:23.711163Z	trace	envoy http	[C8][S9663562306288894161] encode headers called: filter=istio.metadata_exchange status=0
+2022-10-11T12:19:23.711194Z	debug	envoy http	[C8][S9663562306288894161] encoding headers via codec (end_stream=false):
+':status', '503'
+'content-length', '145'
+'content-type', 'text/plain'
+'date', 'Tue, 11 Oct 2022 12:19:23 GMT'
+'server', 'istio-envoy'
+'x-envoy-decorator-operation', ':0/*'
+
+2022-10-11T12:19:23.711210Z	trace	envoy connection	[C8] writing 176 bytes, end_stream false
+2022-10-11T12:19:23.711219Z	trace	envoy http	[C8][S9663562306288894161] encode data called: filter=istio.stats status=0
+2022-10-11T12:19:23.711222Z	trace	envoy http	[C8][S9663562306288894161] encode data called: filter=envoy.filters.http.cors status=0
+2022-10-11T12:19:23.711225Z	trace	envoy http	[C8][S9663562306288894161] encode data called: filter=envoy.filters.http.fault status=0
+2022-10-11T12:19:23.711228Z	trace	envoy http	[C8][S9663562306288894161] encode data called: filter=istio.metadata_exchange status=0
+2022-10-11T12:19:23.711232Z	trace	envoy http	[C8][S9663562306288894161] encoding data via codec (size=145 end_stream=true)
+2022-10-11T12:19:23.711236Z	trace	envoy connection	[C8] writing 145 bytes, end_stream false
+2022-10-11T12:19:23.711241Z	trace	envoy main	item added to deferred deletion list (size=2)
+2022-10-11T12:19:23.711318Z	debug	envoy wasm	wasm log stats_inbound stats_inbound: [extensions/stats/plugin.cc:645]::report() metricKey cache hit , stat=12
+2022-10-11T12:19:23.711329Z	debug	envoy wasm	wasm log stats_inbound stats_inbound: [extensions/stats/plugin.cc:645]::report() metricKey cache hit , stat=6
+2022-10-11T12:19:23.711333Z	debug	envoy wasm	wasm log stats_inbound stats_inbound: [extensions/stats/plugin.cc:645]::report() metricKey cache hit , stat=10
+2022-10-11T12:19:23.711336Z	debug	envoy wasm	wasm log stats_inbound stats_inbound: [extensions/stats/plugin.cc:645]::report() metricKey cache hit , stat=14
+2022-10-11T12:19:23.711343Z	trace	envoy main	item added to deferred deletion list (size=3)
+2022-10-11T12:19:23.711357Z	trace	envoy pool	not creating a new connection, shouldCreateNewConnection returned false.
+2022-10-11T12:19:23.711365Z	trace	envoy main	item added to deferred deletion list (size=4)
+2022-10-11T12:19:23.711368Z	debug	envoy pool	invoking idle callbacks - is_draining_for_deletion_=false
+2022-10-11T12:19:23.711378Z	trace	envoy upstream	Erasing idle pool for host 0x55fdeb65d820
+2022-10-11T12:19:23.711382Z	trace	envoy main	item added to deferred deletion list (size=5)
+2022-10-11T12:19:23.711387Z	trace	envoy upstream	Pool container empty for host 0x55fdeb65d820, erasing host entry
+2022-10-11T12:19:23.711395Z	trace	envoy main	clearing deferred deletion list (size=5)
+2022-10-11T12:19:23.711442Z	trace	envoy connection	[C8] socket event: 2
+2022-10-11T12:19:23.711449Z	trace	envoy connection	[C8] write ready
+2022-10-11T12:19:23.711512Z	trace	envoy connection	[C8] write returns: 321
+2022-10-11T12:19:23.711666Z	trace	envoy connection	[C8] socket event: 3
+2022-10-11T12:19:23.711678Z	trace	envoy connection	[C8] write ready
+2022-10-11T12:19:23.711681Z	trace	envoy connection	[C8] read ready. dispatch_buffered_data=0
+2022-10-11T12:19:23.711692Z	trace	envoy connection	[C8] read returns: 0
+2022-10-11T12:19:23.711695Z	debug	envoy connection	[C8] remote close
+2022-10-11T12:19:23.711698Z	debug	envoy connection	[C8] closing socket: 0
+2022-10-11T12:19:23.711755Z	trace	envoy connection	[C8] raising connection event 0
+2022-10-11T12:19:23.711769Z	trace	envoy conn_handler	[C8] connection on event 0
+2022-10-11T12:19:23.711773Z	debug	envoy conn_handler	[C8] adding to cleanup list
+2022-10-11T12:19:23.711777Z	trace	envoy main	item added to deferred deletion list (size=1)
+2022-10-11T12:19:23.711781Z	trace	envoy main	item added to deferred deletion list (size=2)
+2022-10-11T12:19:23.711784Z	trace	envoy main	clearing deferred deletion list (size=2)
+2022-10-11T12:19:25.915154Z	debug	envoy main	flushing stats
+2022-10-11T12:19:25.923605Z	trace	envoy upstream	Stale original dst hosts cleanup triggered.
+2022-10-11T12:19:25.923620Z	trace	envoy upstream	Cleaning up stale original dst hosts.
+2022-10-11T12:19:25.923624Z	trace	envoy upstream	Removing stale host 10.32.0.5:80.
+2022-10-11T12:19:25.923672Z	debug	envoy upstream	membership update for TLS cluster InboundPassthroughClusterIpv4 added 0 removed 1
+2022-10-11T12:19:25.923676Z	debug	envoy upstream	membership update for TLS cluster InboundPassthroughClusterIpv4 added 0 removed 1
+2022-10-11T12:19:25.923701Z	debug	envoy upstream	re-creating local LB for TLS cluster InboundPassthroughClusterIpv4
+2022-10-11T12:19:25.923729Z	debug	envoy upstream	membership update for TLS cluster InboundPassthroughClusterIpv4 added 0 removed 1
+2022-10-11T12:19:25.923684Z	debug	envoy upstream	re-creating local LB for TLS cluster InboundPassthroughClusterIpv4
+2022-10-11T12:19:25.923765Z	debug	envoy upstream	re-creating local LB for TLS cluster InboundPassthroughClusterIpv4
+2022-10-11T12:19:25.923793Z	debug	envoy upstream	removing hosts for TLS cluster InboundPassthroughClusterIpv4 removed 1
+2022-10-11T12:19:25.923817Z	debug	envoy upstream	removing hosts for TLS cluster InboundPassthroughClusterIpv4 removed 1
+2022-10-11T12:19:25.923795Z	debug	envoy upstream	removing hosts for TLS cluster InboundPassthroughClusterIpv4 removed 1
+2022-10-11T12:19:25.923837Z	trace	envoy upstream	Stale original dst hosts cleanup triggered.
