@@ -1,6 +1,6 @@
 NAME=$1
-POD_IP=$2
-PROXY_IP=$3
+POD_IP=$2 #10.32.0.5
+PROXY_IP=$3 #10.32.0.6
 TABLE_NUM=$4
 
 # outbound mark
@@ -15,3 +15,6 @@ iptables -t mangle -A PREROUTING -p tcp -d $POD_IP -j IN-$NAME
 # add route
 ip route add default via $PROXY_IP table $TABLE_NUM
 ip rule add fwmark $TABLE_NUM table $TABLE_NUM
+
+ip route flush cache
+
