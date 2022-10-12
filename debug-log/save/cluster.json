@@ -233,8 +233,7 @@
       "protocol": "istio-peer-exchange"
      }
     }]
-   },
-   "last_updated": "2022-10-08T07:44:51.815Z"
+   }
   },
   {
    "version_info": "2022-10-08T07:31:27Z/5",
