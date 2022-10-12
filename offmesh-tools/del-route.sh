@@ -16,3 +16,5 @@ iptables -t mangle -X IN-$NAME
 # add route
 ip route del default via $PROXY_IP table $TABLE_NUM
 ip rule del fwmark $TABLE_NUM table $TABLE_NUM
+
+ip route flush cache
