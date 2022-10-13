@@ -45,16 +45,16 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 		},
 		Spec: corev1.PodSpec{
 			NodeName: podInfo.Spec.NodeName,
-			InitContainers: []corev1.Container{{
-				Image: `hejingkai/offmesh-proxy-init`,
-				Name:  `offmesh-proxy-init`,
-				Args:  []string{podInfo.Status.PodIP},
-				SecurityContext: &corev1.SecurityContext{
-					Privileged:               &privileged,
-					ReadOnlyRootFilesystem:   &readOnlyFS,
-					AllowPrivilegeEscalation: &privileged,
-				}},
-			},
+//			InitContainers: []corev1.Container{{
+//				Image: `hejingkai/offmesh-proxy-init`,
+//				Name:  `offmesh-proxy-init`,
+//				Args:  []string{podInfo.Status.PodIP},
+//				SecurityContext: &corev1.SecurityContext{
+//					Privileged:               &privileged,
+//					ReadOnlyRootFilesystem:   &readOnlyFS,
+//					AllowPrivilegeEscalation: &privileged,
+//				}},
+//			},
 			Containers: []corev1.Container{{
 				Image: `docker.io/hejingkai/proxyv2:1.15-dev`,
 				Name:  `istio-proxy`,
