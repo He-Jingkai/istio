@@ -3,19 +3,10 @@ package p_manager_tools
 import (
 	"context"
 	"fmt"
-
-	"github.com/google/uuid"
 	corev1 "k8s.io/api/core/v1"
-
-	// "k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	// "k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
 )
-
-// all the proxy's will be put on namespace ProxyNamespace
-
-const ProxyNamespace = `offmesh-istio-proxy`
 
 type PodMeta struct {
 	NameSpace string
@@ -27,12 +18,9 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 	if err != nil {
 		return nil, err
 	}
-	proxyName := `proxy-` + uuid.New().String()
-	// cpuLimit, _ := resource.ParseQuantity(`2`)
-	// memoryLimit, _ := resource.ParseQuantity(`1Gi`)
-	// cpuRequest, _ := resource.ParseQuantity(`10m`)
-	// memoryRequest, _ := resource.ParseQuantity(`40Mi`)
-	val420 := int32(420) //TODO:两个Volume共用一个是否会有问题
+	proxyName := podInfo.Name + `-proxy`
+	proxyNamespace := podInfo.Namespace
+	val420 := int32(420) 
 	val43200 := int64(43200)
 	val1337 := int64(1337)
 	valTure := true
@@ -53,7 +41,7 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      proxyName,
-			Namespace: ProxyNamespace,
+			Namespace: podInfo.Namespace,
 		},
 		Spec: corev1.PodSpec{
 			NodeName: podInfo.Spec.NodeName,
@@ -208,17 +196,17 @@ func CreateNewProxy(pod *PodMeta, clientSet *kubernetes.Clientset) (*PodMeta, er
 			RestartPolicy: corev1.RestartPolicyAlways,
 		},
 	}
-	_, err = clientSet.CoreV1().Pods(ProxyNamespace).Create(context.Background(), newPod, metav1.CreateOptions{})
+	_, err = clientSet.CoreV1().Pods(proxyNamespace).Create(context.Background(), newPod, metav1.CreateOptions{})
 	if err != nil {
 		return &PodMeta{}, err
 	}
 	podMeta := PodMeta{
-		NameSpace: ProxyNamespace,
+		NameSpace: proxyNamespace,
 		Name:      proxyName,
 	}
 	return &podMeta, nil
 }
 
-func DeleteProxy(clientSet *kubernetes.Clientset, podName string) error {
-	return clientSet.CoreV1().Pods(ProxyNamespace).Delete(context.Background(), podName, metav1.DeleteOptions{})
+func DeleteProxy(clientSet *kubernetes.Clientset, podMeta *PodMeta) error {
+	return clientSet.CoreV1().Pods(podMeta.NameSpace).Delete(context.Background(), podMeta.Name, metav1.DeleteOptions{})
 }

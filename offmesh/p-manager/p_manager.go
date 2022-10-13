@@ -95,7 +95,7 @@ func PopTopProxyFromPool(pod *tools.PodMeta) (*tools.PodMeta, error) {
 }
 
 func ReturnProxyToPool(proxy *tools.PodMeta) {
-	err := tools.DeleteProxy(clientSet, proxy.Name)
+	err := tools.DeleteProxy(clientSet, proxy)
 	if err != nil {
 		return
 	}
