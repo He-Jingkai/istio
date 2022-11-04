@@ -26,6 +26,8 @@ spec:
 {{ toYaml .Values.ztunnel.podAnnotations | indent 8 }}
         {{- end }}
     spec:
+      nodeSelector:
+        offMeshNodeType: side-node
       serviceAccountName: ztunnel
       tolerations:
         - effect: NoSchedule
@@ -111,7 +113,8 @@ spec:
             ip link del p$OUTBOUND_TUN
             set -e
 {{- if not (.Capabilities.KubeVersion.GitVersion | contains "-eks") }}
-            HOST_IP=$(ip route | grep default | awk '{print $3}')
+#            HOST_IP=$(ip route | grep default | awk '{print $3}')
+             HOST_IP=$(cat /var/node_config/worker_node_gateway_ip)
 {{- end }}
 
             ip link add name p$INBOUND_TUN type geneve id 1000 remote $HOST_IP
@@ -226,6 +229,10 @@ spec:
           value: "{{ $val }}"
         {{- end }}
         {{- end }}
+       volumeMounts:
+       - mountPath: /var/node_config
+         name: offMesh-sideNode-config
+
       containers:
       - name: istio-proxy
 {{- if contains "/" .Values.ztunnel.image }}
@@ -308,6 +315,10 @@ spec:
       - name: istiod-ca-cert
         configMap:
           name: istio-ca-root-cert
+      - name: offMesh-sideNode-config
+        hostPath:
+          path: /var/node_config
+          type: DirectoryOrCreate
       - name: config-volume
         configMap:
           name: istio{{- if not (eq .Values.revision "") }}-{{ .Values.revision }}{{- end }}
