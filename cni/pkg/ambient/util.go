@@ -107,6 +107,10 @@ func podOnMyNode(pod *corev1.Pod) bool {
 	return pod.Spec.NodeName == NodeName
 }
 
+func podOnMyDPUNode(pod *corev1.Pod) bool {
+	return pod.Spec.NodeName == NodeName+`-dpu`
+}
+
 func (s *Server) isAmbientGlobal() bool {
 	return s.meshMode == v1alpha1.MeshConfig_AmbientMeshConfig_ON
 }

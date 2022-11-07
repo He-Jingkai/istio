@@ -27,7 +27,7 @@ spec:
         {{- end }}
     spec:
       nodeSelector:
-        offMeshNodeType: side-node
+        offMeshNodeType: dpu
       serviceAccountName: ztunnel
       tolerations:
         - effect: NoSchedule

@@ -164,7 +164,7 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 			pod := obj.(*corev1.Pod)
 
 			scopeLog := log.WithLabels("type", "add")
-			if !podOnMyNode(pod) {
+			if !podOnMyDPUNode(pod) {
 				scopeLog.Debugf("skipping pod not on my node")
 				return
 			}
@@ -204,7 +204,7 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 
 			scopeLog := log.WithLabels("type", "update")
 
-			if ztunnelPod(newPod) && podOnMyNode(newPod) {
+			if ztunnelPod(newPod) && podOnMyDPUNode(newPod) {
 				// This will catch if ztunnel begins running after us... otherwise it gets handled by AddFunc
 				if newPod.Status.Phase != corev1.PodRunning || oldPod.Status.Phase == newPod.Status.Phase {
 					return
