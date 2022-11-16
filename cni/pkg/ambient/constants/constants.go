@@ -34,9 +34,10 @@ const (
 	OutboundTun = "istioout"
 
 	DPUTun = "dputunnel"
+	CPUTun = "cputunnel"
 
 	CPUDPUTunIP = "192.168.128.1"
-	DPUDPUTunIP = "192.168.128.2"
+	DPUCPUTunIP = "192.168.128.2"
 
 	InboundTunIP         = "192.168.126.1"
 	ZTunnelInboundTunIP  = "192.168.126.2"

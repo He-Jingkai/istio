@@ -166,3 +166,39 @@ $ ip route show table 100
 -A ztunnel-POSTROUTING -m mark --mark 0x100/0x100 -j ACCEPT
 -A ztunnel-PREROUTING -m mark --mark 0x100/0x100 -j ACCEPT
 ```
+
+```bash
+*mangle
+# -A PREROUTING -j ztunnel-PREROUTING
+-A INPUT -j ztunnel-INPUT
+-A FORWARD -j ztunnel-FORWARD
+-A OUTPUT -j ztunnel-OUTPUT
+-A POSTROUTING -j ztunnel-POSTROUTING
+
+-A ztunnel-FORWARD -m mark --mark 0x220/0x220 -j CONNMARK --save-mark --nfmask 0x220 --ctmask 0x220
+-A ztunnel-FORWARD -m mark --mark 0x210/0x210 -j CONNMARK --save-mark --nfmask 0x210 --ctmask 0x210
+-A ztunnel-INPUT -m mark --mark 0x220/0x220 -j CONNMARK --save-mark --nfmask 0x220 --ctmask 0x220
+-A ztunnel-INPUT -m mark --mark 0x210/0x210 -j CONNMARK --save-mark --nfmask 0x210 --ctmask 0x210
+-A ztunnel-OUTPUT -s 10.244.0.1/32 -j MARK --set-xmark 0x220/0xffffffff
+-A ztunnel-PREROUTING -i istioin -j MARK --set-xmark 0x200/0x200
+-A ztunnel-PREROUTING -i istioin -j RETURN
+-A ztunnel-PREROUTING -i istioout -j MARK --set-xmark 0x200/0x200
+-A ztunnel-PREROUTING -i istioout -j RETURN
+-A ztunnel-PREROUTING -p udp -m udp --dport 6081 -j RETURN
+-A ztunnel-PREROUTING -m connmark --mark 0x220/0x220 -j MARK --set-xmark 0x200/0x200 
+-A ztunnel-PREROUTING -m mark --mark 0x200/0x200 -j RETURN 
+-A ztunnel-PREROUTING ! -i vethfe50c7fb -m connmark --mark 0x210/0x210 -j MARK --set-xmark 0x40/0x40
+-A ztunnel-PREROUTING -m mark --mark 0x40/0x40 -j RETURN
+-A ztunnel-PREROUTING ! -s 10.244.0.3/32 -i vethfe50c7fb -j MARK --set-xmark 0x210/0x210
+-A ztunnel-PREROUTING -m mark --mark 0x200/0x200 -j RETURN
+-A ztunnel-PREROUTING -i vethfe50c7fb -j MARK --set-xmark 0x220/0x220
+-A ztunnel-PREROUTING -p udp -j MARK --set-xmark 0x220/0x220
+-A ztunnel-PREROUTING -m mark --mark 0x200/0x200 -j RETURN
+-A ztunnel-PREROUTING -p tcp -m set --match-set ztunnel-pods-ips src -j MARK --set-xmark 0x100/0x100
+
+*nat
+-A PREROUTING -j ztunnel-PREROUTING
+-A POSTROUTING -j ztunnel-POSTROUTING
+-A ztunnel-POSTROUTING -m mark --mark 0x100/0x100 -j ACCEPT
+-A ztunnel-PREROUTING -m mark --mark 0x100/0x100 -j ACCEPT
+```

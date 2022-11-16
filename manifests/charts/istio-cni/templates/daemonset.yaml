@@ -44,7 +44,6 @@ spec:
       hostNetwork: true
       nodeSelector:
         kubernetes.io/os: linux
-        offMeshNodeType: cpu
       tolerations:
         # Make sure istio-cni-node gets scheduled on all nodes.
         - effect: NoSchedule
