@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"istio.io/istio/cni/pkg/ambient/constants"
 	"os/exec"
 	"strings"
 
@@ -102,13 +103,13 @@ func (s *Server) matchesDisabledSelectors(lbl map[string]string) (bool, error) {
 
 	return false, nil
 }
+func IsZtunnelOnMyDPU(pod *corev1.Pod) bool {
+	pu := GetPair(NodeName, constants.CPUNode)
+	return pu.Name == pod.Spec.NodeName
+}
 
 func podOnMyNode(pod *corev1.Pod) bool {
 	return pod.Spec.NodeName == NodeName
-}
-
-func podOnMyDPUNode(pod *corev1.Pod) bool {
-	return pod.Spec.NodeName == NodeName+`-dpu`
 }
 
 func (s *Server) isAmbientGlobal() bool {

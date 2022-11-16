@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"istio.io/istio/cni/pkg/offmesh"
 	"net"
 	"net/netip"
 	"os"
@@ -33,6 +34,38 @@ import (
 )
 
 var log = istiolog.RegisterScope("ambient", "ambient controller", 0)
+
+func GetPair(nodeName string, nodeType string) offmesh.PU {
+	//TODO:暂时不考虑single node的问题
+	if nodeType == constants.CPUNode {
+		for _, pair := range offmeshCluster.Pairs {
+			if pair.CPUName == nodeName {
+				return offmesh.PU{IP: pair.DPUIp, Name: pair.DPUName}
+			}
+		}
+		return offmesh.PU{}
+	} else {
+		for _, pair := range offmeshCluster.Pairs {
+			if pair.DPUName == nodeName {
+				return offmesh.PU{IP: pair.CPUIp, Name: pair.CPUName}
+			}
+		}
+		return offmesh.PU{}
+	}
+}
+
+func GetMyPair(nodeName string) offmesh.PU {
+	//TODO:暂时不考虑single node的问题
+	for _, pair := range offmeshCluster.Pairs {
+		if pair.CPUName == nodeName {
+			return offmesh.PU{IP: pair.CPUIp, Name: pair.CPUName}
+		}
+		if pair.DPUName == nodeName {
+			return offmesh.PU{IP: pair.DPUIp, Name: pair.DPUName}
+		}
+	}
+	return offmesh.PU{}
+}
 
 func IsPodInIpset(pod *corev1.Pod) bool {
 	ipset, err := Ipset.List()
@@ -197,6 +230,25 @@ func getDeviceWithDestinationOf(ip string) (string, error) {
 	return link.Attrs().Name, nil
 }
 
+func GetHostNetDevice(hostIP string) (string, error) {
+	links, err := netlink.LinkList()
+	if err != nil {
+		return "", err
+	}
+	for _, link := range links {
+		addrs, err := netlink.AddrList(link, netlink.FAMILY_ALL)
+		if err != nil {
+			return "", err
+		}
+		for _, addr := range addrs {
+			if addr.IP.String() == hostIP {
+				return link.Attrs().Name, nil
+			}
+		}
+	}
+	return "", errors.New("not found")
+}
+
 func GetHostIP(kubeClient kubernetes.Interface) (string, error) {
 	var ip string
 	// Get the node from the Kubernetes API
@@ -247,12 +299,12 @@ func GetHostIP(kubeClient kubernetes.Interface) (string, error) {
 	return "", nil
 }
 
-// CreateRulesOnNode initializes the routing, firewall and ipset rules on the node.
+// CreateRulesOnCPUNode initializes the routing, firewall and ipset rules on the node.
 // https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh
-func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS bool) error {
+func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool) error {
 	var err error
 
-	log.Debugf("CreateRulesOnNode: ztunnelVeth=%s, ztunnelIP=%s", ztunnelVeth, ztunnelIP)
+	log.Debugf("CreateRulesOnNode: cpuEth=%s, ztunnelIP=%s", cpuEth, ztunnelIP)
 
 	// Check if chain exists, if it exists flush.. otherwise initialize
 	// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L28
@@ -282,7 +334,7 @@ func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS boo
 		newIptableRule(
 			constants.TableMangle,
 			constants.ChainZTunnelPrerouting,
-			"-i", constants.InboundTun,
+			"-i", constants.DPUTun,
 			"-j", "MARK",
 			"--set-mark", constants.SkipMark,
 		),
@@ -290,21 +342,7 @@ func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS boo
 		newIptableRule(
 			constants.TableMangle,
 			constants.ChainZTunnelPrerouting,
-			"-i", constants.InboundTun,
-			"-j", "RETURN",
-		),
-		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L90
-		newIptableRule(
-			constants.TableMangle,
-			constants.ChainZTunnelPrerouting,
-			"-i", constants.OutboundTun,
-			"-j", "MARK",
-			"--set-mark", constants.SkipMark,
-		),
-		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L91
-		newIptableRule(constants.TableMangle,
-			constants.ChainZTunnelPrerouting,
-			"-i", constants.OutboundTun,
+			"-i", constants.DPUTun,
 			"-j", "RETURN",
 		),
 
@@ -441,7 +479,7 @@ func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS boo
 		newIptableRule(
 			constants.TableMangle,
 			constants.ChainZTunnelPrerouting,
-			"!", "-i", ztunnelVeth,
+			"!", "-i", cpuEth,
 			"-m", "connmark",
 			"--mark", constants.ProxyMark,
 			"-j", "MARK",
@@ -462,8 +500,9 @@ func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS boo
 		newIptableRule(
 			constants.TableMangle,
 			constants.ChainZTunnelPrerouting,
-			"-i", ztunnelVeth,
+			"-i", cpuEth,
 			"!", "--source", ztunnelIP,
+			"--match-set", Ipset.Name, "dst",
 			"-j", "MARK",
 			"--set-mark", constants.ProxyMark,
 		),
@@ -481,7 +520,8 @@ func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS boo
 		newIptableRule(
 			constants.TableMangle,
 			constants.ChainZTunnelPrerouting,
-			"-i", ztunnelVeth,
+			"-i", cpuEth,
+			"--match-set", Ipset.Name, "dst",
 			"-j", "MARK",
 			"--set-mark", constants.ConnSkipMark,
 		),
@@ -536,10 +576,10 @@ func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS boo
 	// @TODO: This likely needs to be cleaned up, there are a lot of martians in AWS
 	// that seem to necessitate this work.
 	procs := map[string]int{
-		"/proc/sys/net/ipv4/conf/default/rp_filter":                0,
-		"/proc/sys/net/ipv4/conf/all/rp_filter":                    0,
-		"/proc/sys/net/ipv4/conf/" + ztunnelVeth + "/rp_filter":    0,
-		"/proc/sys/net/ipv4/conf/" + ztunnelVeth + "/accept_local": 1,
+		"/proc/sys/net/ipv4/conf/default/rp_filter":           0,
+		"/proc/sys/net/ipv4/conf/all/rp_filter":               0,
+		"/proc/sys/net/ipv4/conf/" + cpuEth + "/rp_filter":    0,
+		"/proc/sys/net/ipv4/conf/" + cpuEth + "/accept_local": 1,
 	}
 	for proc, val := range procs {
 		err = SetProc(proc, fmt.Sprint(val))
@@ -550,58 +590,58 @@ func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS boo
 
 	// Create tunnels
 	// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L153-L161
-	inbnd := &netlink.Geneve{
+	dputun := &netlink.Geneve{
 		LinkAttrs: netlink.LinkAttrs{
-			Name: constants.InboundTun,
+			Name: constants.DPUTun,
 		},
 		ID:     1000,
-		Remote: net.ParseIP(ztunnelIP),
+		Remote: net.ParseIP(GetPair(NodeName, constants.CPUNode).IP),
 	}
-	log.Debugf("Building inbound tunnel: %+v", inbnd)
-	err = netlink.LinkAdd(inbnd)
+	log.Debugf("Building dpu tunnel: %+v", dputun)
+	err = netlink.LinkAdd(dputun)
 	if err != nil {
-		log.Errorf("failed to add inbound tunnel: %v", err)
+		log.Errorf("failed to add dpu tunnel: %v", err)
 	}
-	err = netlink.AddrAdd(inbnd, &netlink.Addr{
+	err = netlink.AddrAdd(dputun, &netlink.Addr{
 		IPNet: &net.IPNet{
-			IP:   net.ParseIP(constants.InboundTunIP),
+			IP:   net.ParseIP(constants.CPUDPUTunIP),
 			Mask: net.CIDRMask(constants.TunPrefix, 32),
 		},
 	})
 	if err != nil {
-		log.Errorf("failed to add inbound tunnel address: %v", err)
+		log.Errorf("failed to add dpu tunnel address: %v", err)
 	}
 
-	outbnd := &netlink.Geneve{
-		LinkAttrs: netlink.LinkAttrs{
-			Name: constants.OutboundTun,
-		},
-		ID:     1001,
-		Remote: net.ParseIP(ztunnelIP),
-	}
-	log.Debugf("Building outbound tunnel: %+v", outbnd)
-	err = netlink.LinkAdd(outbnd)
-	if err != nil {
-		log.Errorf("failed to add outbound tunnel: %v", err)
-	}
-	err = netlink.AddrAdd(outbnd, &netlink.Addr{
-		IPNet: &net.IPNet{
-			IP:   net.ParseIP(constants.OutboundTunIP),
-			Mask: net.CIDRMask(constants.TunPrefix, 32),
-		},
-	})
-	if err != nil {
-		log.Errorf("failed to add outbound tunnel address: %v", err)
-	}
+	//outbnd := &netlink.Geneve{
+	//	LinkAttrs: netlink.LinkAttrs{
+	//		Name: constants.OutboundTun,
+	//	},
+	//	ID:     1001,
+	//	Remote: net.ParseIP(ztunnelIP),
+	//}
+	//log.Debugf("Building outbound tunnel: %+v", outbnd)
+	//err = netlink.LinkAdd(outbnd)
+	//if err != nil {
+	//	log.Errorf("failed to add outbound tunnel: %v", err)
+	//}
+	//err = netlink.AddrAdd(outbnd, &netlink.Addr{
+	//	IPNet: &net.IPNet{
+	//		IP:   net.ParseIP(constants.OutboundTunIP),
+	//		Mask: net.CIDRMask(constants.TunPrefix, 32),
+	//	},
+	//})
+	//if err != nil {
+	//	log.Errorf("failed to add outbound tunnel address: %v", err)
+	//}
 
-	err = netlink.LinkSetUp(inbnd)
+	err = netlink.LinkSetUp(dputun)
 	if err != nil {
-		log.Errorf("failed to set inbound tunnel up: %v", err)
+		log.Errorf("failed to set dpu tunnel up: %v", err)
 	}
-	err = netlink.LinkSetUp(outbnd)
-	if err != nil {
-		log.Errorf("failed to set outbound tunnel up: %v", err)
-	}
+	//err = netlink.LinkSetUp(outbnd)
+	//if err != nil {
+	//	log.Errorf("failed to set outbound tunnel up: %v", err)
+	//}
 
 	procs = map[string]int{
 		"/proc/sys/net/ipv4/conf/" + constants.InboundTun + "/rp_filter":     0,
@@ -633,40 +673,40 @@ func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS boo
 
 	routes := []*ExecList{
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L164
-		newExec("ip",
-			[]string{
-				"route", "add", "table", fmt.Sprint(constants.RouteTableOutbound), ztunnelIP,
-				"dev", ztunnelVeth, "scope", "link",
-			},
-		),
+		//newExec("ip",
+		//	[]string{
+		//		"route", "add", "table", fmt.Sprint(constants.RouteTableOutbound), ztunnelIP,
+		//		"dev", ztunnelVeth, "scope", "link",
+		//	},
+		//),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L166
 		newExec("ip",
 			[]string{
 				"route", "add", "table", fmt.Sprint(constants.RouteTableOutbound), "0.0.0.0/0",
-				"via", constants.ZTunnelOutboundTunIP, "dev", constants.OutboundTun,
+				"via", constants.DPUDPUTunIP, "dev", constants.DPUTun,
 			},
 		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L168
-		newExec("ip",
-			[]string{
-				"route", "add", "table", fmt.Sprint(constants.RouteTableProxy), ztunnelIP,
-				"dev", ztunnelVeth, "scope", "link",
-			},
-		),
+		//newExec("ip",
+		//	[]string{
+		//		"route", "add", "table", fmt.Sprint(constants.RouteTableProxy), ztunnelIP,
+		//		"dev", ztunnelVeth, "scope", "link",
+		//	},
+		//),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L169
 		newExec("ip",
 			[]string{
 				"route", "add", "table", fmt.Sprint(constants.RouteTableProxy), "0.0.0.0/0",
-				"via", ztunnelIP, "dev", ztunnelVeth, "onlink",
+				"via", GetPair(NodeName, constants.CPUNode).IP, "dev", cpuEth,
 			},
 		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L171
-		newExec("ip",
-			[]string{
-				"route", "add", "table", fmt.Sprint(constants.RouteTableInbound), ztunnelIP,
-				"dev", ztunnelVeth, "scope", "link",
-			},
-		),
+		//newExec("ip",
+		//	[]string{
+		//		"route", "add", "table", fmt.Sprint(constants.RouteTableInbound), ztunnelIP,
+		//		"dev", ztunnelVeth, "scope", "link",
+		//	},
+		//),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L62-L77
 		// Everything with the skip mark goes directly to the main table
 		newExec("ip",
@@ -697,12 +737,12 @@ func (s *Server) CreateRulesOnNode(ztunnelVeth, ztunnelIP string, captureDNS boo
 		// Send all traffic to the inbound table. This table has routes only to pods in the mesh.
 		// It does not have a catch-all route, so if a route is missing, the search will continue
 		// allowing us to override routing just for member pods.
-		newExec("ip",
-			[]string{
-				"rule", "add", "priority", "103",
-				"table", fmt.Sprint(constants.RouteTableInbound),
-			},
-		),
+		//newExec("ip",
+		//	[]string{
+		//		"rule", "add", "priority", "103",
+		//		"table", fmt.Sprint(constants.RouteTableInbound),
+		//	},
+		//),
 	}
 
 	for _, route := range routes {

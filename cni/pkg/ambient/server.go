@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"istio.io/istio/cni/pkg/offmesh"
 	"os"
 	"sync"
 
@@ -32,6 +33,8 @@ import (
 	"istio.io/istio/pkg/kube"
 	"istio.io/istio/pkg/kube/controllers"
 )
+
+var offmeshCluster = offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)
 
 type Server struct {
 	kubeClient  kube.Client

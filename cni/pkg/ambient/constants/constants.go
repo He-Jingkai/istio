@@ -15,6 +15,9 @@
 package constants
 
 const (
+	CPUNode = "cpu_node"
+	DPUNode = "dpu_node"
+
 	// In the below, we add the fwmask to ensure only that mark can match
 	OutboundMask = "0x100"
 	OutboundMark = OutboundMask + "/" + OutboundMask
@@ -29,6 +32,11 @@ const (
 
 	InboundTun  = "istioin"
 	OutboundTun = "istioout"
+
+	DPUTun = "dputunnel"
+
+	CPUDPUTunIP = "192.168.128.1"
+	DPUDPUTunIP = "192.168.128.2"
 
 	InboundTunIP         = "192.168.126.1"
 	ZTunnelInboundTunIP  = "192.168.126.2"

@@ -15,14 +15,13 @@
 package ambient
 
 import (
+	mesh "istio.io/api/mesh/v1alpha1"
+	"istio.io/istio/pilot/pkg/ambient/ambientpod"
+	"istio.io/istio/pkg/kube/controllers"
 	corev1 "k8s.io/api/core/v1"
 	klabels "k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/cache"
-
-	mesh "istio.io/api/mesh/v1alpha1"
-	"istio.io/istio/pilot/pkg/ambient/ambientpod"
-	"istio.io/istio/pkg/kube/controllers"
 )
 
 var ErrLegacyLabel = "Namespace %s has sidecar label istio-injection or istio.io/rev " +
@@ -164,26 +163,25 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 			pod := obj.(*corev1.Pod)
 
 			scopeLog := log.WithLabels("type", "add")
-			if !podOnMyDPUNode(pod) {
-				scopeLog.Debugf("skipping pod not on my node")
-				return
-			}
 
-			if ztunnelPod(pod) {
+			scopeLog.Infof("caching pod: %v, ztunnelPod: %v,IsZtunnelOnMyDPU: %v", pod.Name, ztunnelPod(pod), IsZtunnelOnMyDPU(pod))
+
+			if ztunnelPod(pod) && IsZtunnelOnMyDPU(pod) {
 				if pod.Status.Phase != corev1.PodRunning {
 					return
 				}
 
 				scopeLog.Infof("ztunnel is now running")
 
-				veth, err := getDeviceWithDestinationOf(pod.Status.PodIP)
+				veth, err := GetHostNetDevice(GetMyPair(NodeName).IP)
+				scopeLog.Infof("hostIP=%v, eth:%v", GetMyPair(NodeName).IP, veth)
 				if err != nil {
 					scopeLog.Errorf("Failed to get device for ztunnel ip: %v", err)
 					return
 				}
 
 				captureDNS := getEnvFromPod(pod, "ISTIO_META_DNS_CAPTURE") == "true"
-				err = s.CreateRulesOnNode(veth, pod.Status.PodIP, captureDNS)
+				err = s.CreateRulesOnCPUNode(veth, pod.Status.PodIP, captureDNS)
 				if err != nil {
 					scopeLog.Errorf("Failed to configure node rules for ztunnel: %v", err)
 					return
@@ -203,22 +201,24 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 			oldPod := old.(*corev1.Pod)
 
 			scopeLog := log.WithLabels("type", "update")
+			scopeLog.Infof("caching pod: %v", newPod.Name)
 
-			if ztunnelPod(newPod) && podOnMyDPUNode(newPod) {
+			if ztunnelPod(newPod) && IsZtunnelOnMyDPU(newPod) {
 				// This will catch if ztunnel begins running after us... otherwise it gets handled by AddFunc
 				if newPod.Status.Phase != corev1.PodRunning || oldPod.Status.Phase == newPod.Status.Phase {
 					return
 				}
 				scopeLog.Infof("ztunnel is now running")
 
-				veth, err := getDeviceWithDestinationOf(newPod.Status.PodIP)
+				veth, err := GetHostNetDevice(GetMyPair(NodeName).IP)
+				scopeLog.Infof("hostIP=%v, eth:%v", GetMyPair(NodeName).IP, veth)
 				if err != nil {
 					scopeLog.Errorf("Failed to get device for ztunnel ip: %v", err)
 					return
 				}
 
 				captureDNS := getEnvFromPod(newPod, "ISTIO_META_DNS_CAPTURE") == "true"
-				err = s.CreateRulesOnNode(veth, newPod.Status.PodIP, captureDNS)
+				err = s.CreateRulesOnCPUNode(veth, newPod.Status.PodIP, captureDNS)
 				if err != nil {
 					scopeLog.Errorf("Failed to configure node for ztunnel: %v", err)
 					return
@@ -244,16 +244,15 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 			pod := obj.(*corev1.Pod)
 			scopeLog := log.WithLabels("type", "delete")
 
-			if !podOnMyNode(pod) {
-				scopeLog.Debugf("skipping pod not on my node")
-				return
-			}
-
-			if ztunnelPod(pod) {
+			//if !podOnMyNode(pod) {
+			//	scopeLog.Debugf("skipping pod not on my node")
+			//	return
+			//}
+			if ztunnelPod(pod) && IsZtunnelOnMyDPU(pod) {
 				scopeLog.Infof("ztunnel is now stopped... cleaning up.")
 				s.cleanup()
 				s.setZTunnelRunning(false)
-			} else if IsPodInIpset(pod) {
+			} else if podOnMyNode(pod) && IsPodInIpset(pod) {
 				scopeLog.Infof("Pod %s/%s is now stopped... cleaning up.", pod.Namespace, pod.Name)
 				DelPodFromMesh(pod)
 			}

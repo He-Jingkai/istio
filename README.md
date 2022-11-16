@@ -85,3 +85,9 @@ These all represent short term limitations, and are expected to be fixed in futu
 * Workloads not listening on `localhost` are not supported (see [here](https://istio.io/latest/blog/2021/upcoming-networking-changes/)).
 * Traffic from outside the mesh does not have inbound policy applied.
 * `STRICT` mTLS does not fully prevent plain text traffic.
+
+# offMesh patch
+- ztunnel only scheduled to cpu node
+- cni-node(cpu's) only scheduled to dpu node
+- add cni-node(dpu) to schedule to dpu node
+- 

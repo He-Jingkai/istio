@@ -44,7 +44,7 @@ spec:
       hostNetwork: true
       nodeSelector:
         kubernetes.io/os: linux
-        offMeshNodeType: main
+        offMeshNodeType: cpu
       tolerations:
         # Make sure istio-cni-node gets scheduled on all nodes.
         - effect: NoSchedule
@@ -143,6 +143,8 @@ spec:
               name: cni-log-dir
             - mountPath: /etc/ambient-config
               name: cni-ambientconfig
+            - mountPath: /etc/offmesh
+              name: vol-offmesh
           resources:
 {{- if .Values.cni.resources }}
 {{ toYaml .Values.cni.resources | trim | indent 12 }}
@@ -227,3 +229,6 @@ spec:
         - name: cni-log-dir
           hostPath:
             path: /var/run/istio-cni
+        - name: vol-offmesh
+          hostPath:
+            path: /home/offMesh-config
