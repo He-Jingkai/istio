@@ -16,9 +16,9 @@ package ambient
 
 import (
 	mesh "istio.io/api/mesh/v1alpha1"
-	"istio.io/istio/cni/pkg/ambient/constants"
 	"istio.io/istio/pilot/pkg/ambient/ambientpod"
 	"istio.io/istio/pkg/kube/controllers"
+	"istio.io/istio/pkg/offmesh"
 	corev1 "k8s.io/api/core/v1"
 	klabels "k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
@@ -151,7 +151,7 @@ func (s *Server) Reconcile(name types.NamespacedName) error {
 }
 
 func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
-	if MyNodeType() == constants.CPUNode {
+	if offmesh.MyNodeType(NodeName, offmeshCluster) == offmesh.CPUNode {
 		return &cache.ResourceEventHandlerFuncs{
 			// We only handle existing resources, so if we get an add event,
 			// we need to check to see if pod is running, if so, it's safe to
@@ -175,8 +175,8 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 
 					scopeLog.Infof("ztunnel is now running")
 
-					veth, err := GetHostNetDevice(GetMyPair(NodeName).IP)
-					scopeLog.Infof("hostIP=%v, eth:%v", GetMyPair(NodeName).IP, veth)
+					veth, err := GetHostNetDevice(offmesh.GetMyPair(NodeName, offmeshCluster).IP)
+					scopeLog.Infof("hostIP=%v, eth:%v", offmesh.GetMyPair(NodeName, offmeshCluster).IP, veth)
 					if err != nil {
 						scopeLog.Errorf("Failed to get device for ztunnel ip: %v", err)
 						return
@@ -212,8 +212,8 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 					}
 					scopeLog.Infof("ztunnel is now running")
 
-					veth, err := GetHostNetDevice(GetMyPair(NodeName).IP)
-					scopeLog.Infof("hostIP=%v, eth:%v", GetMyPair(NodeName).IP, veth)
+					veth, err := GetHostNetDevice(offmesh.GetMyPair(NodeName, offmeshCluster).IP)
+					scopeLog.Infof("hostIP=%v, eth:%v", offmesh.GetMyPair(NodeName, offmeshCluster).IP, veth)
 					if err != nil {
 						scopeLog.Errorf("Failed to get device for ztunnel ip: %v", err)
 						return

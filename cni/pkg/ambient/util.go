@@ -18,8 +18,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"istio.io/istio/cni/pkg/ambient/constants"
-	"istio.io/istio/cni/pkg/offmesh"
+	"istio.io/istio/pkg/offmesh"
 	"os/exec"
 	"strings"
 
@@ -105,12 +104,12 @@ func (s *Server) matchesDisabledSelectors(lbl map[string]string) (bool, error) {
 	return false, nil
 }
 func IsZtunnelOnMyDPU(pod *corev1.Pod) bool {
-	pu := GetPair(NodeName, constants.CPUNode)
+	pu := offmesh.GetPair(NodeName, offmesh.CPUNode, offmeshCluster)
 	return pu.Name == pod.Spec.NodeName
 }
 
 func IsPodOnMyCPU(pod *corev1.Pod) bool {
-	pu := GetPair(NodeName, constants.DPUNode)
+	pu := offmesh.GetPair(NodeName, offmesh.DPUNode, offmeshCluster)
 	return pu.Name == pod.Spec.NodeName
 }
 
@@ -136,50 +135,6 @@ func getEnvFromPod(pod *corev1.Pod, envName string) string {
 			if env.Name == envName {
 				return env.Value
 			}
-		}
-	}
-	return ""
-}
-
-func GetPair(nodeName string, nodeType string) offmesh.PU {
-	//TODO:暂时不考虑single node的问题
-	if nodeType == constants.CPUNode {
-		for _, pair := range offmeshCluster.Pairs {
-			if pair.CPUName == nodeName {
-				return offmesh.PU{IP: pair.DPUIp, Name: pair.DPUName}
-			}
-		}
-		return offmesh.PU{}
-	} else {
-		for _, pair := range offmeshCluster.Pairs {
-			if pair.DPUName == nodeName {
-				return offmesh.PU{IP: pair.CPUIp, Name: pair.CPUName}
-			}
-		}
-		return offmesh.PU{}
-	}
-}
-
-func GetMyPair(nodeName string) offmesh.PU {
-	//TODO:暂时不考虑single node的问题
-	for _, pair := range offmeshCluster.Pairs {
-		if pair.CPUName == nodeName {
-			return offmesh.PU{IP: pair.CPUIp, Name: pair.CPUName}
-		}
-		if pair.DPUName == nodeName {
-			return offmesh.PU{IP: pair.DPUIp, Name: pair.DPUName}
-		}
-	}
-	return offmesh.PU{}
-}
-
-func MyNodeType() string {
-	for _, pair := range offmeshCluster.Pairs {
-		if pair.CPUName == NodeName {
-			return constants.CPUNode
-		}
-		if pair.DPUName == NodeName {
-			return constants.DPUNode
 		}
 	}
 	return ""

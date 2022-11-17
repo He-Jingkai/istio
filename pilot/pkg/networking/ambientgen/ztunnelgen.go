@@ -174,15 +174,15 @@ func (g *ZTunnelConfigGenerator) BuildClusters(proxy *model.Proxy, push *model.P
 		}
 	}
 
-	for sa := range workloads.NodeLocalBySA(proxy.Metadata.NodeName) {
+	for sa := range workloads.CPUNodeLocalBySA(proxy.Metadata.NodeName) {
 		c := outboundTunnelCluster(proxy, push, sa, sa)
 		out = append(out, &discovery.Resource{Name: c.Name, Resource: protoconv.MessageToAny(c)})
 	}
-	for sa := range workloads.NodeLocalBySA(proxy.Metadata.NodeName) {
+	for sa := range workloads.CPUNodeLocalBySA(proxy.Metadata.NodeName) {
 		c := outboundPodTunnelCluster(proxy, push, sa, sa)
 		out = append(out, &discovery.Resource{Name: c.Name, Resource: protoconv.MessageToAny(c)})
 	}
-	for sa := range workloads.NodeLocalBySA(proxy.Metadata.NodeName) {
+	for sa := range workloads.CPUNodeLocalBySA(proxy.Metadata.NodeName) {
 		c := outboundPodLocalTunnelCluster(proxy, push, sa, sa)
 		out = append(out, &discovery.Resource{Name: c.Name, Resource: protoconv.MessageToAny(c)})
 	}
@@ -324,7 +324,7 @@ func (g *ZTunnelConfigGenerator) buildPodOutboundCaptureListener(proxy *model.Pr
 
 	services := proxy.SidecarScope.Services()
 	seen := sets.New()
-	for _, sourceWl := range push.AmbientIndex.Workloads.NodeLocal(proxy.Metadata.NodeName) {
+	for _, sourceWl := range push.AmbientIndex.Workloads.CPUNodeLocal(proxy.Metadata.NodeName) {
 		sourceAndDestMatch := match.NewDestinationIP()
 		// TODO: handle host network better, which has a shared IP
 		sourceMatch.Map[sourceWl.PodIP] = match.ToMatcher(sourceAndDestMatch.Matcher)
@@ -656,7 +656,7 @@ func buildWaypointClusters(proxy *model.Proxy, push *model.PushContext) model.Re
 	var clusters []*cluster.Cluster
 	// Client waypoints
 	for sa, waypoints := range push.AmbientIndex.Waypoints.ByIdentity {
-		saWorkloads := push.AmbientIndex.Workloads.NodeLocalBySA(proxy.Metadata.NodeName)[sa]
+		saWorkloads := push.AmbientIndex.Workloads.CPUNodeLocalBySA(proxy.Metadata.NodeName)[sa]
 		if len(saWorkloads) == 0 || len(waypoints) == 0 {
 			// no waypoints or no workloads that use this client waypoint on the node
 			continue
@@ -685,7 +685,7 @@ func buildWaypointClusters(proxy *model.Proxy, push *model.PushContext) model.Re
 		})
 	}
 	for waypointSA, waypoints := range push.AmbientIndex.Waypoints.ByIdentity {
-		for workloadSA, workloads := range push.AmbientIndex.Workloads.NodeLocalBySA(proxy.Metadata.NodeName) {
+		for workloadSA, workloads := range push.AmbientIndex.Workloads.CPUNodeLocalBySA(proxy.Metadata.NodeName) {
 			if len(workloads) == 0 || len(waypoints) == 0 {
 				// no waypoint proxies or no workloads that use this identity on the node
 				continue
@@ -1068,7 +1068,7 @@ func (g *ZTunnelConfigGenerator) buildInboundCaptureListener(proxy *model.Proxy,
 		}},
 	}
 
-	for _, workload := range push.AmbientIndex.Workloads.NodeLocal(proxy.Metadata.NodeName) {
+	for _, workload := range push.AmbientIndex.Workloads.CPUNodeLocal(proxy.Metadata.NodeName) {
 		// Skip workloads in the host network
 		if workload.HostNetwork {
 			continue
@@ -1221,7 +1221,7 @@ func (g *ZTunnelConfigGenerator) buildInboundPlaintextCaptureListener(proxy *mod
 		Transparent: wrappers.Bool(true),
 	}
 
-	for _, workload := range push.AmbientIndex.Workloads.NodeLocal(proxy.Metadata.NodeName) {
+	for _, workload := range push.AmbientIndex.Workloads.CPUNodeLocal(proxy.Metadata.NodeName) {
 		// Skip workloads in the host network
 		if workload.HostNetwork {
 			continue

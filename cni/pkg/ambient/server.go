@@ -18,7 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"istio.io/istio/cni/pkg/offmesh"
+	"istio.io/istio/pkg/offmesh"
 	"os"
 	"sync"
 

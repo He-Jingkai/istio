@@ -30,8 +30,6 @@ type NodeInfo struct {
 	DPUIp        string
 }
 
-const ClusterConfigYamlPath = `/etc/offmesh/cluster-conf.yaml`
-
 func ReadClusterConfigYaml(filePath string) ClusterConfig {
 	var clusterConf ClusterConfig
 	var err error

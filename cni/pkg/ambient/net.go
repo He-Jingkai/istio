@@ -29,6 +29,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 
 	"istio.io/istio/cni/pkg/ambient/constants"
+	"istio.io/istio/pkg/offmesh"
 	istiolog "istio.io/pkg/log"
 )
 
@@ -562,7 +563,7 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 			Name: constants.DPUTun,
 		},
 		ID:     1000,
-		Remote: net.ParseIP(GetPair(NodeName, constants.CPUNode).IP),
+		Remote: net.ParseIP(offmesh.GetPair(NodeName, offmesh.CPUNode, offmeshCluster).IP),
 	}
 	log.Debugf("Building dpu tunnel: %+v", dputun)
 	err = netlink.LinkAdd(dputun)
@@ -638,7 +639,7 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 		newExec("ip",
 			[]string{
 				"route", "add", "table", fmt.Sprint(constants.RouteTableProxy), "0.0.0.0/0",
-				"via", GetPair(NodeName, constants.CPUNode).IP, "dev", cpuEth,
+				"via", offmesh.GetPair(NodeName, offmesh.CPUNode, offmeshCluster).IP, "dev", cpuEth,
 			},
 		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L171
@@ -1117,7 +1118,7 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 			Name: constants.CPUTun,
 		},
 		ID:     1000,
-		Remote: net.ParseIP(GetPair(NodeName, constants.DPUNode).IP),
+		Remote: net.ParseIP(offmesh.GetPair(NodeName, offmesh.DPUNode, offmeshCluster).IP),
 	}
 	log.Debugf("Building cpu tunnel: %+v", cputun)
 	err = netlink.LinkAdd(cputun)

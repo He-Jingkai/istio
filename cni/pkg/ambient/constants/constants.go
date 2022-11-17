@@ -15,9 +15,6 @@
 package constants
 
 const (
-	CPUNode = "cpu_node"
-	DPUNode = "dpu_node"
-
 	// In the below, we add the fwmask to ensure only that mark can match
 	OutboundMask = "0x100"
 	OutboundMark = OutboundMask + "/" + OutboundMask
