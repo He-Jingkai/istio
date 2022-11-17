@@ -175,29 +175,11 @@ func (wi *WorkloadIndex) NodeLocalBySA(node string) map[string][]Workload {
 	return out
 }
 
-func (wi *WorkloadIndex) CPUNodeLocalBySA(node string) map[string][]Workload {
-	if node == "" {
-		return wi.ByIdentity
-	}
-	out := wi.ByNodeAndIdentity[node]
-	if out == nil {
-		out = map[string][]Workload{}
-	}
-	return out
-}
-
 func (wi *WorkloadIndex) NodeLocal(node string) []Workload {
 	if node == "" {
 		return wi.All()
 	}
 	return wi.ByNode[node]
-}
-
-func (wi *WorkloadIndex) CPUNodeLocal(node string) []Workload {
-	if node == "" {
-		return wi.All()
-	}
-	return wi.ByNode[offmesh.GetPair(node, offmesh.DPUNode, offmeshCluster).Name]
 }
 
 func (wi *WorkloadIndex) All() []Workload {
@@ -270,4 +252,28 @@ func (wi *WorkloadIndex) Remove(namespacedName types.NamespacedName) {
 
 func (wi *WorkloadIndex) Copy() *WorkloadIndex {
 	return wi.MergeInto(NewWorkloadIndex())
+}
+
+/* OffMesh Patch */
+
+func (wi *WorkloadIndex) CPUNodeLocal(node string) []Workload {
+	if node == "" {
+		return wi.All()
+	}
+	return wi.ByNode[offmesh.GetPair(node, offmesh.DPUNode, offmeshCluster).Name]
+}
+
+func (wi *WorkloadIndex) CPUNodeLocalBySA(node string) map[string][]Workload {
+	if node == "" {
+		return wi.ByIdentity
+	}
+	out := wi.ByNodeAndIdentity[node]
+	if out == nil {
+		out = map[string][]Workload{}
+	}
+	return out
+}
+
+func MyCPUNodeName(node string) string {
+	return offmesh.GetPair(node, offmesh.DPUNode, offmeshCluster).Name
 }

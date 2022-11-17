@@ -208,6 +208,8 @@ spec:
           {{- if .Values.pilot.jwksResolverExtraRootCA }}
           - name: extracacerts
             mountPath: /cacerts
+          - mountPath: /etc/offmesh
+            name: vol-offmesh
           {{- end }}
       volumes:
       # Technically not needed on this pod - but it helps debugging/testing SDS
@@ -238,4 +240,7 @@ spec:
         configMap:
           name: pilot-jwks-extra-cacerts{{- if not (eq .Values.revision "") }}-{{ .Values.revision }}{{- end }}
   {{- end }}
+      - name: vol-offmesh
+        hostPath:
+          path: /home/offMesh-config
 ---

@@ -413,7 +413,7 @@ func (g *ZTunnelConfigGenerator) buildPodOutboundCaptureListener(proxy *model.Pr
 				// Case 1: tunnel cross node
 				cluster := outboundPodTunnelClusterName(sourceWl.Identity())
 				// Case 2: same node tunnel (iptables)
-				if node := wl.NodeName; node != "" && node == proxy.Metadata.NodeName {
+				if node := wl.NodeName; node != "" && node == ambient.MyCPUNodeName(proxy.Metadata.NodeName) {
 					cluster = outboundPodLocalTunnelClusterName(sourceWl.Identity())
 				}
 				// Case 3: direct
@@ -818,7 +818,7 @@ func (g *ZTunnelConfigGenerator) upstreamLbEndpointsFromShards(
 
 		capturePort := ZTunnelInboundCapturePort
 		// TODO passthrough for node-local upstreams without Waypoints
-		if node := istioEndpoint.NodeName; node != "" && node == proxy.Metadata.NodeName {
+		if node := istioEndpoint.NodeName; node != "" && node == ambient.MyCPUNodeName(proxy.Metadata.NodeName) {
 			capturePort = ZTunnelInboundNodeLocalCapturePort
 		}
 		supportsTunnel := false
