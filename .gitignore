@@ -36,7 +36,7 @@ bin/protoc-min-version*
 bin/protoc-gen-docs*
 bin/testlinter
 bin/envvarlinter
-bin/istioctl
+# bin/istioctl
 *.orig
 # Avoid accidental istio.VERSION changes
 istio.VERSION
