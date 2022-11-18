@@ -228,6 +228,6 @@ spec:
         - name: cni-log-dir
           hostPath:
             path: /var/run/istio-cni
-        - name: vol-offmesh
-          hostPath:
-            path: /home/offMesh-config
+        - name: offmesh-conf
+          configMap:
+              name: offmesh-conf
