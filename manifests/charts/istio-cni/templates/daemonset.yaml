@@ -143,7 +143,7 @@ spec:
             - mountPath: /etc/ambient-config
               name: cni-ambientconfig
             - mountPath: /etc/offmesh
-              name: vol-offmesh
+              name: offmesh-conf
           resources:
 {{- if .Values.cni.resources }}
 {{ toYaml .Values.cni.resources | trim | indent 12 }}

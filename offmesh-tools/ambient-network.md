@@ -1,6 +1,21 @@
 # ambient network notes
 
 ```shell
+ kubectl create configmap offmesh-conf -n ambient --from-file=/home/hjk/offmesh-conf
+```
+
+```yaml
+volumeMounts:
+  - mountPath: /etc/offmesh-conf
+    name: offmesh-conf
+      
+volumes:
+  - name: offmesh-conf
+    configMap:
+      name: offmesh-conf
+```
+
+```shell
 #cpu 
 kubectl label nodes "$NodeName" offMeshNodeType=cpu
 #dpu
