@@ -55,6 +55,8 @@ spec:
 {{ toYaml $gateway.podAnnotations | indent 8 }}
 {{ end }}
     spec:
+      nodeSelector:
+        offMeshNodeType: cpu
 {{- if not $gateway.runAsRoot }}
       securityContext:
         runAsUser: 1337

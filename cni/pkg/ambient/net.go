@@ -226,11 +226,11 @@ func GetHostIP(kubeClient kubernetes.Interface) (string, error) {
 	}
 
 	ip = node.Spec.PodCIDR
-	fmt.Printf("node.Spec.PodCIDR: %v", ip)
+	fmt.Printf("node.Spec.PodCIDR: %v\n", ip)
 	// This needs to be done as in Kind, the node internal IP is not the one we want.
 	if ip == "" {
 		// PodCIDR is not set, try to get the IP from the node internal IP
-		fmt.Printf("node.Status.Addresses: %v", node.Status.Addresses)
+		fmt.Printf("node.Status.Addresses: %v\n", node.Status.Addresses)
 		for _, address := range node.Status.Addresses {
 			if address.Type == corev1.NodeInternalIP {
 				return address.Address, nil
@@ -239,21 +239,22 @@ func GetHostIP(kubeClient kubernetes.Interface) (string, error) {
 	} else {
 		network, err := netip.ParsePrefix(ip)
 		if err != nil {
-			return "", fmt.Errorf("error parsing node IP: %v", err)
+			return "", fmt.Errorf("error parsing node IP: %v\n", err)
 		}
 
 		ifaces, err := net.Interfaces()
 		if err != nil {
-			return "", fmt.Errorf("error getting interfaces: %v", err)
+			return "", fmt.Errorf("error getting interfaces: %v\n", err)
 		}
-
 		for _, iface := range ifaces {
 			addrs, err := iface.Addrs()
+			fmt.Printf("iface: %v\n", iface)
 			if err != nil {
 				return "", fmt.Errorf("error getting addresses: %v", err)
 			}
 
 			for _, addr := range addrs {
+				fmt.Printf("addr: %v\n", addr.String())
 				a, err := netip.ParseAddr(strings.Split(addr.String(), "/")[0])
 				if err != nil {
 					return "", fmt.Errorf("error parsing address: %v", err)
