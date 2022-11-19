@@ -1,7 +1,8 @@
 # ambient network notes
 
 ```shell
- kubectl create configmap offmesh-conf -n ambient --from-file=/home/hjk/offmesh-conf
+kubectl create configmap offmesh-conf -n istio-system --from-file=/home/hjk/offmesh-conf
+kubectl create configmap offmesh-conf -n kube-system  --from-file=/home/hjk/offmesh-conf
 ```
 
 ```yaml

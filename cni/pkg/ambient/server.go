@@ -34,8 +34,6 @@ import (
 	"istio.io/istio/pkg/kube/controllers"
 )
 
-var offmeshCluster = offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)
-
 type Server struct {
 	kubeClient  kube.Client
 	environment *model.Environment
@@ -48,6 +46,7 @@ type Server struct {
 	disabledSelectors []*metav1.LabelSelector
 	mu                sync.Mutex
 	ztunnelRunning    bool
+	offmeshCluster    offmesh.ClusterConfig
 }
 
 type AmbientConfigFile struct {
@@ -72,6 +71,7 @@ func NewServer(ctx context.Context, args AmbientArgs) (*Server, error) {
 		disabledSelectors: ambientpod.LegacySelectors,
 		ztunnelRunning:    false,
 		kubeClient:        client,
+		offmeshCluster:    offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath),
 	}
 
 	// We need to find our Host IP -- is there a better way to do this?

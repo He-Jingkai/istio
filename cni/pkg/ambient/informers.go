@@ -151,7 +151,7 @@ func (s *Server) Reconcile(name types.NamespacedName) error {
 }
 
 func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
-	if offmesh.MyNodeType(NodeName, offmeshCluster) == offmesh.CPUNode {
+	if offmesh.MyNodeType(NodeName, s.offmeshCluster) == offmesh.CPUNode {
 		return &cache.ResourceEventHandlerFuncs{
 			// We only handle existing resources, so if we get an add event,
 			// we need to check to see if pod is running, if so, it's safe to
@@ -166,17 +166,17 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 
 				scopeLog := log.WithLabels("type", "add")
 
-				scopeLog.Infof("caching pod: %v, ztunnelPod: %v,IsZtunnelOnMyDPU: %v", pod.Name, ztunnelPod(pod), IsZtunnelOnMyDPU(pod))
+				scopeLog.Infof("caching pod: %v, ztunnelPod: %v,IsZtunnelOnMyDPU: %v", pod.Name, ztunnelPod(pod), IsZtunnelOnMyDPU(pod, s.offmeshCluster))
 
-				if ztunnelPod(pod) && IsZtunnelOnMyDPU(pod) {
+				if ztunnelPod(pod) && IsZtunnelOnMyDPU(pod, s.offmeshCluster) {
 					if pod.Status.Phase != corev1.PodRunning {
 						return
 					}
 
 					scopeLog.Infof("ztunnel is now running")
 
-					veth, err := GetHostNetDevice(offmesh.GetMyPair(NodeName, offmeshCluster).IP)
-					scopeLog.Infof("hostIP=%v, eth:%v", offmesh.GetMyPair(NodeName, offmeshCluster).IP, veth)
+					veth, err := GetHostNetDevice(offmesh.GetMyPair(NodeName, s.offmeshCluster).IP)
+					scopeLog.Infof("hostIP=%v, eth:%v", offmesh.GetMyPair(NodeName, s.offmeshCluster).IP, veth)
 					if err != nil {
 						scopeLog.Errorf("Failed to get device for ztunnel ip: %v", err)
 						return
@@ -205,15 +205,15 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 				scopeLog := log.WithLabels("type", "update")
 				scopeLog.Infof("caching pod: %v", newPod.Name)
 
-				if ztunnelPod(newPod) && IsZtunnelOnMyDPU(newPod) {
+				if ztunnelPod(newPod) && IsZtunnelOnMyDPU(newPod, s.offmeshCluster) {
 					// This will catch if ztunnel begins running after us... otherwise it gets handled by AddFunc
 					if newPod.Status.Phase != corev1.PodRunning || oldPod.Status.Phase == newPod.Status.Phase {
 						return
 					}
 					scopeLog.Infof("ztunnel is now running")
 
-					veth, err := GetHostNetDevice(offmesh.GetMyPair(NodeName, offmeshCluster).IP)
-					scopeLog.Infof("hostIP=%v, eth:%v", offmesh.GetMyPair(NodeName, offmeshCluster).IP, veth)
+					veth, err := GetHostNetDevice(offmesh.GetMyPair(NodeName, s.offmeshCluster).IP)
+					scopeLog.Infof("hostIP=%v, eth:%v", offmesh.GetMyPair(NodeName, s.offmeshCluster).IP, veth)
 					if err != nil {
 						scopeLog.Errorf("Failed to get device for ztunnel ip: %v", err)
 						return
@@ -250,7 +250,7 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 				//	scopeLog.Debugf("skipping pod not on my node")
 				//	return
 				//}
-				if ztunnelPod(pod) && IsZtunnelOnMyDPU(pod) {
+				if ztunnelPod(pod) && IsZtunnelOnMyDPU(pod, s.offmeshCluster) {
 					scopeLog.Infof("ztunnel is now stopped... cleaning up.")
 					s.cleanup()
 					s.setZTunnelRunning(false)
@@ -295,7 +295,7 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 				// catch the existing pods
 				s.ReconcileNamespaces()
 			}
-			if IsPodOnMyCPU(pod) {
+			if IsPodOnMyCPU(pod, s.offmeshCluster) {
 				AddPodToMesh(pod, "")
 			}
 
@@ -334,7 +334,7 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 				// catch the existing pods
 				s.ReconcileNamespaces()
 			}
-			if IsPodOnMyCPU(newPod) {
+			if IsPodOnMyCPU(newPod, s.offmeshCluster) {
 				AddPodToMesh(newPod, "")
 			}
 			// Catch pod with opt out applied
@@ -359,7 +359,7 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 				scopeLog.Infof("ztunnel is now stopped... cleaning up.")
 				s.cleanup()
 				s.setZTunnelRunning(false)
-			} else if IsPodOnMyCPU(pod) && IsPodInIpset(pod) {
+			} else if IsPodOnMyCPU(pod, s.offmeshCluster) && IsPodInIpset(pod) {
 				scopeLog.Infof("Pod %s/%s is now stopped... cleaning up.", pod.Namespace, pod.Name)
 				DelPodFromMesh(pod)
 			}

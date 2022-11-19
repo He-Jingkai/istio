@@ -103,12 +103,12 @@ func (s *Server) matchesDisabledSelectors(lbl map[string]string) (bool, error) {
 
 	return false, nil
 }
-func IsZtunnelOnMyDPU(pod *corev1.Pod) bool {
+func IsZtunnelOnMyDPU(pod *corev1.Pod, offmeshCluster offmesh.ClusterConfig) bool {
 	pu := offmesh.GetPair(NodeName, offmesh.CPUNode, offmeshCluster)
 	return pu.Name == pod.Spec.NodeName
 }
 
-func IsPodOnMyCPU(pod *corev1.Pod) bool {
+func IsPodOnMyCPU(pod *corev1.Pod, offmeshCluster offmesh.ClusterConfig) bool {
 	pu := offmesh.GetPair(NodeName, offmesh.DPUNode, offmeshCluster)
 	return pu.Name == pod.Spec.NodeName
 }
