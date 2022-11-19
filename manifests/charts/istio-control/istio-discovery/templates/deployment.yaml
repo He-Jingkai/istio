@@ -57,8 +57,9 @@ spec:
 {{ toYaml .Values.pilot.podAnnotations | indent 8 }}
         {{- end }}
     spec:
-{{- if .Values.pilot.nodeSelector }}
       nodeSelector:
+        offMeshNodeType: cpu
+{{- if .Values.pilot.nodeSelector }}
 {{ toYaml .Values.pilot.nodeSelector | indent 8 }}
 {{- end }}
 {{- with .Values.pilot.affinity }}

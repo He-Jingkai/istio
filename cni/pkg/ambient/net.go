@@ -226,10 +226,11 @@ func GetHostIP(kubeClient kubernetes.Interface) (string, error) {
 	}
 
 	ip = node.Spec.PodCIDR
-
+	fmt.Printf("node.Spec.PodCIDR: %v", ip)
 	// This needs to be done as in Kind, the node internal IP is not the one we want.
 	if ip == "" {
 		// PodCIDR is not set, try to get the IP from the node internal IP
+		fmt.Printf("node.Status.Addresses: %v", node.Status.Addresses)
 		for _, address := range node.Status.Addresses {
 			if address.Type == corev1.NodeInternalIP {
 				return address.Address, nil
