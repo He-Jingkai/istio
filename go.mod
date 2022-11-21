@@ -102,7 +102,10 @@ require (
 	sigs.k8s.io/yaml v1.3.0
 )
 
-require github.com/emicklei/go-restful/v3 v3.8.0 // indirect
+require (
+	github.com/containernetworking/cni v1.0.1 // indirect
+	github.com/emicklei/go-restful/v3 v3.8.0 // indirect
+)
 
 require (
 	cloud.google.com/go v0.102.1 // indirect

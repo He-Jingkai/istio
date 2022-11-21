@@ -24,10 +24,10 @@ import (
 	"strconv"
 	"time"
 
-	"istio.io/istio/cni/containernetworking/cni/pkg/skel"
-	"istio.io/istio/cni/containernetworking/cni/pkg/types"
-	cniv1 "istio.io/istio/cni/containernetworking/cni/pkg/types/100"
-	"istio.io/istio/cni/containernetworking/cni/pkg/version"
+	"istio.io/istio/containernetworking/cni/pkg/skel"
+	"istio.io/istio/containernetworking/cni/pkg/types"
+	cniv1 "istio.io/istio/containernetworking/cni/pkg/types/100"
+	"istio.io/istio/containernetworking/cni/pkg/version"
 
 	"istio.io/api/annotation"
 	"istio.io/istio/cni/pkg/ambient"
