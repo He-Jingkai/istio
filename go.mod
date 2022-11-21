@@ -18,7 +18,6 @@ require (
 	github.com/census-instrumentation/opencensus-proto v0.3.0
 	github.com/cheggaaa/pb/v3 v3.1.0
 	github.com/cncf/xds/go v0.0.0-20220520190051-1e77728a1eaa
-	github.com/containernetworking/cni v1.1.2
 	github.com/containernetworking/plugins v1.1.1
 	github.com/coreos/go-oidc/v3 v3.2.0
 	github.com/davecgh/go-spew v1.1.1

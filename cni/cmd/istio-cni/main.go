@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/containernetworking/cni/pkg/skel"
-	"github.com/containernetworking/cni/pkg/version"
+	"istio.io/istio/cni/containernetworking/cni/pkg/skel"
+	"istio.io/istio/cni/containernetworking/cni/pkg/version"
 
 	"istio.io/istio/cni/pkg/plugin"
 	"istio.io/istio/tools/istio-iptables/pkg/cmd"

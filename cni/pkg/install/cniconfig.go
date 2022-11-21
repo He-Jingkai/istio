@@ -23,7 +23,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/containernetworking/cni/libcni"
+	"istio.io/istio/cni/containernetworking/cni/libcni"
 
 	"istio.io/istio/cni/pkg/config"
 	"istio.io/istio/cni/pkg/util"

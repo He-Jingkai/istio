@@ -27,7 +27,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/containernetworking/cni/pkg/skel"
+	"istio.io/istio/cni/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/plugins/pkg/ns"
 	"github.com/containernetworking/plugins/pkg/testutils"
 	"k8s.io/client-go/kubernetes"

@@ -24,10 +24,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/containernetworking/cni/pkg/skel"
-	"github.com/containernetworking/cni/pkg/types"
-	cniv1 "github.com/containernetworking/cni/pkg/types/100"
-	"github.com/containernetworking/cni/pkg/version"
+	"istio.io/istio/cni/containernetworking/cni/pkg/skel"
+	"istio.io/istio/cni/containernetworking/cni/pkg/types"
+	cniv1 "istio.io/istio/cni/containernetworking/cni/pkg/types/100"
+	"istio.io/istio/cni/containernetworking/cni/pkg/version"
 
 	"istio.io/api/annotation"
 	"istio.io/istio/cni/pkg/ambient"
@@ -316,6 +316,7 @@ func CmdAdd(args *skel.CmdArgs) (err error) {
 		log.Debugf("Not a kubernetes pod")
 	}
 
+	log.Infof("converting result here...")
 	var result *cniv1.Result
 	if conf.PrevResult == nil {
 		result = &cniv1.Result{
@@ -325,7 +326,7 @@ func CmdAdd(args *skel.CmdArgs) (err error) {
 		// Pass through the result for the next plugin
 		result = conf.PrevResult
 	}
-
+	log.Infof("result: %v...", result)
 	return types.PrintResult(result, conf.CNIVersion)
 }
 
