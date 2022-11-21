@@ -316,6 +316,7 @@ func CmdAdd(args *skel.CmdArgs) (err error) {
 		log.Debugf("Not a kubernetes pod")
 	}
 
+	log.Infof("converting result here...")
 	var result *cniv1.Result
 	if conf.PrevResult == nil {
 		result = &cniv1.Result{
@@ -325,7 +326,7 @@ func CmdAdd(args *skel.CmdArgs) (err error) {
 		// Pass through the result for the next plugin
 		result = conf.PrevResult
 	}
-
+	log.Infof("result: %v...", result)
 	return types.PrintResult(result, conf.CNIVersion)
 }
 
