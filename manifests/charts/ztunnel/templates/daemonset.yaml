@@ -26,8 +26,8 @@ spec:
 {{ toYaml .Values.ztunnel.podAnnotations | indent 8 }}
         {{- end }}
     spec:
-  nodeSelector:
-    offMeshNodeType: dpu
+      nodeSelector:
+        offMeshNodeType: dpu
       serviceAccountName: ztunnel
       tolerations:
         - effect: NoSchedule
