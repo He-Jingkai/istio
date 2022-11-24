@@ -118,7 +118,7 @@ func (s *Server) Reconcile(name types.NamespacedName) error {
 		log.Errorf("Failed to list pods in namespace %s: %v", name.Name, err)
 		return err
 	}
-
+	nodeType := offmesh.MyNodeType(NodeName, s.offmeshCluster)
 	if (s.isAmbientGlobal() || (s.isAmbientNamespaced() && matchAmbient)) && !matchDisabled {
 		if ambientpod.HasLegacyLabel(ns.GetLabels()) {
 			log.Errorf(ErrLegacyLabel, name.Name)
@@ -128,7 +128,9 @@ func (s *Server) Reconcile(name types.NamespacedName) error {
 		log.Infof("Namespace %s is enabled in ambient mesh", name.Name)
 
 		for _, pod := range pods {
-			if podOnMyNode(pod) && !ambientpod.PodHasOptOut(pod) {
+			podToAdd := (nodeType == offmesh.CPUNode && podOnMyNode(pod)) ||
+				(nodeType == offmesh.DPUNode && IsPodOnMyCPU(pod, s.offmeshCluster))
+			if podToAdd && !ambientpod.PodHasOptOut(pod) {
 				log.Debugf("Adding pod to mesh: %s", pod.Name)
 				AddPodToMesh(pod, "")
 			} else {
@@ -138,7 +140,9 @@ func (s *Server) Reconcile(name types.NamespacedName) error {
 	} else {
 		log.Infof("Namespace %s is disabled from ambient mesh", name.Name)
 		for _, pod := range pods {
-			if podOnMyNode(pod) {
+			podToAdd := (nodeType == offmesh.CPUNode && podOnMyNode(pod)) ||
+				(nodeType == offmesh.DPUNode && IsPodOnMyCPU(pod, s.offmeshCluster))
+			if podToAdd {
 				log.Debugf("Checking if in ipset and deleting pod: %s", pod.Name)
 				DelPodFromMesh(pod)
 			} else {
