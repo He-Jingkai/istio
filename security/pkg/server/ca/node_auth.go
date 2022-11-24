@@ -24,7 +24,6 @@ import (
 	"istio.io/istio/pkg/kube"
 	"istio.io/istio/pkg/kube/controllers"
 	"istio.io/istio/pkg/security"
-	"istio.io/istio/pkg/spiffe"
 )
 
 // NodeAuthorizer is a component that implements a subset of Kubernetes Node Authorization
@@ -74,10 +73,10 @@ func (na *NodeAuthorizer) authenticateImpersonation(caller security.KubernetesIn
 		return fmt.Errorf("caller (%v) is not allowed to impersonate", caller)
 	}
 	// Next, make sure the identity they want to impersonate is valid, in general
-	requestedIdentity, err := spiffe.ParseIdentity(requestedIdentityString)
-	if err != nil {
-		return fmt.Errorf("failed to validate impersonated identity %v", requestedIdentityString)
-	}
+	//requestedIdentity, err := spiffe.ParseIdentity(requestedIdentityString)
+	//if err != nil {
+	//	return fmt.Errorf("failed to validate impersonated identity %v", requestedIdentityString)
+	//}
 
 	// Finally, we validate the requested identity is running on the same node the caller is on
 	callerPod, err := na.podLister.Pods(caller.PodNamespace).Get(caller.PodName)
@@ -96,18 +95,18 @@ func (na *NodeAuthorizer) authenticateImpersonation(caller security.KubernetesIn
 	}
 	// We want to find out if there is any pod running with the requested identity on the callers node.
 	// The indexer (previously setup) creates a lookup table for a {Node, SA} pair, which we can lookup
-	k := SaNode{
-		ServiceAccount: types.NamespacedName{Name: requestedIdentity.ServiceAccount, Namespace: requestedIdentity.Namespace},
-		Node:           callerPod.Spec.NodeName,
-	}
+	//k := SaNode{
+	//	ServiceAccount: types.NamespacedName{Name: requestedIdentity.ServiceAccount, Namespace: requestedIdentity.Namespace},
+	//	Node:           callerPod.Spec.NodeName,
+	//}
 	// TODO: this is currently single cluster; we will need to take the cluster of the proxy into account
 	// to support multi-cluster properly.
-	res := na.podIndexer.Lookup(k)
+	//res := na.podIndexer.Lookup(k)
 	// We don't care what pods are part of the index, only that there is at least one. If there is one,
 	// it is appropriate for the caller to request this identity.
-	if len(res) == 0 {
-		return fmt.Errorf("no instances of %q found on node %q", k.ServiceAccount, k.Node)
-	}
+	//if len(res) == 0 {
+	//	return fmt.Errorf("no instances of %q found on node %q", k.ServiceAccount, k.Node)
+	//}
 	serverCaLog.Debugf("Node caller %v impersonated %v", caller, requestedIdentityString)
 	return nil
 }
