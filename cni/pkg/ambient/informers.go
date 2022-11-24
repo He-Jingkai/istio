@@ -295,7 +295,13 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 				// catch the existing pods
 				s.ReconcileNamespaces()
 			}
-			if IsPodOnMyCPU(pod, s.offmeshCluster) {
+
+			ns, err := s.kubeClient.KubeInformer().Core().V1().Namespaces().Lister().Get(pod.Namespace)
+			if err != nil {
+				scopeLog.Errorf("Failed to configure node rules for ztunnel: %v", err)
+				return
+			}
+			if IsPodOnMyCPU(pod, s.offmeshCluster) && ambientpod.ShouldPodBeInIpset(ns, pod, s.meshMode.String(), true) {
 				AddPodToMesh(pod, "")
 			}
 
@@ -334,7 +340,13 @@ func (s *Server) podHandler() *cache.ResourceEventHandlerFuncs {
 				// catch the existing pods
 				s.ReconcileNamespaces()
 			}
-			if IsPodOnMyCPU(newPod, s.offmeshCluster) {
+
+			ns, err := s.kubeClient.KubeInformer().Core().V1().Namespaces().Lister().Get(newPod.Namespace)
+			if err != nil {
+				scopeLog.Errorf("Failed to configure node rules for ztunnel: %v", err)
+				return
+			}
+			if IsPodOnMyCPU(newPod, s.offmeshCluster) && ambientpod.ShouldPodBeInIpset(ns, newPod, s.meshMode.String(), true) {
 				AddPodToMesh(newPod, "")
 			}
 			// Catch pod with opt out applied
