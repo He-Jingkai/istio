@@ -807,7 +807,7 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 			constants.ChainZTunnelPrerouting,
 			"-i", constants.InboundTun,
 			"-j", "MARK",
-			"--set-mark", constants.SkipMark,
+			"--set-mark", constants.CPUTunnelMark,
 		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L89
 		newIptableRule(
@@ -822,7 +822,7 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 			constants.ChainZTunnelPrerouting,
 			"-i", constants.OutboundTun,
 			"-j", "MARK",
-			"--set-mark", constants.SkipMark,
+			"--set-mark", constants.CPUTunnelMark,
 		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L91
 		newIptableRule(constants.TableMangle,
@@ -1216,8 +1216,21 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 				"dev", ztunnelVeth, "scope", "link",
 			},
 		),
+		newExec("ip",
+			[]string{
+				"route", "add", "table", fmt.Sprint(constants.RouteTableToCPUTunnel), "0.0.0.0/0",
+				"via", constants.CPUDPUTunIP, "dev", constants.CPUTun,
+			},
+		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L62-L77
 		// Everything with the skip mark goes directly to the main table
+		newExec("ip",
+			[]string{
+				"rule", "add", "priority", "99",
+				"fwmark", fmt.Sprint(constants.CPUTunnelMark),
+				"lookup", fmt.Sprint(constants.RouteTableToCPUTunnel),
+			},
+		),
 		newExec("ip",
 			[]string{
 				"rule", "add", "priority", "100",

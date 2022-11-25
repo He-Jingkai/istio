@@ -27,6 +27,9 @@ const (
 	ProxyRetMask = "0x040"
 	ProxyRetMark = ProxyRetMask + "/" + ProxyRetMask
 
+	CPUTunnelMask = "0x240"
+	CPUTunnelMark = CPUTunnelMask + "/" + CPUTunnelMask
+
 	InboundTun  = "istioin"
 	OutboundTun = "istioout"
 
@@ -63,9 +66,10 @@ const (
 )
 
 const (
-	RouteTableInbound  = 100
-	RouteTableOutbound = 101
-	RouteTableProxy    = 102
+	RouteTableInbound     = 100
+	RouteTableOutbound    = 101
+	RouteTableProxy       = 102
+	RouteTableToCPUTunnel = 104
 )
 
 const (
