@@ -566,7 +566,7 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 		LinkAttrs: netlink.LinkAttrs{
 			Name: constants.DPUTun,
 		},
-		ID:     1000,
+		ID:     2000,
 		Remote: net.ParseIP(offmesh.GetPair(NodeName, offmesh.CPUNode, s.offmeshCluster).IP),
 	}
 	log.Infof("Building dpu tunnel: %+v", dputun)
@@ -590,8 +590,8 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 	}
 
 	procs = map[string]int{
-		"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/rp_filter":    0,
-		"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/accept_local": 1,
+		//"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/rp_filter":    0,
+		//"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/accept_local": 1,
 	}
 	for proc, val := range procs {
 		err = SetProc(proc, fmt.Sprint(val))
@@ -1149,7 +1149,7 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 		LinkAttrs: netlink.LinkAttrs{
 			Name: constants.CPUTun,
 		},
-		ID:     1002,
+		ID:     2000,
 		Remote: net.ParseIP(offmesh.GetPair(NodeName, offmesh.DPUNode, s.offmeshCluster).IP),
 	}
 	log.Infof("Building cpu tunnel: %+v", cputun)
@@ -1185,8 +1185,8 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 		"/proc/sys/net/ipv4/conf/" + constants.InboundTun + "/accept_local":  1,
 		"/proc/sys/net/ipv4/conf/" + constants.OutboundTun + "/rp_filter":    0,
 		"/proc/sys/net/ipv4/conf/" + constants.OutboundTun + "/accept_local": 1,
-		"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/rp_filter":         0,
-		"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/accept_local":      1,
+		//"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/rp_filter":         0,
+		//"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/accept_local":      1,
 	}
 	for proc, val := range procs {
 		err = SetProc(proc, fmt.Sprint(val))
