@@ -569,7 +569,7 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 		ID:     1000,
 		Remote: net.ParseIP(offmesh.GetPair(NodeName, offmesh.CPUNode, s.offmeshCluster).IP),
 	}
-	log.Debugf("Building dpu tunnel: %+v", dputun)
+	log.Infof("Building dpu tunnel: %+v", dputun)
 	err = netlink.LinkAdd(dputun)
 	if err != nil {
 		log.Errorf("failed to add dpu tunnel: %v", err)
@@ -590,10 +590,8 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 	}
 
 	procs = map[string]int{
-		"/proc/sys/net/ipv4/conf/" + constants.InboundTun + "/rp_filter":     0,
-		"/proc/sys/net/ipv4/conf/" + constants.InboundTun + "/accept_local":  1,
-		"/proc/sys/net/ipv4/conf/" + constants.OutboundTun + "/rp_filter":    0,
-		"/proc/sys/net/ipv4/conf/" + constants.OutboundTun + "/accept_local": 1,
+		"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/rp_filter":    0,
+		"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/accept_local": 1,
 	}
 	for proc, val := range procs {
 		err = SetProc(proc, fmt.Sprint(val))
@@ -710,11 +708,22 @@ func (s *Server) cleanup() {
 	_ = routeFlushTable(constants.RouteTableOutbound)
 	_ = routeFlushTable(constants.RouteTableProxy)
 
-	exec := []*ExecList{
-		newExec("ip", []string{"rule", "del", "priority", "100"}),
-		newExec("ip", []string{"rule", "del", "priority", "101"}),
-		newExec("ip", []string{"rule", "del", "priority", "102"}),
-		newExec("ip", []string{"rule", "del", "priority", "103"}),
+	var exec []*ExecList
+	if offmesh.MyNodeType(NodeName, s.offmeshCluster) == offmesh.CPUNode {
+		exec = []*ExecList{
+			newExec("ip", []string{"rule", "del", "priority", "100"}),
+			newExec("ip", []string{"rule", "del", "priority", "101"}),
+			newExec("ip", []string{"rule", "del", "priority", "102"}),
+			newExec("ip", []string{"rule", "del", "priority", "103"}),
+		}
+	} else if offmesh.MyNodeType(NodeName, s.offmeshCluster) == offmesh.DPUNode {
+		exec = []*ExecList{
+			newExec("ip", []string{"rule", "del", "priority", "100"}),
+			newExec("ip", []string{"rule", "del", "priority", "101"}),
+			newExec("ip", []string{"rule", "del", "priority", "102"}),
+			newExec("ip", []string{"rule", "del", "priority", "103"}),
+			newExec("ip", []string{"rule", "del", "priority", "99"}),
+		}
 	}
 	for _, e := range exec {
 		err := execute(e.Cmd, e.Args...)
@@ -724,21 +733,40 @@ func (s *Server) cleanup() {
 	}
 
 	// Delete tunnel links
-	err := netlink.LinkDel(&netlink.Geneve{
-		LinkAttrs: netlink.LinkAttrs{
-			Name: constants.InboundTun,
-		},
-	})
-	if err != nil {
-		log.Warnf("error deleting inbound tunnel: %v", err)
-	}
-	err = netlink.LinkDel(&netlink.Geneve{
-		LinkAttrs: netlink.LinkAttrs{
-			Name: constants.OutboundTun,
-		},
-	})
-	if err != nil {
-		log.Warnf("error deleting outbound tunnel: %v", err)
+	if offmesh.MyNodeType(NodeName, s.offmeshCluster) == offmesh.CPUNode {
+		err := netlink.LinkDel(&netlink.Geneve{
+			LinkAttrs: netlink.LinkAttrs{
+				Name: constants.DPUTun,
+			},
+		})
+		if err != nil {
+			log.Warnf("error deleting dpu tunnel: %v", err)
+		}
+	} else if offmesh.MyNodeType(NodeName, s.offmeshCluster) == offmesh.DPUNode {
+		err := netlink.LinkDel(&netlink.Geneve{
+			LinkAttrs: netlink.LinkAttrs{
+				Name: constants.InboundTun,
+			},
+		})
+		if err != nil {
+			log.Warnf("error deleting inbound tunnel: %v", err)
+		}
+		err = netlink.LinkDel(&netlink.Geneve{
+			LinkAttrs: netlink.LinkAttrs{
+				Name: constants.OutboundTun,
+			},
+		})
+		if err != nil {
+			log.Warnf("error deleting outbound tunnel: %v", err)
+		}
+		err = netlink.LinkDel(&netlink.Geneve{
+			LinkAttrs: netlink.LinkAttrs{
+				Name: constants.CPUTun,
+			},
+		})
+		if err != nil {
+			log.Warnf("error deleting cpu tunnel: %v", err)
+		}
 	}
 
 	_ = Ipset.DestroySet()
@@ -1121,10 +1149,10 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 		LinkAttrs: netlink.LinkAttrs{
 			Name: constants.CPUTun,
 		},
-		ID:     1000,
+		ID:     1002,
 		Remote: net.ParseIP(offmesh.GetPair(NodeName, offmesh.DPUNode, s.offmeshCluster).IP),
 	}
-	log.Debugf("Building cpu tunnel: %+v", cputun)
+	log.Infof("Building cpu tunnel: %+v", cputun)
 	err = netlink.LinkAdd(cputun)
 	if err != nil {
 		log.Errorf("failed to add cpu tunnel: %v", err)
@@ -1157,6 +1185,8 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 		"/proc/sys/net/ipv4/conf/" + constants.InboundTun + "/accept_local":  1,
 		"/proc/sys/net/ipv4/conf/" + constants.OutboundTun + "/rp_filter":    0,
 		"/proc/sys/net/ipv4/conf/" + constants.OutboundTun + "/accept_local": 1,
+		"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/rp_filter":         0,
+		"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/accept_local":      1,
 	}
 	for proc, val := range procs {
 		err = SetProc(proc, fmt.Sprint(val))
