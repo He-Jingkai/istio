@@ -1185,8 +1185,8 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 		"/proc/sys/net/ipv4/conf/" + constants.InboundTun + "/accept_local":  1,
 		"/proc/sys/net/ipv4/conf/" + constants.OutboundTun + "/rp_filter":    0,
 		"/proc/sys/net/ipv4/conf/" + constants.OutboundTun + "/accept_local": 1,
-		//"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/rp_filter":         0,
-		//"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/accept_local":      1,
+		"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/rp_filter":         0,
+		"/proc/sys/net/ipv4/conf/" + constants.CPUTun + "/accept_local":      1,
 	}
 	for proc, val := range procs {
 		err = SetProc(proc, fmt.Sprint(val))

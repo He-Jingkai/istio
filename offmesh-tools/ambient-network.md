@@ -3,6 +3,8 @@
 ```shell
 kubectl create configmap offmesh-conf -n istio-system --from-file=/home/hjk/offmesh-conf
 kubectl create configmap offmesh-conf -n kube-system  --from-file=/home/hjk/offmesh-conf
+
+kubectl label namespace default istio.io/dataplane-mode=ambient
 ```
 
 ```yaml
