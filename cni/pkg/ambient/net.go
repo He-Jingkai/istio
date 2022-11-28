@@ -648,8 +648,14 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L171
 		newExec("ip",
 			[]string{
-				"route", "add", "table", fmt.Sprint(constants.RouteTableInbound), dpuIP,
+				"route", "add", "table", fmt.Sprint(constants.TunnelRoutingTable), dpuIP,
 				"dev", cpuEth, "scope", "link",
+			},
+		),
+		newExec("ip",
+			[]string{
+				"rule", "add", "priority", "98",
+				"table", fmt.Sprint(constants.TunnelRoutingTable),
 			},
 		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L62-L77
@@ -716,6 +722,7 @@ func (s *Server) cleanup() {
 			newExec("ip", []string{"rule", "del", "priority", "101"}),
 			newExec("ip", []string{"rule", "del", "priority", "102"}),
 			newExec("ip", []string{"rule", "del", "priority", "103"}),
+			newExec("ip", []string{"rule", "del", "priority", "98"}),
 		}
 	} else if offmesh.MyNodeType(NodeName, s.offmeshCluster) == offmesh.DPUNode {
 		exec = []*ExecList{
@@ -724,6 +731,7 @@ func (s *Server) cleanup() {
 			newExec("ip", []string{"rule", "del", "priority", "102"}),
 			newExec("ip", []string{"rule", "del", "priority", "103"}),
 			newExec("ip", []string{"rule", "del", "priority", "99"}),
+			newExec("ip", []string{"rule", "del", "priority", "98"}),
 		}
 	}
 	for _, e := range exec {
@@ -1249,14 +1257,20 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 		),
 		newExec("ip",
 			[]string{
-				"route", "add", "table", fmt.Sprint(constants.RouteTableInbound), cpuIP,
+				"route", "add", "table", fmt.Sprint(constants.RouteTableToCPUTunnel), "0.0.0.0/0",
+				"via", constants.CPUDPUTunIP, "dev", constants.CPUTun,
+			},
+		),
+		newExec("ip",
+			[]string{
+				"route", "add", "table", fmt.Sprint(constants.TunnelRoutingTable), cpuIP,
 				"dev", hostEth, "scope", "link",
 			},
 		),
 		newExec("ip",
 			[]string{
-				"route", "add", "table", fmt.Sprint(constants.RouteTableToCPUTunnel), "0.0.0.0/0",
-				"via", constants.CPUDPUTunIP, "dev", constants.CPUTun,
+				"rule", "add", "priority", "98",
+				"table", fmt.Sprint(constants.TunnelRoutingTable),
 			},
 		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L62-L77

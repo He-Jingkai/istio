@@ -70,6 +70,7 @@ const (
 	RouteTableOutbound    = 101
 	RouteTableProxy       = 102
 	RouteTableToCPUTunnel = 104
+	TunnelRoutingTable    = 105
 )
 
 const (
