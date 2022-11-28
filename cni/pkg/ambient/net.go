@@ -562,12 +562,13 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 
 	// Create tunnels
 	// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L153-L161
+	dpuIP := offmesh.GetPair(NodeName, offmesh.CPUNode, s.offmeshCluster).IP
 	dputun := &netlink.Geneve{
 		LinkAttrs: netlink.LinkAttrs{
 			Name: constants.DPUTun,
 		},
 		ID:     2000,
-		Remote: net.ParseIP(offmesh.GetPair(NodeName, offmesh.CPUNode, s.offmeshCluster).IP),
+		Remote: net.ParseIP(dpuIP),
 	}
 	log.Infof("Building dpu tunnel: %+v", dputun)
 	err = netlink.LinkAdd(dputun)
@@ -590,8 +591,8 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 	}
 
 	procs = map[string]int{
-		//"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/rp_filter":    0,
-		//"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/accept_local": 1,
+		"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/rp_filter":    0,
+		"/proc/sys/net/ipv4/conf/" + constants.DPUTun + "/accept_local": 1,
 	}
 	for proc, val := range procs {
 		err = SetProc(proc, fmt.Sprint(val))
@@ -645,12 +646,12 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 			},
 		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L171
-		//newExec("ip",
-		//	[]string{
-		//		"route", "add", "table", fmt.Sprint(constants.RouteTableInbound), ztunnelIP,
-		//		"dev", ztunnelVeth, "scope", "link",
-		//	},
-		//),
+		newExec("ip",
+			[]string{
+				"route", "add", "table", fmt.Sprint(constants.RouteTableInbound), dpuIP,
+				"dev", cpuEth, "scope", "link",
+			},
+		),
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L62-L77
 		// Everything with the skip mark goes directly to the main table
 		newExec("ip",
@@ -680,13 +681,13 @@ func (s *Server) CreateRulesOnCPUNode(cpuEth, ztunnelIP string, captureDNS bool)
 		),
 		// Send all traffic to the inbound table. This table has routes only to pods in the mesh.
 		// It does not have a catch-all route, so if a route is missing, the search will continue
-		// allowing us to override routing just for member pods.
-		//newExec("ip",
-		//	[]string{
-		//		"rule", "add", "priority", "103",
-		//		"table", fmt.Sprint(constants.RouteTableInbound),
-		//	},
-		//),
+		//allowing us to override routing just for member pods.
+		newExec("ip",
+			[]string{
+				"rule", "add", "priority", "103",
+				"table", fmt.Sprint(constants.RouteTableInbound),
+			},
+		),
 	}
 
 	for _, route := range routes {
@@ -1144,13 +1145,13 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 	if err != nil {
 		log.Errorf("failed to add outbound tunnel address: %v", err)
 	}
-
+	cpuIP := offmesh.GetPair(NodeName, offmesh.DPUNode, s.offmeshCluster).IP
 	cputun := &netlink.Geneve{
 		LinkAttrs: netlink.LinkAttrs{
 			Name: constants.CPUTun,
 		},
 		ID:     2000,
-		Remote: net.ParseIP(offmesh.GetPair(NodeName, offmesh.DPUNode, s.offmeshCluster).IP),
+		Remote: net.ParseIP(cpuIP),
 	}
 	log.Infof("Building cpu tunnel: %+v", cputun)
 	err = netlink.LinkAdd(cputun)
@@ -1209,7 +1210,7 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 			}
 		}
 	}
-
+	hostEth, _ := GetHostNetDevice(offmesh.GetMyPair(NodeName, s.offmeshCluster).IP)
 	routes := []*ExecList{
 		// https://github.com/solo-io/istio-sidecarless/blob/master/redirect-worker.sh#L164
 		newExec("ip",
@@ -1244,6 +1245,12 @@ func (s *Server) CreateRulesOnDPUNode(ztunnelVeth, ztunnelIP string, captureDNS 
 			[]string{
 				"route", "add", "table", fmt.Sprint(constants.RouteTableInbound), ztunnelIP,
 				"dev", ztunnelVeth, "scope", "link",
+			},
+		),
+		newExec("ip",
+			[]string{
+				"route", "add", "table", fmt.Sprint(constants.RouteTableInbound), cpuIP,
+				"dev", hostEth, "scope", "link",
 			},
 		),
 		newExec("ip",
