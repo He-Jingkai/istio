@@ -1,4 +1,5 @@
 
+[//]: # (abandoned)
 # 一次正常的通信中的网络包流向
 ## CLIENT
 ```shell
