@@ -31,8 +31,8 @@ $ ip rule
 0:      from all lookup local
 100:    from all fwmark 0x200/0x200 goto 32766
 101:    from all fwmark 0x100/0x100 lookup 101
-102:    from all fwmark 0x40/0x40 lookup 102
-103:    from all lookup 100
+#102:    from all fwmark 0x40/0x40 lookup 102
+#103:    from all lookup 100
 32766:  from all lookup main
 32767:  from all lookup default
 
