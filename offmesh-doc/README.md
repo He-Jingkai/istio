@@ -81,7 +81,7 @@ We need to use different network rules on the dpu and cpu nodes. The network rul
 
 We used the same network rules as the prototype system on the dpu nodes. On the cpu node, we use the following network rules (the meaning of the corresponding network rules is described in the comments).
 
-The workflow of the network package in the system is shown in the figure below.
+The workflow of the network package in the system is shown in the figure below.The setting and dynamic update of network rules are implemented by the `istio-cni-node` pod on the corresponding node, which runs in host network mode.
 ![](./pic/ambient-offmesh.jpeg)
 
 ```shell
