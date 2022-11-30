@@ -1,0 +1,9 @@
+pairs:
+  - cpuNodeIP: 192.168.50.130
+    dpuNodeIP: 192.168.50.131
+    cpuNodeName: master
+    dpuNodeName: master-dpu
+  - cpuNodeIP: 192.168.50.133
+    dpuNodeIP: 192.168.50.128
+    cpuNodeName: worker1
+    dpuNodeName: worker1-dpu

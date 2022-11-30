@@ -100,9 +100,11 @@ $ iptable-save
 -A ztunnel-OUTPUT -s 10.244.0.1/32 -j MARK --set-xmark 0x220/0xffffffff
 -A ztunnel-PREROUTING -m connmark --mark 0x220/0x220 -j MARK --set-xmark 0x200/0x200
 -A ztunnel-PREROUTING -m mark --mark 0x200/0x200 -j RETURN
--A ztunnel-PREROUTING -i ens32 -m set --match-set ztunnel-pods-ips dst -j MARK --set-xmark 0x220/0x220
+-A ztunnel-PREROUTING -i ens32 -m set --match-set ztunnel-pods-ips dst -j MARK --set-xmark 0x200/0x200
+-A ztunnel-PREROUTING -p udp -j MARK --set-xmark 0x220/0x220
 -A ztunnel-PREROUTING -m mark --mark 0x200/0x200 -j RETURN
 -A ztunnel-PREROUTING -p tcp -m set --match-set ztunnel-pods-ips src -j MARK --set-xmark 0x100/0x100
+COMMIT
 
 *nat
 :ztunnel-POSTROUTING - [0:0]
