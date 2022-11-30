@@ -96,7 +96,6 @@ import (
 )
 
 var log = istiolog.RegisterScope("ambientgen", "xDS Generator for ambient clients", 0)
-var offmeshCluster = offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)
 
 var _ model.XdsResourceGenerator = &ZTunnelConfigGenerator{}
 
@@ -175,7 +174,7 @@ func (g *ZTunnelConfigGenerator) BuildClusters(proxy *model.Proxy, push *model.P
 			}
 		}
 	}
-	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmeshCluster).Name
+	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)).Name
 	for sa := range workloads.NodeLocalBySA(CPUNodeName) {
 		c := outboundTunnelCluster(proxy, push, sa, sa)
 		out = append(out, &discovery.Resource{Name: c.Name, Resource: protoconv.MessageToAny(c)})
@@ -327,7 +326,7 @@ func (g *ZTunnelConfigGenerator) buildPodOutboundCaptureListener(proxy *model.Pr
 	services := proxy.SidecarScope.Services()
 	seen := sets.New()
 
-	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmeshCluster).Name
+	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)).Name
 	for _, sourceWl := range push.AmbientIndex.Workloads.NodeLocal(CPUNodeName) {
 		sourceAndDestMatch := match.NewDestinationIP()
 		// TODO: handle host network better, which has a shared IP
@@ -658,7 +657,7 @@ func parseWaypointClusterName(name string) (src, dst, t string, ok bool) {
 
 func buildWaypointClusters(proxy *model.Proxy, push *model.PushContext) model.Resources {
 	var clusters []*cluster.Cluster
-	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmeshCluster).Name
+	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)).Name
 	// Client waypoints
 	for sa, waypoints := range push.AmbientIndex.Waypoints.ByIdentity {
 		saWorkloads := push.AmbientIndex.Workloads.NodeLocalBySA(CPUNodeName)[sa]
@@ -821,7 +820,7 @@ func (g *ZTunnelConfigGenerator) upstreamLbEndpointsFromShards(
 			LoadBalancingWeight: wrappers.UInt32(1),
 		}
 
-		CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmeshCluster).Name
+		CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)).Name
 
 		capturePort := ZTunnelInboundCapturePort
 		// TODO passthrough for node-local upstreams without Waypoints
@@ -1074,7 +1073,7 @@ func (g *ZTunnelConfigGenerator) buildInboundCaptureListener(proxy *model.Proxy,
 			},
 		}},
 	}
-	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmeshCluster).Name
+	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)).Name
 	for _, workload := range push.AmbientIndex.Workloads.NodeLocal(CPUNodeName) {
 		// Skip workloads in the host network
 		if workload.HostNetwork {
@@ -1227,7 +1226,7 @@ func (g *ZTunnelConfigGenerator) buildInboundPlaintextCaptureListener(proxy *mod
 		}},
 		Transparent: wrappers.Bool(true),
 	}
-	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmeshCluster).Name
+	CPUNodeName := offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)).Name
 	for _, workload := range push.AmbientIndex.Workloads.NodeLocal(CPUNodeName) {
 		// Skip workloads in the host network
 		if workload.HostNetwork {

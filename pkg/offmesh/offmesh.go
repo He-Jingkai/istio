@@ -1,5 +1,14 @@
 package offmesh
 
+import (
+	"gopkg.in/yaml.v2"
+	"k8s.io/klog/v2"
+	"os"
+)
+
+var offmeshCluster ClusterConfig
+var read = false
+
 type PUPair struct {
 	CPUIp   string `yaml:"cpuNodeIP"`
 	DPUIp   string `yaml:"dpuNodeIP"`
@@ -24,39 +33,32 @@ type NodeInfo struct {
 	DPUIp        string
 }
 
-//pairs:
-//- cpuNodeIP: 192.168.50.130
-//dpuNodeIP: 192.168.50.131
-//cpuNodeName: master
-//dpuNodeName: master-dpu
-//- cpuNodeIP: 192.168.50.133
-//dpuNodeIP: 192.168.50.128
-//cpuNodeName: worker1
-//dpuNodeName: worker1-dpu
-
 func ReadClusterConfigYaml(filePath string) ClusterConfig {
-	//var clusterConf ClusterConfig
-	//var err error
-	//file, err := os.ReadFile(filePath)
-	//if err != nil {
-	//	klog.Errorf("read cluster conf yaml error: %v", err)
-	//}
-	//err = yaml.Unmarshal(file, &clusterConf)
-	//if err != nil {
-	//	klog.Errorf("unmarshal cluster conf yaml error: %v", err)
-	//}
-	//return clusterConf
-	return ClusterConfig{
-		Pairs: []PUPair{{
-			CPUIp:   "192.168.50.130",
-			DPUIp:   "192.168.50.131",
-			CPUName: "master",
-			DPUName: "master-dpu",
-		}, {
-			CPUIp:   "192.168.50.133",
-			DPUIp:   "192.168.50.128",
-			CPUName: "worker1",
-			DPUName: "worker1-dpu",
-		}},
+	if read {
+		return offmeshCluster
 	}
+	var err error
+	file, err := os.ReadFile(filePath)
+	if err != nil {
+		klog.Errorf("read cluster conf yaml error: %v", err)
+	}
+	err = yaml.Unmarshal(file, &offmeshCluster)
+	if err != nil {
+		klog.Errorf("unmarshal cluster conf yaml error: %v", err)
+	}
+	read = true
+	return offmeshCluster
+	//return ClusterConfig{
+	//	Pairs: []PUPair{{
+	//		CPUIp:   "192.168.50.130",
+	//		DPUIp:   "192.168.50.131",
+	//		CPUName: "master",
+	//		DPUName: "master-dpu",
+	//	}, {
+	//		CPUIp:   "192.168.50.133",
+	//		DPUIp:   "192.168.50.128",
+	//		CPUName: "worker1",
+	//		DPUName: "worker1-dpu",
+	//	}},
+	//}
 }
