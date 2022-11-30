@@ -48,17 +48,4 @@ func ReadClusterConfigYaml(filePath string) ClusterConfig {
 	}
 	read = true
 	return offmeshCluster
-	//return ClusterConfig{
-	//	Pairs: []PUPair{{
-	//		CPUIp:   "192.168.50.130",
-	//		DPUIp:   "192.168.50.131",
-	//		CPUName: "master",
-	//		DPUName: "master-dpu",
-	//	}, {
-	//		CPUIp:   "192.168.50.133",
-	//		DPUIp:   "192.168.50.128",
-	//		CPUName: "worker1",
-	//		DPUName: "worker1-dpu",
-	//	}},
-	//}
 }
