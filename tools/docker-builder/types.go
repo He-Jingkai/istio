@@ -201,7 +201,7 @@ func DefaultArgs() Args {
 		variants = cur.SortedList()
 	}
 
-	arch := []string{"linux/amd64"}
+	arch := []string{"linux/amd64", "linux/arm64"}
 	if legacy, f := os.LookupEnv("DOCKER_ARCHITECTURES"); f {
 		arch = strings.Split(legacy, ",")
 	}
