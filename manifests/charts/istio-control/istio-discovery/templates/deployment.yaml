@@ -59,6 +59,7 @@ spec:
     spec:
 {{- if .Values.pilot.nodeSelector }}
       nodeSelector:
+        offMeshNodeType: cpu
 {{ toYaml .Values.pilot.nodeSelector | indent 8 }}
 {{- end }}
 {{- with .Values.pilot.affinity }}
