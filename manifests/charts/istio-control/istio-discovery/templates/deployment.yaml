@@ -206,11 +206,11 @@ spec:
           - name: istio-kubeconfig
             mountPath: /var/run/secrets/remote
             readOnly: true
+          - mountPath: /etc/offmesh
+            name: offmesh-conf
           {{- if .Values.pilot.jwksResolverExtraRootCA }}
           - name: extracacerts
             mountPath: /cacerts
-          - mountPath: /etc/offmesh
-            name: offmesh-conf
           {{- end }}
       volumes:
       # Technically not needed on this pod - but it helps debugging/testing SDS
