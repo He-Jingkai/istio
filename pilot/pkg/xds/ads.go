@@ -15,7 +15,6 @@
 package xds
 
 import (
-	"istio.io/istio/pkg/offmesh"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -527,7 +526,6 @@ func (s *DiscoveryServer) initConnection(node *core.Node, con *Connection, ident
 	if err != nil {
 		return err
 	}
-	proxy.Metadata.NodeName = offmesh.GetPair(proxy.Metadata.NodeName, offmesh.DPUNode, offmesh.ReadClusterConfigYaml(offmesh.ClusterConfigYamlPath)).Name
 	// Check if proxy cluster has an alias configured, if yes use that as cluster ID for this proxy.
 	if alias, exists := s.ClusterAliases[proxy.Metadata.ClusterID]; exists {
 		proxy.Metadata.ClusterID = alias
