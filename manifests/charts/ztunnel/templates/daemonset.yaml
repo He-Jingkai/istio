@@ -250,7 +250,7 @@ spec:
         - proxy
         - sidecar
         - --concurrency
-        - "0"
+        - "8"
         env:
         - name: ISTIO_META_GENERATOR
           value: "ztunnel-envoy"
